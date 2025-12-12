@@ -1,4 +1,4 @@
-import { Phone, Mail, MapPin, Home, Clock } from 'lucide-react';
+import { Phone, Mail, MapPin, Home, Clock, Facebook, Instagram } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
@@ -184,6 +184,30 @@ const Footer = () => {
                 </button>
               </li>
             </ul>
+
+            <div className="mt-6">
+              <h5 className="font-semibold mb-3">Follow Us</h5>
+              <div className="flex gap-4 mb-6">
+                <a 
+                  href="https://www.facebook.com/lacasadeteresita/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-white/10 p-3 rounded-full hover:bg-[#C4A96A] transition-colors"
+                  aria-label="Facebook"
+                >
+                  <Facebook className="h-5 w-5" />
+                </a>
+                <a 
+                  href="https://www.instagram.com/lacasadeteresitabo/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-white/10 p-3 rounded-full hover:bg-[#C4A96A] transition-colors"
+                  aria-label="Instagram"
+                >
+                  <Instagram className="h-5 w-5" />
+                </a>
+              </div>
+            </div>
 
             <div className="mt-6">
               <h5 className="font-semibold mb-3">We Accept</h5>
