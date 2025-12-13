@@ -4,41 +4,50 @@ import { useParams, Link } from 'react-router-dom';
 import { 
   Wifi, Tv, Bath, Trees, Coffee, Shirt, Users, 
   Star, Maximize2, Bed, Check, MessageCircle, 
-  ChevronLeft, ChevronRight, ArrowLeft, X 
+  ChevronLeft, ChevronRight, ArrowLeft, X
 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-
-import { roomsDetailed } from '../data/roomsData';
+import { useData } from '../context/DataContext';
+import AccessoriesSection from '../components/AccessoriesSection';
+import DateRangePicker from '../components/DateRangePicker';
+import PriceBreakdown from '../components/PriceBreakdown';
 
 const RoomDetailPage = () => {
   const { roomSlug } = useParams();
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
+  const { rooms, config, accessories, isInitialLoad } = useData();
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [showLightbox, setShowLightbox] = useState(false);
-
-  const room = roomsDetailed.find(r => r.slug === roomSlug);
+  const [selectedAccessories, setSelectedAccessories] = useState({});
+  const [dateRange, setDateRange] = useState(null);
 
   // Scroll to top when component mounts or room changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [roomSlug]);
 
+  // Find room by slug
+  const room = rooms.find(r => r.slug === roomSlug);
+
+  // Room not found
   if (!room) {
     return (
       <div className="min-h-screen pt-32 pb-20 bg-[#F8F5F2]">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h1 className="text-4xl font-bold text-[#2D5A4A] mb-4">
-            {t.rooms.notFound.title}
+            {language === 'en' ? 'Room Not Found' : 'Habitación No Encontrada'}
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            {t.rooms.notFound.subtitle}
+            {language === 'en' 
+              ? 'The room you are looking for does not exist or is no longer available.'
+              : 'La habitación que buscas no existe o ya no está disponible.'}
           </p>
           <Link
-            to="/rooms"
+            to="/#rooms"
             className="inline-flex items-center gap-2 bg-[#A85C32] text-white px-8 py-4 rounded-lg font-semibold hover:bg-[#8B4926] transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
-            Back to Rooms
+            {language === 'en' ? 'Back to Rooms' : 'Volver a Habitaciones'}
           </Link>
         </div>
       </div>
@@ -49,10 +58,76 @@ const RoomDetailPage = () => {
     Wifi, Tv, Bath, Trees, Coffee, Shirt, Users
   };
 
-  const handleWhatsApp = () => {
-    const phoneNumber = "59170675985";
+  const handleWhatsApp = async () => {
+    const phoneNumber = config.whatsappNumber || "59170675985";
     const roomName = room.name[language];
-    const message = t.whatsapp.roomMessage.replace('{roomName}', roomName);
+    
+    // Calculate accessories total
+    const accessoriesTotal = Object.entries(selectedAccessories).reduce((total, [id, qty]) => {
+      const accessory = accessories.find(a => a.id === id);
+      return total + (accessory ? accessory.prix * qty : 0);
+    }, 0);
+    
+    // Build accessories list for message
+    const accessoriesList = Object.entries(selectedAccessories)
+      .map(([id, qty]) => {
+        const accessory = accessories.find(a => a.id === id);
+        return accessory ? `- ${accessory.nom} x${qty} ($${accessory.prix * qty})` : '';
+      })
+      .filter(Boolean)
+      .join('\n');
+    
+    // Import calculateTotalPrice
+    const { calculateTotalPrice } = await import('../services/dataManager');
+    
+    let message = '';
+    
+    if (dateRange && dateRange.checkIn && dateRange.checkOut) {
+      // With dates selected
+      const priceData = await calculateTotalPrice(room.id, dateRange.checkIn, dateRange.checkOut);
+      const checkInStr = dateRange.checkIn.toLocaleDateString(language === 'en' ? 'en-US' : 'es-ES', { 
+        year: 'numeric', month: 'long', day: 'numeric' 
+      });
+      const checkOutStr = dateRange.checkOut.toLocaleDateString(language === 'en' ? 'en-US' : 'es-ES', { 
+        year: 'numeric', month: 'long', day: 'numeric' 
+      });
+      
+      const totalWithAccessories = priceData.totalPrice + accessoriesTotal;
+      
+      message = language === 'en'
+        ? `Hello! I'm interested in booking the ${roomName} room.\n\n` +
+          `Check-in: ${checkInStr}\n` +
+          `Check-out: ${checkOutStr}\n` +
+          `Nights: ${priceData.nights}\n\n` +
+          `Room total: $${priceData.totalPrice}`
+        : `¡Hola! Estoy interesado en reservar la habitación ${roomName}.\n\n` +
+          `Entrada: ${checkInStr}\n` +
+          `Salida: ${checkOutStr}\n` +
+          `Noches: ${priceData.nights}\n\n` +
+          `Total habitación: $${priceData.totalPrice}`;
+      
+      if (accessoriesList) {
+        message += language === 'en'
+          ? `\n\nAdd-ons:\n${accessoriesList}\n\nGrand Total: $${totalWithAccessories}`
+          : `\n\nServicios adicionales:\n${accessoriesList}\n\nTotal General: $${totalWithAccessories}`;
+      } else {
+        message += language === 'en'
+          ? `\n\nTotal: $${priceData.totalPrice}`
+          : `\n\nTotal: $${priceData.totalPrice}`;
+      }
+    } else {
+      // Without dates
+      message = language === 'en'
+        ? `Hello! I'm interested in booking the ${roomName} room.\n\nPrice: $${room.price}/night`
+        : `¡Hola! Estoy interesado en reservar la habitación ${roomName}.\n\nPrecio: $${room.price}/noche`;
+      
+      if (accessoriesList) {
+        message += language === 'en'
+          ? `\n\nAdd-ons:\n${accessoriesList}`
+          : `\n\nServicios adicionales:\n${accessoriesList}`;
+      }
+    }
+    
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
@@ -64,6 +139,9 @@ const RoomDetailPage = () => {
   const prevImage = () => {
     setCurrentImageIndex((prev) => (prev - 1 + room.images.length) % room.images.length);
   };
+
+  // Check if dynamic data is still loading
+  const isDynamicDataLoading = isInitialLoad && (!room.isAvailable && room.isAvailable !== false);
 
   return (
     <div className="min-h-screen pt-20 bg-white">
@@ -82,12 +160,14 @@ const RoomDetailPage = () => {
             <button
               onClick={prevImage}
               className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all"
+              aria-label="Previous image"
             >
               <ChevronLeft className="h-6 w-6 text-[#2D5A4A]" />
             </button>
             <button
               onClick={nextImage}
               className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all"
+              aria-label="Next image"
             >
               <ChevronRight className="h-6 w-6 text-[#2D5A4A]" />
             </button>
@@ -101,8 +181,9 @@ const RoomDetailPage = () => {
 
         {/* Back Button */}
         <Link
-          to="/"
+          to="/#rooms"
           className="absolute top-4 left-4 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all"
+          aria-label="Back to rooms"
         >
           <ArrowLeft className="h-6 w-6 text-[#2D5A4A]" />
         </Link>
@@ -121,11 +202,31 @@ const RoomDetailPage = () => {
                 >
                   {room.name[language]}
                 </h1>
+                
+                {/* Availability with skeleton loader */}
                 <div className="text-right">
-                  <div className="text-sm text-gray-600 mb-1">{t.rooms.availability}</div>
-                  <div className="text-2xl font-bold text-[#A85C32]">
-                    {room.available} {language === 'en' ? 'rooms' : 'habitaciones'}
+                  <div className="text-sm text-gray-600 mb-1">
+                    {language === 'en' ? 'Availability' : 'Disponibilidad'}
                   </div>
+                  {isDynamicDataLoading ? (
+                    <div className="h-8 w-24 bg-gray-200 animate-pulse rounded"></div>
+                  ) : (
+                    <>
+                      {room.isAvailable ? (
+                        <div className="text-2xl font-bold text-green-600">
+                          {room.available}/{room.capaciteMax || room.available} {language === 'en' ? 'available' : 'disponibles'}
+                        </div>
+                      ) : room.isAvailable === false ? (
+                        <div className="text-2xl font-bold text-red-600">
+                          {language === 'en' ? 'Not Available' : 'No Disponible'}
+                        </div>
+                      ) : (
+                        <div className="text-2xl font-bold text-green-600">
+                          {room.available} {language === 'en' ? 'available' : 'disponibles'}
+                        </div>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -153,11 +254,11 @@ const RoomDetailPage = () => {
             {/* Amenities */}
             <div className="mb-8 bg-[#F8F5F2] p-6 rounded-xl">
               <h3 className="text-2xl font-bold text-[#2D5A4A] mb-4">
-                {t.rooms.amenities}
+                {language === 'en' ? 'Amenities' : 'Servicios'}
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {room.amenities.map((amenity, index) => {
-                  const Icon = iconMap[amenity.icon];
+                {room.amenities && room.amenities.map((amenity, index) => {
+                  const Icon = iconMap[amenity.icon] || Check;
                   return (
                     <div key={index} className="flex items-center gap-3">
                       <Icon className="h-5 w-5 text-[#A85C32] flex-shrink-0" />
@@ -169,105 +270,189 @@ const RoomDetailPage = () => {
             </div>
 
             {/* Bathroom */}
-            <div className="mb-8">
-              <h3 className="text-2xl font-bold text-[#2D5A4A] mb-4">
-                {t.rooms.bathroom}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {room.bathroom[language].map((item, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <Check className="h-5 w-5 text-[#A85C32] flex-shrink-0" />
-                    <span className="text-gray-700">{item}</span>
-                  </div>
-                ))}
+            {room.bathroom && (
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-[#2D5A4A] mb-4">
+                  {language === 'en' ? 'Bathroom' : 'Baño'}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {room.bathroom[language].map((item, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <Check className="h-5 w-5 text-[#A85C32] flex-shrink-0" />
+                      <span className="text-gray-700">{item}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Views */}
-            <div className="mb-8">
-              <h3 className="text-2xl font-bold text-[#2D5A4A] mb-4">
-                {t.rooms.views}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {room.view[language].map((view, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <Trees className="h-5 w-5 text-[#A85C32] flex-shrink-0" />
-                    <span className="text-gray-700">{view}</span>
-                  </div>
-                ))}
+            {room.view && (
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-[#2D5A4A] mb-4">
+                  {language === 'en' ? 'Views' : 'Vistas'}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {room.view[language].map((view, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <Trees className="h-5 w-5 text-[#A85C32] flex-shrink-0" />
+                      <span className="text-gray-700">{view}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Features */}
-            <div className="mb-8">
-              <h3 className="text-2xl font-bold text-[#2D5A4A] mb-4">
-                {t.rooms.features}
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                {room.features[language].map((feature, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <Check className="h-5 w-5 text-[#A85C32] flex-shrink-0" />
-                    <span className="text-gray-700 text-sm">{feature}</span>
-                  </div>
-                ))}
+            {room.features && (
+              <div className="mb-8">
+                <h3 className="text-2xl font-bold text-[#2D5A4A] mb-4">
+                  {language === 'en' ? 'Features' : 'Características'}
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  {room.features[language].map((feature, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <Check className="h-5 w-5 text-[#A85C32] flex-shrink-0" />
+                      <span className="text-gray-700 text-sm">{feature}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Non-Smoking Badge */}
-            <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+            <div className="bg-green-50 border border-green-200 p-4 rounded-lg mb-8">
               <div className="flex items-center gap-3">
                 <div className="bg-green-100 p-2 rounded-full">
                   <Check className="h-5 w-5 text-green-600" />
                 </div>
                 <span className="font-semibold text-green-800">
-                  {t.rooms.nonSmoking}
+                  {language === 'en' ? 'Non-smoking room' : 'Habitación para no fumadores'}
                 </span>
               </div>
             </div>
+
+            {/* Accessories Section */}
+            <AccessoriesSection 
+              roomId={room.id}
+              onAccessoriesChange={setSelectedAccessories}
+            />
           </div>
 
           {/* Booking Card */}
           <div className="lg:col-span-1">
-            <div className="sticky top-24 bg-white border-2 border-[#A85C32] rounded-xl p-6 shadow-xl">
-              <div className="mb-6">
-                <div className="flex items-baseline gap-2 mb-2">
-                  <span className="text-5xl font-bold text-[#A85C32]">
-                    ${room.price}
-                  </span>
-                  <span className="text-xl text-gray-600">
-                    {t.rooms.pricePerNight}
-                  </span>
-                </div>
-                <div className="text-sm text-green-600 font-semibold">
-                  ✓ {t.rooms.freeCancellation}
-                </div>
+            <div className="sticky top-24 space-y-4">
+              {/* Date Picker */}
+              <div className="bg-white border-2 border-gray-200 rounded-xl p-6 shadow-lg">
+                <h3 className="text-lg font-bold text-[#2D5A4A] mb-4">
+                  {language === 'en' ? 'Select your dates' : 'Selecciona tus fechas'}
+                </h3>
+                <DateRangePicker 
+                  onDatesChange={setDateRange}
+                  language={language}
+                  minNights={1}
+                />
               </div>
 
-              <div className="mb-6 bg-[#F8F5F2] p-4 rounded-lg">
-                <h4 className="font-bold text-[#2D5A4A] mb-3">
-                  {t.rooms.included}
-                </h4>
-                <ul className="space-y-2">
-                  {room.included[language].map((item, index) => (
-                    <li key={index} className="flex items-center gap-2 text-sm">
-                      <Check className="h-4 w-4 text-[#A85C32] flex-shrink-0" />
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
+              {/* Price Breakdown */}
+              {dateRange && dateRange.checkIn && dateRange.checkOut && (
+                <PriceBreakdown 
+                  roomId={room.id}
+                  dateRange={dateRange}
+                  language={language}
+                />
+              )}
+
+              {/* Booking Summary Card */}
+              <div className="bg-white border-2 border-[#A85C32] rounded-xl p-6 shadow-xl">
+                {/* Price Display */}
+                {!dateRange || !dateRange.checkIn || !dateRange.checkOut ? (
+                  <div className="mb-6">
+                    <div className="text-sm text-gray-600 mb-2">
+                      {language === 'en' ? 'Starting from' : 'Desde'}
+                    </div>
+                    <div className="flex items-baseline gap-2 mb-2">
+                      {isDynamicDataLoading ? (
+                        <div className="h-12 w-32 bg-gray-200 animate-pulse rounded"></div>
+                      ) : (
+                        <>
+                          <span className="text-5xl font-bold text-[#A85C32]">
+                            ${room.price}
+                          </span>
+                          <span className="text-xl text-gray-600">
+                            {language === 'en' ? '/ night' : '/ noche'}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    <div className="text-sm text-green-600 font-semibold">
+                      ✓ {language === 'en' ? 'Free cancellation' : 'Cancelación gratuita'}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mb-6">
+                    <div className="text-sm text-gray-600 mb-2">
+                      {language === 'en' ? 'Your reservation' : 'Tu reserva'}
+                    </div>
+                    <div className="bg-[#F8F5F2] rounded-lg p-4 mb-4">
+                      <div className="flex justify-between text-sm mb-2">
+                        <span className="text-gray-600">{language === 'en' ? 'Check-in' : 'Entrada'}</span>
+                        <span className="font-semibold">
+                          {dateRange.checkIn.toLocaleDateString(language === 'en' ? 'en-US' : 'es-ES', { 
+                            month: 'short', day: 'numeric' 
+                          })}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">{language === 'en' ? 'Check-out' : 'Salida'}</span>
+                        <span className="font-semibold">
+                          {dateRange.checkOut.toLocaleDateString(language === 'en' ? 'en-US' : 'es-ES', { 
+                            month: 'short', day: 'numeric' 
+                          })}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* What's Included */}
+                <div className="mb-6 bg-[#F8F5F2] p-4 rounded-lg">
+                  <h4 className="font-bold text-[#2D5A4A] mb-3">
+                    {language === 'en' ? "What's Included" : 'Qué está incluido'}
+                  </h4>
+                  <ul className="space-y-2">
+                    {room.included && room.included[language].map((item, index) => (
+                      <li key={index} className="flex items-center gap-2 text-sm">
+                        <Check className="h-4 w-4 text-[#A85C32] flex-shrink-0" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Book Now Button */}
+                <button
+                  onClick={handleWhatsApp}
+                  disabled={room.isAvailable === false}
+                  className={`w-full py-4 rounded-lg font-bold text-lg transition-all duration-300 flex items-center justify-center gap-3 shadow-lg mb-4 ${
+                    room.isAvailable === false
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                      : 'bg-[#25D366] text-white hover:bg-[#20BA5A] hover:shadow-xl hover:scale-105'
+                  }`}
+                >
+                  <MessageCircle className="h-6 w-6" />
+                  {room.isAvailable === false
+                    ? (language === 'en' ? 'Currently Unavailable' : 'Actualmente No Disponible')
+                    : (language === 'en' ? 'Book Now via WhatsApp' : 'Reservar por WhatsApp')
+                  }
+                </button>
+
+                <p className="text-sm text-gray-600 text-center">
+                  {language === 'en' 
+                    ? 'Instant confirmation • Best price guarantee'
+                    : 'Confirmación instantánea • Garantía del mejor precio'}
+                </p>
               </div>
-
-              <button
-                onClick={handleWhatsApp}
-                className="w-full bg-[#25D366] text-white py-4 rounded-lg font-bold text-lg hover:bg-[#20BA5A] transition-all duration-300 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl hover:scale-105 mb-4"
-              >
-                <MessageCircle className="h-6 w-6" />
-                {t.rooms.bookNow}
-              </button>
-
-              <p className="text-sm text-gray-600 text-center">
-                Instant confirmation • Best price guarantee
-              </p>
             </div>
           </div>
         </div>
@@ -279,6 +464,7 @@ const RoomDetailPage = () => {
           <button
             onClick={() => setShowLightbox(false)}
             className="absolute top-4 right-4 text-white hover:text-[#C4A96A] transition-colors"
+            aria-label="Close lightbox"
           >
             <X className="h-8 w-8" />
           </button>

@@ -1,34 +1,27 @@
-// src/components/WhatsAppButton.jsx
+// src/components/WhatsAppButton.tsx
 import { MessageCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useData } from '../context/DataContext';
 
-
-const WhatsAppButton = ({ roomName = null }) => {
+const WhatsAppButton = () => {
   const { language, t } = useLanguage();
-  const phoneNumber = "59170675985";
-
-  const getMessage = () => {
-    if (roomName) {
-      return t.whatsapp.roomMessage.replace('{roomName}', roomName);
-    }
-    return t.whatsapp.homeMessage;
-  };
+  const { config } = useData();
 
   const handleClick = () => {
-    const message = encodeURIComponent(getMessage());
-    const url = `https://wa.me/${phoneNumber}?text=${message}`;
+    const message = t.whatsapp.homeMessage;
+    const url = `https://wa.me/${config.whatsappNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');
   };
 
   return (
     <button
       onClick={handleClick}
-      className="fixed bottom-6 right-6 z-50 bg-[#25D366] text-white rounded-full p-4 shadow-lg hover:bg-[#20BA5A] transition-all duration-300 hover:scale-110 group"
-      aria-label="Contact via WhatsApp"
+      className="fixed bottom-6 right-6 bg-[#25D366] text-white p-4 rounded-full shadow-2xl hover:scale-110 transition-transform duration-300 z-50 group"
+      aria-label="Contact on WhatsApp"
     >
-      <MessageCircle className="h-7 w-7 group-hover:scale-110 transition-transform" />
-      <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center animate-pulse">
-        1
+      <MessageCircle className="h-7 w-7" />
+      <span className="absolute right-full mr-3 top-1/2 -translate-y-1/2 bg-gray-900 text-white px-4 py-2 rounded-lg text-sm font-semibold whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+        {language === 'en' ? 'Chat with us!' : '¡Chatea con nosotros!'}
       </span>
     </button>
   );
