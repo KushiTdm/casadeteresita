@@ -14,7 +14,7 @@ export async function fetchRoomsFromSheets() {
   }
 
   try {
-    const range = 'Chambres!A2:E'; // ID, Nom, Type, PrixBase, Capacite
+    const range = 'Rooms!A2:E'; // ID, Nom, Type, PrixBase, Capacite
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
     
     console.log('📥 Fetching rooms from Google Sheets...');
@@ -102,7 +102,7 @@ export async function fetchSpecialPrices() {
   }
 
   try {
-    const range = 'PrixSpeciaux!A2:D';
+    const range = 'SpecialPrices!A2:D';
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
     
     console.log('📥 Fetching special prices from Google Sheets...');
@@ -190,7 +190,7 @@ export async function fetchAvailability() {
   }
 
   try {
-    const range = 'Disponibilite!A2:D';
+    const range = 'Available!A2:D';
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${range}?key=${API_KEY}`;
     
     console.log('📥 Fetching availability from Google Sheets...');

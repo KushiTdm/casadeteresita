@@ -2,9 +2,57 @@
 
 export const roomsDetailed = [
   {
+    id: 'queen',
+    slug: 'queen',
+    available: 2,
+    name: {
+      en: 'Queen Room',
+      es: 'Habitación Queen'
+    },
+    price: 60,
+    size: 30,
+    beds: {
+      en: '1 large double bed',
+      es: '1 cama doble grande'
+    },
+    rating: 9.4,
+    reviewCount: 45,
+    images: [
+      '/queenBedDeluxe.jpg'
+    ],
+    description: {
+      en: 'Providing free toiletries, this double room includes a private bathroom with a shower and a hairdryer...',
+      es: 'Con artículos de tocador gratuitos, esta habitación doble incluye un baño privado...'
+    },
+    amenities: [
+      { icon: 'Wifi', label: { en: 'Free WiFi', es: 'WiFi Gratis' } },
+      { icon: 'Tv', label: { en: 'Flat-screen TV', es: 'TV Pantalla Plana' } },
+      { icon: 'Bath', label: { en: 'Private Bathroom', es: 'Baño Privado' } },
+      { icon: 'Trees', label: { en: 'Garden View', es: 'Vista al Jardín' } },
+      { icon: 'Coffee', label: { en: 'Electric Kettle', es: 'Hervidor Eléctrico' } },
+      { icon: 'Shirt', label: { en: 'Wardrobe', es: 'Armario' } }
+    ],
+    bathroom: {
+      en: ['Free toiletries', 'Toilet', 'Bathtub or shower', 'Towels', 'Hairdryer', 'Toilet paper'],
+      es: ['Artículos de tocador gratuitos', 'Inodoro', 'Bañera o ducha', 'Toallas', 'Secador de pelo', 'Papel higiénico']
+    },
+    view: {
+      en: ['Garden view', 'Courtyard view'],
+      es: ['Vista al jardín', 'Vista al patio']
+    },
+    features: {
+      en: ['Parquet flooring', 'Socket near bed', 'Cable channels', 'Patio', 'Ground floor access'],
+      es: ['Suelo de parquet', 'Enchufe cerca de la cama', 'Canales por cable', 'Patio', 'Acceso en planta baja']
+    },
+    included: {
+      en: ['Breakfast included', 'Free cancellation'],
+      es: ['Desayuno incluido', 'Cancelación gratuita']
+    }
+  },
+  {
     id: 'deluxe-queen',
     slug: 'deluxe-queen',
-    available: 3,
+    available: 1,
     name: {
       en: 'Deluxe Queen Room',
       es: 'Habitación Deluxe Queen'
