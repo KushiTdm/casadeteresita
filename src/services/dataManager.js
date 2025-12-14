@@ -109,17 +109,19 @@ export async function getAccessories() {
 }
 
 /**
- * Get special prices
+ * Get special prices - ALWAYS FETCH FRESH DATA
  */
 export async function getSpecialPrices() {
   try {
+    console.log('🔄 Fetching fresh special prices...');
     const prices = await fetchSpecialPrices();
     if (prices) {
       specialPricesCache = prices;
+      console.log('✅ Special prices updated:', prices.length, 'entries');
       return prices;
     }
   } catch (error) {
-    console.warn('Using cached or empty special prices');
+    console.warn('⚠️ Error fetching special prices, using cache');
   }
   
   return specialPricesCache;
@@ -183,6 +185,7 @@ function getBasePrice(room) {
 /**
  * Get the current price for a specific date
  * Takes into account special pricing periods
+ * CORRECTION: Accepte les prix spéciaux même s'ils sont inférieurs au prix de base
  * @param {string} roomId - Room identifier
  * @param {Date|string} date - Date to check
  * @returns {Promise<number>} Price for that date
@@ -192,6 +195,7 @@ export async function getCurrentPrice(roomId, date) {
   const room = rooms.find(r => r.id === roomId);
   
   if (!room) {
+    console.warn(`❌ Room not found: ${roomId}`);
     return 0;
   }
 
@@ -202,6 +206,9 @@ export async function getCurrentPrice(roomId, date) {
   const checkDate = new Date(date);
   checkDate.setHours(0, 0, 0, 0);
   
+  console.log(`🔍 Checking price for ${roomId} on ${checkDate.toISOString().split('T')[0]}`);
+  console.log(`   Base price: $${basePrice}`);
+  
   // Check if this date has a special price
   for (const sp of specialPrices) {
     if (sp.chambreId === roomId) {
@@ -211,19 +218,21 @@ export async function getCurrentPrice(roomId, date) {
       spEndDate.setHours(0, 0, 0, 0);
       
       if (checkDate >= spStartDate && checkDate <= spEndDate) {
-        console.log(`💰 Special price for ${roomId} on ${checkDate.toISOString().split('T')[0]}: ${sp.prix}`);
+        console.log(`   ✅ Special price found: $${sp.prix} (${sp.dateDebut} to ${sp.dateFin})`);
+        // CORRECTION: Retourner le prix spécial QUEL QUE SOIT sa valeur
         return sp.prix;
       }
     }
   }
   
-  // No special price, return base price
+  console.log(`   ℹ️ No special price found, using base price: $${basePrice}`);
   return basePrice;
 }
 
 /**
  * Calculate total price for a date range
  * Takes into account special pricing periods
+ * CORRECTION: Gère correctement les prix spéciaux inférieurs au prix de base
  * @param {string} roomId - Room identifier
  * @param {Date|string} checkIn - Check-in date
  * @param {Date|string} checkOut - Check-out date
@@ -253,6 +262,10 @@ export async function calculateTotalPrice(roomId, checkIn, checkOut) {
     return { totalPrice: 0, nightlyPrices: [], basePrice: basePrice, nights: 0 };
   }
 
+  console.log(`\n💰 Calculating price for ${roomId} (${nights} nights)`);
+  console.log(`   Base price: $${basePrice}`);
+  console.log(`   Special prices available: ${specialPrices.filter(sp => sp.chambreId === roomId).length}`);
+
   // Calculate price for each night
   const nightlyPrices = [];
   let totalPrice = 0;
@@ -274,25 +287,32 @@ export async function calculateTotalPrice(roomId, checkIn, checkOut) {
         spEndDate.setHours(0, 0, 0, 0);
         
         if (currentDate >= spStartDate && currentDate <= spEndDate) {
+          // CORRECTION: Appliquer le prix spécial SANS vérification de minimum
           nightPrice = sp.prix;
           priceType = 'special';
-          console.log(`🎯 Special price applied: ${currentDate.toISOString().split('T')[0]} = $${nightPrice}`);
+          console.log(`   ✅ ${currentDate.toISOString().split('T')[0]}: $${nightPrice} (special price)`);
           break;
         }
       }
+    }
+    
+    if (priceType === 'base') {
+      console.log(`   ℹ️ ${currentDate.toISOString().split('T')[0]}: $${nightPrice} (base price)`);
     }
     
     nightlyPrices.push({
       date: new Date(currentDate),
       price: nightPrice,
       type: priceType,
-      isHigherThanBase: nightPrice > basePrice
+      isDifferentFromBase: nightPrice !== basePrice,
+      isHigherThanBase: nightPrice > basePrice,
+      isLowerThanBase: nightPrice < basePrice
     });
     
     totalPrice += nightPrice;
   }
   
-  console.log(`💰 Total price for ${roomId}: $${totalPrice} (${nights} nights, base: $${basePrice})`);
+  console.log(`   📊 Total: $${totalPrice} for ${nights} nights\n`);
   
   return {
     totalPrice,
