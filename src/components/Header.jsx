@@ -10,9 +10,10 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Détecter si on est sur une page qui n'a pas de Hero avec fond sombre
-  const isDetailPage = location.pathname.includes('/rooms/');
-  // Forcer le style "scrolled" sur les pages de détail
+  // Detect if on detail/blog/museum pages
+  const isDetailPage = location.pathname.includes('/rooms/') || 
+                        location.pathname.includes('/blog') ||
+                        location.pathname.includes('/museum');
   const shouldUseDarkStyle = isScrolled || isDetailPage;
 
   useEffect(() => {
@@ -24,10 +25,8 @@ const Header = () => {
   }, []);
 
   const scrollToSection = (sectionId) => {
-    // If not on home page, navigate to home first
     if (location.pathname !== '/') {
       navigate('/');
-      // Wait for navigation, then scroll
       setTimeout(() => {
         const element = document.getElementById(sectionId);
         if (element) {
@@ -35,7 +34,6 @@ const Header = () => {
         }
       }, 100);
     } else {
-      // Already on home page, just scroll
       const element = document.getElementById(sectionId);
       if (element) {
         element.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -80,17 +78,24 @@ const Header = () => {
 
             <button
               onClick={() => scrollToSection('rooms')}
-              className={linkClass(location.pathname === '/rooms')}
+              className={linkClass(location.pathname.includes('/rooms'))}
             >
               {t.nav.rooms}
             </button>
 
-            <button
-              onClick={() => scrollToSection('gallery')}
-              className={linkClass(false)}
+            <Link
+              to="/blog"
+              className={linkClass(location.pathname.includes('/blog'))}
             >
-              {t.nav.gallery}
-            </button>
+              {t.nav.blog}
+            </Link>
+
+            <Link
+              to="/museum"
+              className={linkClass(location.pathname === '/museum')}
+            >
+              {t.nav.museum}
+            </Link>
 
             <button
               onClick={() => scrollToSection('location')}
@@ -147,18 +152,31 @@ const Header = () => {
             <button
               onClick={() => scrollToSection('rooms')}
               className={`block w-full text-left text-gray-700 hover:text-[#A85C32] font-medium ${
-                location.pathname === '/rooms' ? 'text-[#A85C32]' : ''
+                location.pathname.includes('/rooms') ? 'text-[#A85C32]' : ''
               }`}
             >
               {t.nav.rooms}
             </button>
 
-            <button
-              onClick={() => scrollToSection('gallery')}
-              className="block w-full text-left text-gray-700 hover:text-[#A85C32] font-medium"
+            <Link
+              to="/blog"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`block text-gray-700 hover:text-[#A85C32] font-medium ${
+                location.pathname.includes('/blog') ? 'text-[#A85C32]' : ''
+              }`}
             >
-              {t.nav.gallery}
-            </button>
+              {t.nav.blog}
+            </Link>
+
+            <Link
+              to="/museum"
+              onClick={() => setIsMobileMenuOpen(false)}
+              className={`block text-gray-700 hover:text-[#A85C32] font-medium ${
+                location.pathname === '/museum' ? 'text-[#A85C32]' : ''
+              }`}
+            >
+              {t.nav.museum}
+            </Link>
 
             <button
               onClick={() => scrollToSection('location')}
