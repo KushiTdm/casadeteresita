@@ -11,6 +11,7 @@ import { useData } from '../context/DataContext';
 import AccessoriesSection from '../components/AccessoriesSection';
 import DateRangePicker from '../components/DateRangePicker';
 import PriceBreakdown from '../components/PriceBreakdown';
+import { getAvailability } from '../services/dataManager';
 
 const RoomDetailPage = () => {
   const { roomSlug } = useParams();
@@ -20,14 +21,40 @@ const RoomDetailPage = () => {
   const [showLightbox, setShowLightbox] = useState(false);
   const [selectedAccessories, setSelectedAccessories] = useState({});
   const [dateRange, setDateRange] = useState(null);
+  const [unavailableDates, setUnavailableDates] = useState([]);
+
+  // Find room by slug - DOIT ÊTRE AVANT les useEffect qui l'utilisent
+  const room = rooms.find(r => r.slug === roomSlug);
 
   // Scroll to top when component mounts or room changes
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [roomSlug]);
 
-  // Find room by slug
-  const room = rooms.find(r => r.slug === roomSlug);
+  // Load unavailable dates for this room
+  useEffect(() => {
+    const loadUnavailability = async () => {
+      if (!room) return;
+      
+      try {
+        const availability = await getAvailability();
+        
+        // Filter unavailable dates for this room
+        const roomUnavailability = availability
+          .filter(av => av.chambreId === room.id && av.statut === 'Unavailable')
+          .map(av => ({
+            start: new Date(av.dateDebut),
+            end: new Date(av.dateFin)
+          }));
+        
+        setUnavailableDates(roomUnavailability);
+      } catch (error) {
+        console.error('Error loading availability:', error);
+      }
+    };
+
+    loadUnavailability();
+  }, [room?.id]);
 
   // Room not found
   if (!room) {
@@ -57,6 +84,7 @@ const RoomDetailPage = () => {
   const iconMap = {
     Wifi, Tv, Bath, Trees, Coffee, Shirt, Users
   };
+
 
   const handleWhatsApp = async () => {
     const phoneNumber = config.whatsappNumber || "59170675985";
@@ -203,31 +231,7 @@ const RoomDetailPage = () => {
                   {room.name[language]}
                 </h1>
                 
-                {/* Availability with skeleton loader */}
-                <div className="text-right">
-                  <div className="text-sm text-gray-600 mb-1">
-                    {language === 'en' ? 'Availability' : 'Disponibilidad'}
-                  </div>
-                  {isDynamicDataLoading ? (
-                    <div className="h-8 w-24 bg-gray-200 animate-pulse rounded"></div>
-                  ) : (
-                    <>
-                      {room.isAvailable ? (
-                        <div className="text-2xl font-bold text-green-600">
-                          {room.available}/{room.capaciteMax || room.available} {language === 'en' ? 'available' : 'disponibles'}
-                        </div>
-                      ) : room.isAvailable === false ? (
-                        <div className="text-2xl font-bold text-red-600">
-                          {language === 'en' ? 'Not Available' : 'No Disponible'}
-                        </div>
-                      ) : (
-                        <div className="text-2xl font-bold text-green-600">
-                          {room.available} {language === 'en' ? 'available' : 'disponibles'}
-                        </div>
-                      )}
-                    </>
-                  )}
-                </div>
+                {/* SUPPRIMÉ : Badge de disponibilité */}
               </div>
 
               <div className="flex flex-wrap items-center gap-4 mb-6">
@@ -351,6 +355,8 @@ const RoomDetailPage = () => {
                   onDatesChange={setDateRange}
                   language={language}
                   minNights={1}
+                  roomId={room.id}
+                  unavailableDates={unavailableDates}
                 />
               </div>
 
@@ -430,21 +436,13 @@ const RoomDetailPage = () => {
                   </ul>
                 </div>
 
-                {/* Book Now Button */}
+                {/* Book Now Button - MODIFIÉ : Toujours actif */}
                 <button
                   onClick={handleWhatsApp}
-                  disabled={room.isAvailable === false}
-                  className={`w-full py-4 rounded-lg font-bold text-lg transition-all duration-300 flex items-center justify-center gap-3 shadow-lg mb-4 ${
-                    room.isAvailable === false
-                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      : 'bg-[#25D366] text-white hover:bg-[#20BA5A] hover:shadow-xl hover:scale-105'
-                  }`}
+                  className="w-full py-4 rounded-lg font-bold text-lg transition-all duration-300 flex items-center justify-center gap-3 shadow-lg mb-4 bg-[#25D366] text-white hover:bg-[#20BA5A] hover:shadow-xl hover:scale-105"
                 >
                   <MessageCircle className="h-6 w-6" />
-                  {room.isAvailable === false
-                    ? (language === 'en' ? 'Currently Unavailable' : 'Actualmente No Disponible')
-                    : (language === 'en' ? 'Book Now via WhatsApp' : 'Reservar por WhatsApp')
-                  }
+                  {language === 'en' ? 'Book Now via WhatsApp' : 'Reservar por WhatsApp'}
                 </button>
 
                 <p className="text-sm text-gray-600 text-center">

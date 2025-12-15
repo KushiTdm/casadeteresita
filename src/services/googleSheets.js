@@ -211,7 +211,7 @@ export async function fetchAvailability() {
       chambreId: row[0] || '',
       dateDebut: row[1] || '',     // Format: YYYY-MM-DD
       dateFin: row[2] || '',       // Format: YYYY-MM-DD
-      statut: row[3] || 'Disponible',
+      statut: row[3] || 'Available',
     }));
 
     console.log('✅ Availability loaded:', availability.length, 'entries');

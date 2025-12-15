@@ -10,66 +10,24 @@ const RoomsPreview = () => {
   const { rooms, isLoading, dataSource } = useData();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
-  const [isInitialized, setIsInitialized] = useState(false);
   const carouselRef = useRef(null);
   const autoPlayRef = useRef(null);
 
   // Sort rooms by price
   const sortedRooms = [...rooms].sort((a, b) => a.price - b.price);
   
-  // Find the index of the featured room
-  const featuredRoomIndex = sortedRooms.findIndex(room => room.id === 'deluxe-queen');
-
-  // Responsive: Number of visible cards
-  const [visibleCards, setVisibleCards] = useState(1);
-
-  useEffect(() => {
-    const updateVisibleCards = () => {
-      if (window.innerWidth >= 1024) {
-        setVisibleCards(3); // Desktop: 3 cards
-      } else if (window.innerWidth >= 768) {
-        setVisibleCards(2); // Tablet: 2 cards
-      } else {
-        setVisibleCards(1); // Mobile: 1 card
-      }
-    };
-
-    updateVisibleCards();
-    window.addEventListener('resize', updateVisibleCards);
-    return () => window.removeEventListener('resize', updateVisibleCards);
-  }, []);
-
-  // Center on featured room on initial load
-  useEffect(() => {
-    if (!isInitialized && featuredRoomIndex !== -1 && visibleCards > 0) {
-      // Calculate the index to center the featured room
-      let centerIndex;
-      
-      if (visibleCards === 1) {
-        // Mobile: show featured room directly
-        centerIndex = featuredRoomIndex;
-      } else if (visibleCards === 2) {
-        // Tablet: show featured room on the left
-        centerIndex = Math.max(0, featuredRoomIndex);
-      } else {
-        // Desktop: center the featured room
-        centerIndex = Math.max(0, featuredRoomIndex - Math.floor(visibleCards / 2));
-      }
-      
-      // Ensure we don't exceed maxIndex
-      const maxIdx = Math.max(0, sortedRooms.length - visibleCards);
-      centerIndex = Math.min(centerIndex, maxIdx);
-      
-      setCurrentIndex(centerIndex);
-      setIsInitialized(true);
-    }
-  }, [featuredRoomIndex, visibleCards, isInitialized, sortedRooms.length]);
+  // Create infinite array by duplicating rooms for seamless looping
+  const infiniteRooms = [...sortedRooms, ...sortedRooms, ...sortedRooms];
+  
+  // Always show 3 cards (desktop, tablet, and mobile)
+  const visibleCards = 3;
+  const maxIndex = sortedRooms.length;
 
   // Auto-play carousel
   useEffect(() => {
     if (isAutoPlaying) {
       autoPlayRef.current = setInterval(() => {
-        nextSlide();
+        setCurrentIndex(prev => (prev + 1) % maxIndex);
       }, 5000); // Change slide every 5 seconds
     }
 
@@ -78,21 +36,24 @@ const RoomsPreview = () => {
         clearInterval(autoPlayRef.current);
       }
     };
-  }, [isAutoPlaying, currentIndex, visibleCards]);
-
-  const maxIndex = Math.max(0, sortedRooms.length - visibleCards);
+  }, [isAutoPlaying, maxIndex]);
 
   const nextSlide = () => {
-    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
+    setCurrentIndex(prev => (prev + 1) % maxIndex);
   };
 
   const prevSlide = () => {
-    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
+    setCurrentIndex(prev => (prev - 1 + maxIndex) % maxIndex);
   };
 
   const goToSlide = (index) => {
     setCurrentIndex(index);
     setIsAutoPlaying(false);
+    
+    // Restart auto-play after 8 seconds of inactivity
+    setTimeout(() => {
+      setIsAutoPlaying(true);
+    }, 8000);
   };
 
   const handleMouseEnter = () => {
@@ -101,6 +62,13 @@ const RoomsPreview = () => {
 
   const handleMouseLeave = () => {
     setIsAutoPlaying(true);
+  };
+
+  // Calculate the starting index for the infinite carousel
+  const getDisplayRooms = () => {
+    // Start from currentIndex in the original array, but display from the duplicated section
+    const startIndex = currentIndex + sortedRooms.length;
+    return infiniteRooms.slice(startIndex, startIndex + visibleCards);
   };
 
   return (
@@ -126,21 +94,16 @@ const RoomsPreview = () => {
         >
           {/* Carousel Wrapper */}
           <div className="overflow-hidden" ref={carouselRef}>
-            <div
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{
-                transform: `translateX(-${currentIndex * (100 / visibleCards)}%)`,
-              }}
-            >
-              {sortedRooms.map((room) => {
+            <div className="flex justify-center gap-6">
+              {getDisplayRooms().map((room, displayIndex) => {
+                const originalIndex = (currentIndex + displayIndex) % sortedRooms.length;
                 const featured = room.id === 'deluxe-queen';
                 const isPriceLoading = isLoading && dataSource === 'unknown';
 
                 return (
                   <div
-                    key={room.id}
-                    className="flex-shrink-0 px-4"
-                    style={{ width: `${100 / visibleCards}%` }}
+                    key={`${room.id}-${originalIndex}-${displayIndex}`}
+                    className="flex-shrink-0 w-full max-w-sm"
                   >
                     <article
                       className={`bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 h-full ${
@@ -216,63 +179,57 @@ const RoomsPreview = () => {
             </div>
           </div>
 
-          {/* Navigation Arrows */}
-          {sortedRooms.length > visibleCards && (
-            <>
-              <button
-                onClick={prevSlide}
-                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white hover:bg-gray-100 p-3 rounded-full shadow-lg transition-all z-10 group"
-                aria-label="Previous room"
-              >
-                <ChevronLeft className="h-6 w-6 text-[#2D5A4A] group-hover:text-[#A85C32]" />
-              </button>
-              <button
-                onClick={nextSlide}
-                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white hover:bg-gray-100 p-3 rounded-full shadow-lg transition-all z-10 group"
-                aria-label="Next room"
-              >
-                <ChevronRight className="h-6 w-6 text-[#2D5A4A] group-hover:text-[#A85C32]" />
-              </button>
-            </>
-          )}
+          {/* Navigation Arrows - Always visible since we have infinite scroll */}
+          <>
+            <button
+              onClick={prevSlide}
+              className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 bg-white hover:bg-gray-100 p-3 rounded-full shadow-lg transition-all z-10 group"
+              aria-label="Previous room"
+            >
+              <ChevronLeft className="h-6 w-6 text-[#2D5A4A] group-hover:text-[#A85C32]" />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 bg-white hover:bg-gray-100 p-3 rounded-full shadow-lg transition-all z-10 group"
+              aria-label="Next room"
+            >
+              <ChevronRight className="h-6 w-6 text-[#2D5A4A] group-hover:text-[#A85C32]" />
+            </button>
+          </>
 
           {/* Dots Indicator */}
-          {sortedRooms.length > visibleCards && (
-            <div className="flex justify-center gap-2 mt-8">
-              {Array.from({ length: maxIndex + 1 }).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => goToSlide(index)}
-                  className={`h-3 rounded-full transition-all duration-300 ${
-                    index === currentIndex
-                      ? 'w-8 bg-[#A85C32]'
-                      : 'w-3 bg-gray-300 hover:bg-gray-400'
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-            </div>
-          )}
+          <div className="flex justify-center gap-2 mt-8">
+            {sortedRooms.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={`h-3 rounded-full transition-all duration-300 ${
+                  index === currentIndex
+                    ? 'w-8 bg-[#A85C32]'
+                    : 'w-3 bg-gray-300 hover:bg-gray-400'
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
+          </div>
         </div>
 
         {/* View All Rooms Link */}
-        {sortedRooms.length > visibleCards && (
-          <div className="text-center mb-12">
-            <button
-              onClick={() => {
-                // Scroll to see all rooms or expand view
-                const roomsSection = document.getElementById('rooms');
-                if (roomsSection) {
-                  roomsSection.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              className="inline-flex items-center gap-2 text-[#A85C32] font-semibold hover:text-[#8B4926] transition-colors"
-            >
-              <span>{language === 'en' ? 'View All Rooms' : 'Ver Todas las Habitaciones'}</span>
-              <ChevronRight className="h-5 w-5" />
-            </button>
-          </div>
-        )}
+        <div className="text-center mb-12">
+          <button
+            onClick={() => {
+              // Scroll to see all rooms or expand view
+              const roomsSection = document.getElementById('rooms');
+              if (roomsSection) {
+                roomsSection.scrollIntoView({ behavior: 'smooth' });
+              }
+            }}
+            className="inline-flex items-center gap-2 text-[#A85C32] font-semibold hover:text-[#8B4926] transition-colors"
+          >
+            <span>{language === 'en' ? 'View All Rooms' : 'Ver Todas las Habitaciones'}</span>
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
 
         {/* What's Included Section */}
         <div className="mt-16 bg-white rounded-xl shadow-lg p-8 max-w-4xl mx-auto">

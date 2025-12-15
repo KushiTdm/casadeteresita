@@ -66,7 +66,7 @@ export const roomsDetailed = [
     rating: 9.4,
     reviewCount: 45,
     images: [
-      '/queenBedDeluxe.jpg'
+      '/Deluxe-room.jpeg'
     ],
     description: {
       en: 'Providing free toiletries, this double room includes a private bathroom with a shower and a hairdryer...',
