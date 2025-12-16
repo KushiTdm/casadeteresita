@@ -1,4 +1,4 @@
-// src/context/DataContext.jsx
+// src/context/DataContext.jsx - VERSION AVEC DEBUG
 import { createContext, useContext, useState, useEffect } from 'react';
 import { roomsDetailed } from '../data/roomsData';
 import { 
@@ -19,20 +19,15 @@ export function DataProvider({ children }) {
     whatsappNumber: '59170675985',
     currency: 'USD',
     checkInTime: '14:00',
-    checkOutTime: '12:00'
+    checkOutTime: '12:00',
+    bookingRates: 9.6 // Default fallback
   });
   
   // Loading states - only for updates
   const [isInitialLoad, setIsInitialLoad] = useState(true);
-  const [dataSource, setDataSource] = useState('fallback'); // Start with fallback
+  const [dataSource, setDataSource] = useState('fallback');
   const [lastUpdateTime, setLastUpdateTime] = useState(null);
 
-  /**
-   * Progressive loading strategy:
-   * 1. Show hardcoded data immediately (no loading spinner)
-   * 2. Fetch from Google Sheets in background
-   * 3. Update UI smoothly when data arrives
-   */
   const loadData = async (checkIn = new Date(), checkOut = null, silent = false) => {
     if (!silent) {
       console.log('📊 Loading data progressively...');
@@ -46,20 +41,27 @@ export function DataProvider({ children }) {
         getAccessories()
       ]);
 
+      // DEBUG: Log what we received
+      console.log('🔍 DEBUG - Config loaded:', configData);
+      console.log('🔍 DEBUG - bookingRates value:', configData?.bookingRates);
+      console.log('🔍 DEBUG - bookingRates type:', typeof configData?.bookingRates);
+
       // Only update if we got valid data from Sheets
       if (roomsData && roomsData.length > 0) {
         setRooms(roomsData);
         setDataSource('sheets');
         console.log('✅ Updated with Google Sheets data');
       } else {
-        // Keep fallback data, just mark as fallback
         setDataSource('fallback');
         console.log('📦 Using hardcoded fallback data');
       }
 
       // Update config if available
       if (configData && configData.whatsappNumber) {
+        console.log('✅ Updating config state with:', configData);
         setConfig(configData);
+      } else {
+        console.log('⚠️ Config data incomplete, keeping default');
       }
 
       // Update accessories if available
@@ -70,7 +72,6 @@ export function DataProvider({ children }) {
       setLastUpdateTime(new Date());
     } catch (error) {
       console.error('❌ Error loading data:', error);
-      // Keep using fallback data - no error state needed
       setDataSource('fallback');
     } finally {
       setIsInitialLoad(false);
@@ -95,14 +96,20 @@ export function DataProvider({ children }) {
     return () => clearInterval(interval);
   }, []);
 
+  // DEBUG: Log when config changes
+  useEffect(() => {
+    console.log('🔄 Config state updated:', config);
+    console.log('   bookingRates:', config.bookingRates, typeof config.bookingRates);
+  }, [config]);
+
   return (
     <DataContext.Provider
       value={{
         rooms,
         accessories,
         config,
-        isLoading: false, // Never block UI with loading
-        isInitialLoad, // Can be used for subtle indicators
+        isLoading: false,
+        isInitialLoad,
         dataSource,
         lastUpdateTime,
         refreshData,

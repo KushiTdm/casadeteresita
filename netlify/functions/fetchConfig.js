@@ -26,15 +26,41 @@ exports.handler = async (event, context) => {
 
     const data = await response.json();
     const config = {};
+    
+    console.log('📋 Raw config data from Sheets:', data.values);
+    
     (data.values || []).forEach((row) => {
       const key = row[0];
       const value = row[1];
-      if (key === 'whatsapp_number') config.whatsappNumber = value;
-      if (key === 'currency') config.currency = value;
-      if (key === 'check_in_time') config.checkInTime = value;
-      if (key === 'check_out_time') config.checkOutTime = value;
-      if (key === 'booking_rates') config.booking_rates = value;
+      
+      console.log(`   Processing: ${key} = ${value}`);
+      
+      if (key === 'whatsapp_number') {
+        config.whatsappNumber = value;
+      } else if (key === 'currency') {
+        config.currency = value;
+      } else if (key === 'check_in_time') {
+        config.checkInTime = value;
+      } else if (key === 'check_out_time') {
+        config.checkOutTime = value;
+      } else if (key === 'booking_rates') {
+        // Parse the value properly - it might be "9.6" or "9.6/10"
+        let parsedValue = value;
+        
+        // If it contains "/", take only the first part
+        if (typeof value === 'string' && value.includes('/')) {
+          parsedValue = value.split('/')[0];
+        }
+        
+        // Convert to float
+        const numValue = parseFloat(parsedValue);
+        config.bookingRates = isNaN(numValue) ? 9.6 : numValue;
+        
+        console.log(`   ✅ booking_rates parsed: "${value}" -> ${config.bookingRates}`);
+      }
     });
+
+    console.log('✅ Final config object:', config);
 
     return { 
       statusCode: 200,

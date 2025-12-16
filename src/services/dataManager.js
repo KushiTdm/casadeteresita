@@ -1,4 +1,4 @@
-// src/services/dataManager.js
+// src/services/dataManager.js - VERSION COMPLÈTE
 import { roomsDetailed } from '../data/roomsData.js';
 import { 
   fetchRoomsFromSheets, 
@@ -14,7 +14,7 @@ const DEFAULT_CONFIG = {
   currency: 'USD',
   checkInTime: '14:00',
   checkOutTime: '12:00',
-  bookingRates: 9.6 // Fallback rating
+  bookingRates: 9.6 // Fallback rating as number
 };
 
 // Cache
@@ -134,24 +134,43 @@ export async function getSpecialPrices() {
 export async function getConfig() {
   try {
     const config = await fetchConfig();
+    
+    console.log('🔧 Config received from Sheets:', config);
+    
     if (config && config.whatsappNumber) {
-      // Ensure bookingRates is a number and has fallback
-      const bookingRates = config.bookingRates 
-        ? parseFloat(config.bookingRates) 
-        : DEFAULT_CONFIG.bookingRates;
+      // Parse bookingRates properly
+      let bookingRates = DEFAULT_CONFIG.bookingRates;
+      
+      if (config.bookingRates !== undefined && config.bookingRates !== null) {
+        if (typeof config.bookingRates === 'number') {
+          bookingRates = config.bookingRates;
+        } else if (typeof config.bookingRates === 'string') {
+          // Handle "9.6" or "9.6/10" format
+          const str = config.bookingRates;
+          if (str.includes('/')) {
+            bookingRates = parseFloat(str.split('/')[0]) || DEFAULT_CONFIG.bookingRates;
+          } else {
+            bookingRates = parseFloat(str) || DEFAULT_CONFIG.bookingRates;
+          }
+        }
+      }
       
       configCache = {
+        ...DEFAULT_CONFIG,
         ...config,
-        bookingRates
+        bookingRates: bookingRates
       };
       
       console.log('✅ Config loaded with booking_rates:', bookingRates);
+      console.log('📦 Final configCache:', configCache);
+      
       return configCache;
     }
   } catch (error) {
-    console.warn('⚠️ Using default config');
+    console.warn('⚠️ Using default config due to error:', error);
   }
   
+  console.log('📦 Using DEFAULT_CONFIG:', DEFAULT_CONFIG);
   return configCache;
 }
 
@@ -196,7 +215,6 @@ function getBasePrice(room) {
 /**
  * Get the current price for a specific date
  * Takes into account special pricing periods
- * CORRECTION: Accepte les prix spéciaux même s'ils sont inférieurs au prix de base
  * @param {string} roomId - Room identifier
  * @param {Date|string} date - Date to check
  * @returns {Promise<number>} Price for that date
@@ -230,7 +248,6 @@ export async function getCurrentPrice(roomId, date) {
       
       if (checkDate >= spStartDate && checkDate <= spEndDate) {
         console.log(`   ✅ Special price found: $${sp.prix} (${sp.dateDebut} to ${sp.dateFin})`);
-        // CORRECTION: Retourner le prix spécial QUEL QUE SOIT sa valeur
         return sp.prix;
       }
     }
@@ -243,7 +260,6 @@ export async function getCurrentPrice(roomId, date) {
 /**
  * Calculate total price for a date range
  * Takes into account special pricing periods
- * CORRECTION: Gère correctement les prix spéciaux inférieurs au prix de base
  * @param {string} roomId - Room identifier
  * @param {Date|string} checkIn - Check-in date
  * @param {Date|string} checkOut - Check-out date
@@ -286,7 +302,7 @@ export async function calculateTotalPrice(roomId, checkIn, checkOut) {
     currentDate.setDate(currentDate.getDate() + i);
     currentDate.setHours(0, 0, 0, 0);
     
-    let nightPrice = basePrice; // Default to base price
+    let nightPrice = basePrice;
     let priceType = 'base';
     
     // Check if this date has a special price
@@ -298,7 +314,6 @@ export async function calculateTotalPrice(roomId, checkIn, checkOut) {
         spEndDate.setHours(0, 0, 0, 0);
         
         if (currentDate >= spStartDate && currentDate <= spEndDate) {
-          // CORRECTION: Appliquer le prix spécial SANS vérification de minimum
           nightPrice = sp.prix;
           priceType = 'special';
           console.log(`   ✅ ${currentDate.toISOString().split('T')[0]}: $${nightPrice} (special price)`);
@@ -360,7 +375,7 @@ export async function getAvailableRooms(roomId, checkIn, checkOut = null) {
   let unavailableCount = 0;
   
   for (const av of availability) {
-    if (av.chambreId === roomId && av.statut === 'Indisponible') {
+    if (av.chambreId === roomId && av.statut === 'Unavailable') {
       const avStartDate = new Date(av.dateDebut);
       const avEndDate = new Date(av.dateFin);
       avStartDate.setHours(0, 0, 0, 0);
@@ -412,8 +427,8 @@ export async function getEnrichedRoom(roomId, checkIn = new Date(), checkOut = n
 
   return {
     ...room,
-    price: currentPrice, // Use the price with proper fallback
-    basePrice: getBasePrice(room), // Also include base price for reference
+    price: currentPrice,
+    basePrice: getBasePrice(room),
     available,
     capaciteMax,
     isAvailable,
@@ -455,7 +470,6 @@ export function clearCache() {
  */
 export function getDataSource() {
   if (!roomsCache) return 'unknown';
-  // Check if we have sheet prices
   const hasSheetPrices = roomsCache.some(room => room.sheetPrice && room.sheetPrice > 0);
   return hasSheetPrices ? 'sheets' : 'fallback';
 }
