@@ -26,7 +26,7 @@ const GalleryPreview = () => {
       alt: 'Building front to the garden'
     },
     {
-      url: '/garden.webp',
+      url: '/garden1.webp',
       alt: 'Historic garden at La Casa de Teresita'
     },
     {

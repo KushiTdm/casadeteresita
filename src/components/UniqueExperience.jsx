@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Book, Music, Briefcase } from 'lucide-react';
+import { Book, Flower, Briefcase } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 
 const UniqueExperience = () => {
@@ -19,7 +19,7 @@ const UniqueExperience = () => {
   const photoRef = useRef(null);
   const missionRef = useRef(null);
 
-  const icons = [Book, Music, Briefcase];
+  const icons = [Book, Flower, Briefcase];
 
   useEffect(() => {
     const observerOptions = {
