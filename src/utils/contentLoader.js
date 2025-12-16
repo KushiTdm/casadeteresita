@@ -2,24 +2,76 @@
 import matter from 'gray-matter';
 
 /**
+ * Fetch a markdown file from public directory
+ * @param {string} path - Relative path from public directory
+ * @returns {Promise<string>} File content
+ */
+async function fetchMarkdownFile(path) {
+  try {
+    const response = await fetch(path);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${path}`);
+    }
+    return await response.text();
+  } catch (error) {
+    console.error(`Error fetching ${path}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Get list of markdown files from a manifest
+ * You need to generate this manifest during build or use a directory listing
+ * For now, we'll use a fallback approach with known file patterns
+ */
+async function getMarkdownFiles(basePath, language) {
+  // This is a workaround - ideally you'd have a manifest.json
+  // For now, we'll try to fetch files based on common patterns
+  const files = [];
+  
+  // Try to fetch a manifest file first
+  try {
+    const manifestResponse = await fetch(`${basePath}/manifest.json`);
+    if (manifestResponse.ok) {
+      const manifest = await manifestResponse.json();
+      return manifest.files || [];
+    }
+  } catch (error) {
+    console.log('No manifest found, using fallback approach');
+  }
+  
+  return files;
+}
+
+/**
  * Load all blog posts for a specific language
  * @param {string} language - 'en' or 'es'
  * @returns {Promise<Array>} Array of blog posts with metadata and content
  */
 export async function getBlogPosts(language = 'en') {
-  const context = import.meta.glob('../content/blog/**/*.md', { as: 'raw', eager: false });
-  const posts = [];
-  
-  for (const path in context) {
-    // Filter by language folder
-    if (path.includes(`/${language}/`)) {
-      try {
-        const content = await context[path]();
+  try {
+    // Fetch the blog index/manifest
+    const manifestPath = `/content/blog/${language}/manifest.json`;
+    const manifestResponse = await fetch(manifestPath);
+    
+    if (!manifestResponse.ok) {
+      console.warn('No blog manifest found, returning empty array');
+      return [];
+    }
+    
+    const manifest = await manifestResponse.json();
+    const posts = [];
+    
+    for (const filename of manifest.files) {
+      const filePath = `/content/blog/${language}/${filename}`;
+      const content = await fetchMarkdownFile(filePath);
+      
+      if (content) {
         const { data, content: body } = matter(content);
         
         // Only include published posts
         if (data.published !== false) {
-          const slug = extractSlugFromPath(path);
+          const slug = filename.replace('.md', '');
           posts.push({ 
             ...data, 
             body, 
@@ -27,14 +79,15 @@ export async function getBlogPosts(language = 'en') {
             language 
           });
         }
-      } catch (error) {
-        console.error(`Error loading ${path}:`, error);
       }
     }
+    
+    // Sort by date, newest first
+    return posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+  } catch (error) {
+    console.error('Error loading blog posts:', error);
+    return [];
   }
-  
-  // Sort by date, newest first
-  return posts.sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
 /**
@@ -44,8 +97,24 @@ export async function getBlogPosts(language = 'en') {
  * @returns {Promise<Object|null>} Blog post object or null
  */
 export async function getBlogPost(slug, language = 'en') {
-  const posts = await getBlogPosts(language);
-  return posts.find(post => post.slug === slug) || null;
+  try {
+    const filePath = `/content/blog/${language}/${slug}.md`;
+    const content = await fetchMarkdownFile(filePath);
+    
+    if (!content) return null;
+    
+    const { data, content: body } = matter(content);
+    
+    return {
+      ...data,
+      body,
+      slug,
+      language
+    };
+  } catch (error) {
+    console.error('Error loading blog post:', error);
+    return null;
+  }
 }
 
 /**
@@ -54,31 +123,42 @@ export async function getBlogPost(slug, language = 'en') {
  * @returns {Promise<Array>} Array of artworks with metadata
  */
 export async function getMuseumArtworks(language = 'en') {
-  const context = import.meta.glob('../content/museum/**/*.md', { as: 'raw', eager: false });
-  const artworks = [];
-  
-  for (const path in context) {
-    // Filter by language folder
-    if (path.includes(`/${language}/`)) {
-      try {
-        const content = await context[path]();
+  try {
+    // Fetch the museum index/manifest
+    const manifestPath = `/content/museum/${language}/manifest.json`;
+    const manifestResponse = await fetch(manifestPath);
+    
+    if (!manifestResponse.ok) {
+      console.warn('No museum manifest found, returning empty array');
+      return [];
+    }
+    
+    const manifest = await manifestResponse.json();
+    const artworks = [];
+    
+    for (const filename of manifest.files) {
+      const filePath = `/content/museum/${language}/${filename}`;
+      const content = await fetchMarkdownFile(filePath);
+      
+      if (content) {
         const { data, content: body } = matter(content);
+        const slug = filename.replace('.md', '');
         
-        const slug = extractSlugFromPath(path);
         artworks.push({ 
           ...data, 
           body, 
           slug,
           language 
         });
-      } catch (error) {
-        console.error(`Error loading ${path}:`, error);
       }
     }
+    
+    // Sort by display order
+    return artworks.sort((a, b) => (a.order || 0) - (b.order || 0));
+  } catch (error) {
+    console.error('Error loading artworks:', error);
+    return [];
   }
-  
-  // Sort by display order
-  return artworks.sort((a, b) => (a.order || 0) - (b.order || 0));
 }
 
 /**
@@ -88,8 +168,24 @@ export async function getMuseumArtworks(language = 'en') {
  * @returns {Promise<Object|null>} Artwork object or null
  */
 export async function getMuseumArtwork(slug, language = 'en') {
-  const artworks = await getMuseumArtworks(language);
-  return artworks.find(artwork => artwork.slug === slug) || null;
+  try {
+    const filePath = `/content/museum/${language}/${slug}.md`;
+    const content = await fetchMarkdownFile(filePath);
+    
+    if (!content) return null;
+    
+    const { data, content: body } = matter(content);
+    
+    return {
+      ...data,
+      body,
+      slug,
+      language
+    };
+  } catch (error) {
+    console.error('Error loading artwork:', error);
+    return null;
+  }
 }
 
 /**
@@ -114,17 +210,6 @@ export async function getArtworksByCategory(category, language = 'en') {
   const artworks = await getMuseumArtworks(language);
   if (!category || category === 'All') return artworks;
   return artworks.filter(artwork => artwork.category === category);
-}
-
-/**
- * Extract slug from file path
- * @param {string} path - File path
- * @returns {string} Slug
- */
-function extractSlugFromPath(path) {
-  const parts = path.split('/');
-  const filename = parts[parts.length - 1];
-  return filename.replace('.md', '');
 }
 
 /**
