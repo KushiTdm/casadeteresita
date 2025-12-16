@@ -9,8 +9,25 @@ const FinalCta = () => {
   const { config } = useData();
   const phoneNumber = config?.whatsappNumber || "59170675985";
   
-  // Get rating from config with fallback
-  const bookingRating = config?.bookingRates || t.reviews.defaultRating || 9.6;
+  // Parse booking rating properly - handle "9.6/10" format or plain number
+  const parseBookingRating = (ratingStr) => {
+    if (!ratingStr) return 9.6; // Default fallback
+    
+    // If it's already a number
+    if (typeof ratingStr === 'number') return ratingStr;
+    
+    // If it's a string like "9.6/10", extract the first part
+    const str = String(ratingStr);
+    if (str.includes('/')) {
+      const parts = str.split('/');
+      return parseFloat(parts[0]) || 9.6;
+    }
+    
+    // Otherwise try to parse as float
+    return parseFloat(str) || 9.6;
+  };
+  
+  const bookingRating = parseBookingRating(config?.bookingRates);
 
   const handleWhatsApp = () => {
     const message = encodeURIComponent(t.whatsapp.homeMessage);
@@ -53,7 +70,7 @@ const FinalCta = () => {
               <div className="text-white/80 text-sm">Established in</div>
             </div>
             <div>
-              <div className="text-4xl font-bold mb-2">{bookingRating}/10</div>
+              <div className="text-4xl font-bold mb-2">{bookingRating.toFixed(1)}/10</div>
               <div className="text-white/80 text-sm">Guest Rating</div>
             </div>
             <div>
