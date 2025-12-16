@@ -2,11 +2,15 @@
 import { Link } from 'react-router-dom';
 import { Calendar, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-
+import { useData } from '../context/DataContext';
 
 const FinalCta = () => {
   const { t } = useLanguage();
-  const phoneNumber = "59170675985";
+  const { config } = useData();
+  const phoneNumber = config?.whatsappNumber || "59170675985";
+  
+  // Get rating from config with fallback
+  const bookingRating = config?.bookingRates || t.reviews.defaultRating || 9.6;
 
   const handleWhatsApp = () => {
     const message = encodeURIComponent(t.whatsapp.homeMessage);
@@ -49,7 +53,7 @@ const FinalCta = () => {
               <div className="text-white/80 text-sm">Established in</div>
             </div>
             <div>
-              <div className="text-4xl font-bold mb-2">9.6/10</div>
+              <div className="text-4xl font-bold mb-2">{bookingRating}/10</div>
               <div className="text-white/80 text-sm">Guest Rating</div>
             </div>
             <div>

@@ -33,6 +33,7 @@ exports.handler = async (event, context) => {
       if (key === 'currency') config.currency = value;
       if (key === 'check_in_time') config.checkInTime = value;
       if (key === 'check_out_time') config.checkOutTime = value;
+      if (key === 'booking_rates') config.booking_rates = value;
     });
 
     return { 

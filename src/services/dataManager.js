@@ -13,7 +13,8 @@ const DEFAULT_CONFIG = {
   whatsappNumber: '59170675985',
   currency: 'USD',
   checkInTime: '14:00',
-  checkOutTime: '12:00'
+  checkOutTime: '12:00',
+  bookingRates: 9.6 // Fallback rating
 };
 
 // Cache
@@ -134,11 +135,21 @@ export async function getConfig() {
   try {
     const config = await fetchConfig();
     if (config && config.whatsappNumber) {
-      configCache = config;
-      return config;
+      // Ensure bookingRates is a number and has fallback
+      const bookingRates = config.bookingRates 
+        ? parseFloat(config.bookingRates) 
+        : DEFAULT_CONFIG.bookingRates;
+      
+      configCache = {
+        ...config,
+        bookingRates
+      };
+      
+      console.log('✅ Config loaded with booking_rates:', bookingRates);
+      return configCache;
     }
   } catch (error) {
-    console.warn('Using default config');
+    console.warn('⚠️ Using default config');
   }
   
   return configCache;

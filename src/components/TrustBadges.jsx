@@ -1,9 +1,12 @@
+// src/components/TrustBadges.jsx
 import { useState, useEffect, useRef } from 'react';
 import { Star, Quote, Award, Sparkles, Users, Bed, MapPin, Building2 } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
+import { useData } from '../context/DataContext';
 
 const TrustBadges = () => {
   const { language, t } = useLanguage();
+  const { config } = useData();
   const [isVisible, setIsVisible] = useState({
     title: false,
     mainCard: false,
@@ -15,6 +18,9 @@ const TrustBadges = () => {
   const mainCardRef = useRef(null);
   const scoreRefs = useRef([]);
   const testimonialRefs = useRef([]);
+
+  // Get rating from config with fallback
+  const bookingRating = config?.bookingRates || t.reviews.defaultRating || 9.6;
 
   const scores = [
     { label: t.reviews.scores.cleanliness, value: 9.8, icon: Sparkles },
@@ -143,7 +149,7 @@ const TrustBadges = () => {
               <Award className="h-16 w-16 text-[#C4A96A]" />
             </div>
             <div className="flex items-center justify-center gap-2 mb-3">
-              <span className="text-5xl font-bold text-[#2D5A4A]">9.6</span>
+              <span className="text-5xl font-bold text-[#2D5A4A]">{bookingRating}</span>
               <span className="text-2xl text-gray-500">/10</span>
             </div>
             <div className="flex justify-center mb-3">
