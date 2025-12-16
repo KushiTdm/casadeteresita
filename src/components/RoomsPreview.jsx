@@ -112,7 +112,7 @@ const RoomsPreview = () => {
                     >
                       {featured && (
                         <div className="bg-[#A85C32] text-white text-center py-2 font-semibold">
-                          {language === 'en' ? 'Popular Choice' : 'Opción Popular'}
+                          {language === 'en' ? 'Popular choice' : 'Muy solicitada'}
                         </div>
                       )}
 
@@ -212,23 +212,6 @@ const RoomsPreview = () => {
               />
             ))}
           </div>
-        </div>
-
-        {/* View All Rooms Link */}
-        <div className="text-center mb-12">
-          <button
-            onClick={() => {
-              // Scroll to see all rooms or expand view
-              const roomsSection = document.getElementById('rooms');
-              if (roomsSection) {
-                roomsSection.scrollIntoView({ behavior: 'smooth' });
-              }
-            }}
-            className="inline-flex items-center gap-2 text-[#A85C32] font-semibold hover:text-[#8B4926] transition-colors"
-          >
-            <span>{language === 'en' ? 'View All Rooms' : 'Ver Todas las Habitaciones'}</span>
-            <ChevronRight className="h-5 w-5" />
-          </button>
         </div>
 
         {/* What's Included Section */}

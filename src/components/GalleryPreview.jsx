@@ -10,28 +10,28 @@ const GalleryPreview = () => {
 
   const images = [
     {
-      url: '/garden.webp',
-      alt: 'Historic garden at La Casa de Teresita'
-    },
-    {
-      url: '/desayuno2.webp',
-      alt: 'Delicious breakfast spread'
+      url: '/entrance.jpg',
+      alt: 'White entrance gate of La Casa de Teresita boutique hotel in Sucre, Bolivia'
     },
     {
       url: '/piano.webp',
       alt: 'Cozy common area with piano'
     },
     {
-      url: '/building.webp',
-      alt: 'Building front to the garden'
-    },
-    {
       url: '/library.webp',
       alt: 'Historic library collection'
     },
     {
-      url: '/entrance.jpg',
-      alt: 'White entrance gate of La Casa de Teresita boutique hotel in Sucre, Bolivia'
+      url: '/building.webp',
+      alt: 'Building front to the garden'
+    },
+    {
+      url: '/garden.webp',
+      alt: 'Historic garden at La Casa de Teresita'
+    },
+    {
+      url: '/desayuno2.webp',
+      alt: 'Delicious breakfast spread'
     }
   ];
 

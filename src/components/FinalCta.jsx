@@ -45,16 +45,16 @@ const FinalCta = () => {
         <div className="mt-12 pt-12 border-t border-white/20">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
             <div>
-              <div className="text-4xl font-bold mb-2">1916</div>
-              <div className="text-white/80 text-sm">Year Built</div>
+              <div className="text-4xl font-bold mb-2">2022</div>
+              <div className="text-white/80 text-sm">Established in</div>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">9.6/10</div>
               <div className="text-white/80 text-sm">Guest Rating</div>
             </div>
             <div>
-              <div className="text-4xl font-bold mb-2">3</div>
-              <div className="text-white/80 text-sm">Historic Gardens</div>
+              <div className="text-4xl font-bold mb-2">9</div>
+              <div className="text-white/80 text-sm">Rooms only</div>
             </div>
             <div>
               <div className="text-4xl font-bold mb-2">100+</div>

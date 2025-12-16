@@ -155,31 +155,6 @@ const TrustBadges = () => {
             <p className="text-sm text-gray-500 mt-2">Based on 247+ reviews</p>
           </div>
 
-          {/* Score Cards avec animation en cascade */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 w-full max-w-4xl">
-            {scores.map((score, index) => {
-              const Icon = score.icon;
-              return (
-                <div
-                  key={index}
-                  ref={el => scoreRefs.current[index] = el}
-                  className={`bg-white p-4 rounded-lg text-center shadow hover:shadow-lg transition-all duration-700 ${
-                    isVisible.scores[index]
-                      ? 'opacity-100 translate-y-0'
-                      : 'opacity-0 translate-y-8'
-                  }`}
-                >
-                  <div className="flex justify-center mb-2">
-                    <Icon className="h-6 w-6 text-[#A85C32]" />
-                  </div>
-                  <div className="text-2xl font-bold text-[#A85C32] mb-1">
-                    {score.value}
-                  </div>
-                  <div className="text-sm text-gray-600">{score.label}</div>
-                </div>
-              );
-            })}
-          </div>
         </div>
 
         {/* Testimonials avec animation en cascade */}

@@ -75,7 +75,7 @@ const Location = () => {
 
           <div className="relative h-96 lg:h-full min-h-[400px] rounded-xl overflow-hidden shadow-2xl">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3825.3407799999997!2d-68.11!3d-16.50!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTbCsDMwJzAwLjAiUyA2OMKwMDYnMzYuMCJX!5e0!3m2!1sen!2sbo!4v1234567890"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3825.2193064656967!2d-68.11923399999999!3d-16.5150224!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x915f20f4d4c97a6b%3A0xdf138ca8a8316023!2sTSE%2C%20Av.%20Arce%202995%2C%20La%20Paz!5e0!3m2!1sfr!2sbo!4v1765854160241!5m2!1sfr!2sbo"
               width="100%"
               height="100%"
               style={{ border: 0 }}
@@ -88,6 +88,7 @@ const Location = () => {
         </div>
       </div>
     </section>
+    
   );
 };
 

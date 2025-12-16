@@ -7,7 +7,7 @@ export const roomsDetailed = [
     available: 2,
     name: {
       en: 'Queen Room',
-      es: 'Habitación Queen'
+      es: 'Queen Room'
     },
     price: 60,
     size: 30,
@@ -21,28 +21,28 @@ export const roomsDetailed = [
       '/queenBedDeluxe.jpg'
     ],
     description: {
-      en: 'Providing free toiletries, this double room includes a private bathroom with a shower and a hairdryer...',
-      es: 'Con artículos de tocador gratuitos, esta habitación doble incluye un baño privado...'
+      en: 'With private bathroom, this room includes free toiletries.',
+      es: 'Con baño privado, esta habitación incluye artículos de tocador gratuitos.'
     },
     amenities: [
       { icon: 'Wifi', label: { en: 'Free WiFi', es: 'WiFi Gratis' } },
       { icon: 'Tv', label: { en: 'Flat-screen TV', es: 'TV Pantalla Plana' } },
       { icon: 'Bath', label: { en: 'Private Bathroom', es: 'Baño Privado' } },
-      { icon: 'Trees', label: { en: 'Garden View', es: 'Vista al Jardín' } },
-      { icon: 'Coffee', label: { en: 'Electric Kettle', es: 'Hervidor Eléctrico' } },
+      { icon: 'Trees', label: { en: 'Patio View', es: 'Vista al Patio' } },
+      { icon: 'Coffee', label: { en: 'Electric Kettle (upon request)', es: 'Hervidor Eléctrico (a solicitud)' } },
       { icon: 'Shirt', label: { en: 'Wardrobe', es: 'Armario' } }
     ],
     bathroom: {
-      en: ['Free toiletries', 'Toilet', 'Bathtub or shower', 'Towels', 'Hairdryer', 'Toilet paper'],
-      es: ['Artículos de tocador gratuitos', 'Inodoro', 'Bañera o ducha', 'Toallas', 'Secador de pelo', 'Papel higiénico']
+      en: ['Free toiletries', 'Shower', 'Towels', 'Hairdryer (upon request)', 'Toilet paper'],
+      es: ['Artículos de tocador gratuitos', 'Ducha', 'Toallas', 'Secador de pelo (a solicitud)', 'Papel higiénico']
     },
     view: {
-      en: ['Garden view', 'Courtyard view'],
-      es: ['Vista al jardín', 'Vista al patio']
+      en: ['Patio view', 'Patio'],
+      es: ['Vista al patio', 'Patio']
     },
     features: {
-      en: ['Parquet flooring', 'Socket near bed', 'Cable channels', 'Patio', 'Ground floor access'],
-      es: ['Suelo de parquet', 'Enchufe cerca de la cama', 'Canales por cable', 'Patio', 'Acceso en planta baja']
+      en: ['Wooden flooring', 'Socket near bed', 'Cable channels', 'Patio'],
+      es: ['Suelo de madera', 'Enchufe cerca de la cama', 'Canales por cable', 'Patio']
     },
     included: {
       en: ['Breakfast included', 'Free cancellation'],
@@ -53,9 +53,10 @@ export const roomsDetailed = [
     id: 'deluxe-queen',
     slug: 'deluxe-queen',
     available: 1,
+    popular: true,
     name: {
       en: 'Deluxe Queen Room',
-      es: 'Habitación Deluxe Queen'
+      es: 'Deluxe Queen Room'
     },
     price: 65,
     size: 30,
@@ -69,28 +70,28 @@ export const roomsDetailed = [
       '/Deluxe-room.jpeg'
     ],
     description: {
-      en: 'Providing free toiletries, this double room includes a private bathroom with a shower and a hairdryer...',
-      es: 'Con artículos de tocador gratuitos, esta habitación doble incluye un baño privado...'
+      en: 'With private bathroom, this room includes free toiletries.',
+      es: 'Con baño privado, esta habitación incluye artículos de tocador gratuitos.'
     },
     amenities: [
       { icon: 'Wifi', label: { en: 'Free WiFi', es: 'WiFi Gratis' } },
       { icon: 'Tv', label: { en: 'Flat-screen TV', es: 'TV Pantalla Plana' } },
       { icon: 'Bath', label: { en: 'Private Bathroom', es: 'Baño Privado' } },
-      { icon: 'Trees', label: { en: 'Garden View', es: 'Vista al Jardín' } },
-      { icon: 'Coffee', label: { en: 'Electric Kettle', es: 'Hervidor Eléctrico' } },
+      { icon: 'Trees', label: { en: 'Patio View', es: 'Vista al Patio' } },
+      { icon: 'Coffee', label: { en: 'Electric Kettle (upon request)', es: 'Hervidor Eléctrico (a solicitud)' } },
       { icon: 'Shirt', label: { en: 'Wardrobe', es: 'Armario' } }
     ],
     bathroom: {
-      en: ['Free toiletries', 'Toilet', 'Bathtub or shower', 'Towels', 'Hairdryer', 'Toilet paper'],
-      es: ['Artículos de tocador gratuitos', 'Inodoro', 'Bañera o ducha', 'Toallas', 'Secador de pelo', 'Papel higiénico']
+      en: ['Free toiletries', 'Shower', 'Towels', 'Hairdryer (upon request)', 'Toilet paper'],
+      es: ['Artículos de tocador gratuitos', 'Ducha', 'Toallas', 'Secador de pelo (a solicitud)', 'Papel higiénico']
     },
     view: {
-      en: ['Garden view', 'Courtyard view'],
-      es: ['Vista al jardín', 'Vista al patio']
+      en: ['Patio view', 'Patio'],
+      es: ['Vista al patio', 'Patio']
     },
     features: {
-      en: ['Parquet flooring', 'Socket near bed', 'Cable channels', 'Patio', 'Ground floor access'],
-      es: ['Suelo de parquet', 'Enchufe cerca de la cama', 'Canales por cable', 'Patio', 'Acceso en planta baja']
+      en: ['Wooden flooring', 'Socket near bed', 'Cable channels', 'Patio'],
+      es: ['Suelo de madera', 'Enchufe cerca de la cama', 'Canales por cable', 'Patio']
     },
     included: {
       en: ['Breakfast included', 'Free cancellation'],
@@ -103,8 +104,8 @@ export const roomsDetailed = [
     slug: 'single',
     available: 2,
     name: {
-      en: 'Single Room with Bathroom',
-      es: 'Habitación Simple con Baño'
+      en: 'Single Room',
+      es: 'Single Room'
     },
     price: 40,
     size: 20,
@@ -125,20 +126,20 @@ export const roomsDetailed = [
       { icon: 'Wifi', label: { en: 'Free WiFi', es: 'WiFi Gratis' } },
       { icon: 'Tv', label: { en: 'Flat-screen TV', es: 'TV Pantalla Plana' } },
       { icon: 'Bath', label: { en: 'Private Bathroom', es: 'Baño Privado' } },
-      { icon: 'Trees', label: { en: 'Garden View', es: 'Vista al Jardín' } },
-      { icon: 'Coffee', label: { en: 'Electric Kettle', es: 'Hervidor Eléctrico' } }
+      { icon: 'Trees', label: { en: 'Patio View', es: 'Vista al Patio' } },
+      { icon: 'Coffee', label: { en: 'Electric Kettle (upon request)', es: 'Hervidor Eléctrico (a solicitud)' } }
     ],
     bathroom: {
-      en: ['Free toiletries', 'Toilet', 'Bathtub or shower', 'Hairdryer', 'Toilet paper'],
-      es: ['Artículos de tocador gratuitos', 'Inodoro', 'Bañera o ducha', 'Secador de pelo', 'Papel higiénico']
+      en: ['Free toiletries', 'Shower', 'Towels', 'Hairdryer (upon request)', 'Toilet paper'],
+      es: ['Artículos de tocador gratuitos', 'Ducha', 'Toallas', 'Secador de pelo (a solicitud)', 'Papel higiénico']
     },
     view: {
-      en: ['Garden view', 'Courtyard view', 'Patio'],
-      es: ['Vista al jardín', 'Vista al patio', 'Patio']
+      en: ['Patio view', 'Patio'],
+      es: ['Vista al patio', 'Patio']
     },
     features: {
-      en: ['Parquet flooring', 'Socket near bed', 'Cable channels'],
-      es: ['Suelo de parquet', 'Enchufe cerca de la cama', 'Canales por cable']
+      en: ['Floating flooring', 'Socket near bed', 'Cable channels', 'Patio'],
+      es: ['Piso flotante', 'Enchufe cerca de la cama', 'Canales por cable', 'Patio']
     },
     included: {
       en: ['Breakfast included', 'Free cancellation'],
@@ -152,13 +153,13 @@ export const roomsDetailed = [
     available: 1,
     name: {
       en: 'Family Double Room',
-      es: 'Habitación Doble Familiar'
+      es: 'Family Double Room'
     },
     price: 90,
     size: 50,
     beds: {
-      en: '1 single bed and 2 large double beds',
-      es: '1 cama individual y 2 camas dobles grandes'
+      en: '1 Queen bed in one room and 1 double bed + 1 single bed in another room',
+      es: '1 Cama Queen en un ambiente y cama doble e individual en otro ambiente'
     },
     rating: 9.4,
     reviewCount: 45,
@@ -166,29 +167,29 @@ export const roomsDetailed = [
       '/doubleFamilial.jpg'
     ],
     description: {
-      en: 'Offering free toiletries, this family room includes a private bathroom...',
-      es: 'Con artículos de tocador gratuitos, esta habitación familiar incluye baño privado...'
+      en: 'A private bathroom and a kitchenette space.',
+      es: 'Un baño privado y un espacio para cocineta.'
     },
     amenities: [
       { icon: 'Wifi', label: { en: 'Free WiFi', es: 'WiFi Gratis' } },
       { icon: 'Tv', label: { en: 'Flat-screen TV', es: 'TV Pantalla Plana' } },
       { icon: 'Bath', label: { en: 'Private Bathroom', es: 'Baño Privado' } },
-      { icon: 'Trees', label: { en: 'Garden View', es: 'Vista al Jardín' } },
+      { icon: 'Trees', label: { en: 'Patio View', es: 'Vista al Patio' } },
       { icon: 'Users', label: { en: 'Family Friendly', es: 'Familiar' } },
-      { icon: 'Coffee', label: { en: 'Electric Kettle', es: 'Hervidor Eléctrico' } },
+      { icon: 'Coffee', label: { en: 'Kitchenette', es: 'Cocineta' } },
       { icon: 'Shirt', label: { en: 'Wardrobe', es: 'Armario' } }
     ],
     bathroom: {
-      en: ['Free toiletries', 'Toilet', 'Bathtub or shower', 'Hairdryer', 'Toilet paper'],
-      es: ['Artículos de tocador gratuitos', 'Inodoro', 'Bañera o ducha', 'Secador de pelo', 'Papel higiénico']
+      en: ['Free toiletries', 'Shower', 'Towels', 'Hairdryer (upon request)', 'Toilet paper'],
+      es: ['Artículos de tocador gratuitos', 'Ducha', 'Toallas', 'Secador de pelo (a solicitud)', 'Papel higiénico']
     },
     view: {
-      en: ['Garden view', 'City view', 'Courtyard view', 'Patio'],
-      es: ['Vista al jardín', 'Vista a la ciudad', 'Vista al patio', 'Patio']
+      en: ['Patio view', 'Patio'],
+      es: ['Vista al patio', 'Patio']
     },
     features: {
-      en: ['Parquet flooring', 'Socket near bed', 'Cable channels'],
-      es: ['Suelo de parquet', 'Enchufe cerca de la cama', 'Canales por cable']
+      en: ['Wooden flooring', 'Socket near bed', 'Cable channels', 'Patio'],
+      es: ['Suelo de madera', 'Enchufe cerca de la cama', 'Canales por cable', 'Patio']
     },
     included: {
       en: ['Breakfast included', 'Free cancellation'],
@@ -202,7 +203,7 @@ export const roomsDetailed = [
     available: 2,
     name: {
       en: 'Twin Room',
-      es: 'Habitación con Camas Gemelas'
+      es: 'Twin Room'
     },
     price: 60,
     size: 25,
@@ -224,20 +225,20 @@ export const roomsDetailed = [
       { icon: 'Tv', label: { en: 'Flat-screen TV', es: 'TV Pantalla Plana' } },
       { icon: 'Bath', label: { en: 'Private Bathroom', es: 'Baño Privado' } },
       { icon: 'Trees', label: { en: 'Garden View', es: 'Vista al Jardín' } },
-      { icon: 'Coffee', label: { en: 'Electric Kettle', es: 'Hervidor Eléctrico' } },
+      { icon: 'Coffee', label: { en: 'Electric Kettle (upon request)', es: 'Hervidor Eléctrico (a solicitud)' } },
       { icon: 'Shirt', label: { en: 'Wardrobe', es: 'Armario' } }
     ],
     bathroom: {
-      en: ['Free toiletries', 'Toilet', 'Bathtub or shower', 'Hairdryer', 'Toilet paper'],
-      es: ['Artículos de tocador gratuitos', 'Inodoro', 'Bañera o ducha', 'Secador de pelo', 'Papel higiénico']
+      en: ['Free toiletries', 'Shower', 'Towels', 'Hairdryer (upon request)', 'Toilet paper'],
+      es: ['Artículos de tocador gratuitos', 'Ducha', 'Toallas', 'Secador de pelo (a solicitud)', 'Papel higiénico']
     },
     view: {
-      en: ['Garden view', 'Courtyard view', 'Patio'],
-      es: ['Vista al jardín', 'Vista al patio', 'Patio']
+      en: ['Garden view'],
+      es: ['Vista al jardín']
     },
     features: {
-      en: ['Parquet flooring', 'Socket near bed', 'Cable channels'],
-      es: ['Suelo de parquet', 'Enchufe cerca de la cama', 'Canales por cable']
+      en: ['Wooden flooring', 'Socket near bed', 'Cable channels'],
+      es: ['Suelo de madera', 'Enchufe cerca de la cama', 'Canales por cable']
     },
     included: {
       en: ['Breakfast included', 'Free cancellation'],

@@ -11,8 +11,8 @@ export const translations = {
     },
     hero: {
       title: "La Casa de Teresita",
-      subtitle: "Boutique Museo & Family Home",
-      tagline: "Experience La Paz's history in a 1916 mansion. A haven of peace in the heart of the city.",
+      subtitle: "Boutique Museum Hotel & Family Home",
+      tagline: "A haven of peace in the heart of the city.",
       viewRooms: "View Rooms & Prices",
       discoverHistory: "Discover Our Story"
     },
@@ -29,6 +29,7 @@ export const translations = {
     roomsPreview: {
       title: "Our Rooms",
       subtitle: "Comfort and authenticity in every detail",
+      popularLabel: "Highly Requested",
       single: {
         name: "Single Room",
         price: "40",
@@ -39,6 +40,11 @@ export const translations = {
         price: "65",
         features: ["Queen bed", "Premium amenities", "Spacious"]
       },
+      queen: {
+        name: "Queen Room",
+        price: "60",
+        features: ["Queen bed", "Smart TV", "Patio view"]
+      },
       twin: {
         name: "Twin Room",
         price: "60",
@@ -47,31 +53,33 @@ export const translations = {
       family: {
         name: "Family Double Room",
         price: "90",
-        features: ["1 single + 2 double beds", "50m²", "Perfect for families"]
+        features: ["1 Queen + 1 double + 1 single bed", "50m²", "Perfect for families"]
       },
       perNight: "USD/night",
       seeDetails: "Details & Availability",
       allRooms: "See All Rooms"
     },
     uniqueExperience: {
-      title: "A Journey Through Time",
-      subtitle: "The Story of La Casa de Teresita",
-      intro: "Built in 1916, La Casa de Teresita was the home of renowned surgeon Dr. Juan Gamarra Antezana and Maria Teresa Fajardo. Today, we honor their legacy by sharing this historic treasure with travelers seeking an authentic La Paz experience.",
+      title: "A journey through time...",
+      subtitle: "History of La Casa de Teresita",
+      intro: "La Casa de Teresita was the home of the renowned La Paz surgeon Dr. Juan Gamarra Antezana and María Teresa Fajardo. Today we open its doors sharing their important family legacy with travelers seeking a distinctive experience in La Paz.",
       features: [
         {
-          title: "Three Historic Gardens",
-          desc: "From the entrance garden to our family vegetable plot, each space tells a story of La Paz's past."
+          title: "The House Objects",
+          desc: "All the objects preserved belong to the family history, and highlight La Paz life and Bolivia's history in the 20th century. Discover the pianos and curious objects from around the world."
         },
         {
-          title: "Piano & Book Collection",
-          desc: "Discover beautiful historic pianos and century-old books that witnessed Bolivia's 20th-century history."
+          title: "The House Gardens",
+          desc: "A luxury in the center of La Paz. A place of tranquility with a beautiful view of Illimani, the city's emblem."
         },
         {
-          title: "Dr. Gamarra's Study",
-          desc: "Now a cowork space, preserving the professional atmosphere of this distinguished surgeon's office."
+          title: "A Museum in the House",
+          desc: "You can request a guided tour of the private museum, where you will discover valuable and interesting objects that highlight culture and family spirit."
         }
       ],
-      mission: "Our mission is to make you feel part of our family while offering an authentic experience connected to 20th-century La Paz culture."
+      photoAlt: "Dr. Juan Gamarra Antezana and María Teresa Fajardo, founders of La Casa de Teresita",
+      photoCaption: "All this gives the place the strong personality that, perhaps unknowingly, its owners Don Juan and Teresita imprinted on it, to whom this space is dedicated as a tribute to their lives and a memory for future generations.",
+      mission: "Our mission is to make you part of our family, and make your stay in La Paz an unforgettable experience."
     },
     reviews: {
       title: "What Our Guests Say",
@@ -88,11 +96,11 @@ export const translations = {
     },
     location: {
       title: "How to Find Us",
-      subtitle: "In the heart of La Paz, yet peaceful",
+      subtitle: "In the heart of La Paz... but peaceful!",
       address: "Av. Arce #2995 San Jorge, La Paz",
       nearbyTitle: "Nearby Points of Interest",
       nearby: [
-        "Downtown: 10 min by taxi",
+        "Downtown: 15 min by taxi",
         "Cable Car Station: 5 min walk",
         "Sopocachi: Walking distance"
       ],
@@ -105,7 +113,7 @@ export const translations = {
       items: [
         {
           q: "Check-in and check-out times?",
-          a: "Check-in from 2:00 PM with valid ID. Check-out until 12:00 PM (late check-out until 6:00 PM available with 50% fee)."
+          a: "Check-in from 2:00 PM with valid ID. Check-out until 12:00 PM. Check for availability of 'Early check in' and 'Late check out'. NO PERMANENT FRONT DESK SERVICE. Please coordinate your arrival for special hours."
         },
         {
           q: "Free cancellation policy?",
@@ -113,11 +121,11 @@ export const translations = {
         },
         {
           q: "Are pets allowed?",
-          a: "Unfortunately, we don't accept pets to ensure all guests' comfort."
+          a: "Despite having our own pets, we cannot accommodate other pets."
         },
         {
           q: "Payment methods accepted?",
-          a: "We accept cash and cards (Visa, Mastercard)."
+          a: "We accept cash in USD, EUR and Bs, and bank transfers."
         },
         {
           q: "Can children stay?",
@@ -125,12 +133,12 @@ export const translations = {
         },
         {
           q: "Is smoking allowed?",
-          a: "Smoking is not permitted in rooms or inside the house. Violation incurs a $100 penalty."
+          a: "Smoking is not permitted in rooms or inside the house. Violation incurs a $100 penalty. Smoking is allowed in the garden."
         }
       ]
     },
     finalCta: {
-      title: "Ready to Experience Teresita?",
+      title: "Ready to Experience It With Us?",
       subtitle: "Book directly and get the best guarantee",
       checkAvailability: "Check Availability",
       contactWhatsApp: "Contact Us on WhatsApp"
@@ -150,11 +158,19 @@ export const translations = {
       copyright: "All rights reserved",
       cancellation: "Cancellation Policy",
       about: "About",
-      aboutText: "A historic boutique hotel preserving La Paz's heritage since 1916."
+      aboutText: "A boutique museum hotel, preserving a family legacy.",
+      yearBuilt: "Established in 2022",
+      roomCount: "9 Rooms only",
+      since: "Since 2022"
     },
     whatsapp: {
       homeMessage: "Hello! I'm interested in booking at La Casa de Teresita. Do you have availability? Thank you.",
       roomMessage: "Hello! I'd like to book the {roomName} at La Casa de Teresita. Do you have availability? Thank you."
+    },
+    contact: {
+      phone1: "+591 2 2431018",
+      phone2: "+591 2 2430260",
+      mobile: "+591 706 75985"
     },
     rooms: {
       notFound: {
@@ -170,7 +186,17 @@ export const translations = {
       pricePerNight: "USD/night",
       freeCancellation: "Free cancellation up to 24h before arrival",
       included: "What's Included",
-      bookNow: "Book on WhatsApp"
+      bookNow: "Book on WhatsApp",
+      electricKettle: "Electric kettle upon request",
+      shower: "Shower",
+      towels: "Towels",
+      hairDryer: "Hair dryer upon request",
+      toiletPaper: "Toilet paper",
+      patioView: "Patio view",
+      woodFloor: "Wooden floor",
+      floatingFloor: "Floating floor",
+      patio: "Patio",
+      familyNote: "Private bathroom and kitchenette space"
     }
   },
   es: {
@@ -184,8 +210,8 @@ export const translations = {
     },
     hero: {
       title: "La Casa de Teresita",
-      subtitle: "Boutique Museo & Hogar Familiar",
-      tagline: "Vive la historia de La Paz en una mansión de 1916. Un remanso de paz en el corazón de la ciudad.",
+      subtitle: "Hotel Boutique Museo & Hogar Familiar",
+      tagline: "Un remanso de paz en el corazón de la ciudad.",
       viewRooms: "Ver Habitaciones y Precios",
       discoverHistory: "Descubre Nuestra Historia"
     },
@@ -196,55 +222,63 @@ export const translations = {
       }
     },
     gallery: {
-      title: "Descubre Nuestro Espacio",
+      title: "Descubre nuestro espacio",
       viewGallery: "Ver Galería Completa"
     },
     roomsPreview: {
       title: "Nuestras Habitaciones",
       subtitle: "Comodidad y autenticidad en cada detalle",
+      popularLabel: "Muy solicitada",
       single: {
-        name: "Habitación Single",
+        name: "Single Room",
         price: "40",
         features: ["Baño privado", "Smart TV", "Vista al jardín"]
       },
-      double: {
-        name: "Habitación Doble",
+      deluxe: {
+        name: "Deluxe Queen Room",
+        price: "65",
+        features: ["Cama queen", "Amenidades premium", "Amplia"]
+      },
+      queen: {
+        name: "Queen Room",
         price: "60",
-        features: ["Baño privado", "Smart TV", "Vista terraza ciudad"]
+        features: ["Cama queen", "Smart TV", "Vista al patio"]
       },
       twin: {
-        name: "Habitación con Camas Gemelas",
+        name: "Twin Room",
         price: "60",
         features: ["2 camas individuales", "Smart TV", "Vista al jardín"]
       },
       family: {
-        name: "Habitación Doble Familiar",
+        name: "Family Double Room",
         price: "90",
-        features: ["1 cama individual + 2 dobles", "50m²", "Perfecta para familias"]
+        features: ["1 Cama Queen + cama doble e individual", "50m²", "Perfecta para familias"]
       },
       perNight: "USD/noche",
       seeDetails: "Detalles y Disponibilidad",
       allRooms: "Ver Todas las Habitaciones"
     },
     uniqueExperience: {
-      title: "Un Viaje en el Tiempo",
-      subtitle: "La Historia de La Casa de Teresita",
-      intro: "Construida en 1916, La Casa de Teresita fue el hogar del renombrado cirujano Dr. Juan Gamarra Antezana y Maria Teresa Fajardo. Hoy, honramos su legado compartiendo este tesoro histórico con viajeros que buscan una experiencia auténtica en La Paz.",
+      title: "Un viaje en el tiempo...",
+      subtitle: "Historia de La Casa de Teresita",
+      intro: "La Casa de Teresita fue el hogar del renombrado cirujano paceño Dr. Juan Gamarra Antezana y María Teresa Fajardo. Hoy abrimos sus puertas compartiendo su importante legado familiar, a viajeros que buscan una experiencia distinta en La Paz.",
       features: [
         {
-          title: "Tres Jardines Históricos",
-          desc: "Desde el jardín de entrada hasta nuestra huerta familiar, cada espacio cuenta una historia del pasado de La Paz."
+          title: "Los objetos de la casa",
+          desc: "Todos los objetos que se conservan son propios de la historia familiar, y realzan la vida paceña y la historia de Bolivia en el siglo XX. Descubre los pianos y objetos curiosos del mundo."
         },
         {
-          title: "Colección de Pianos y Libros",
-          desc: "Descubre hermosos pianos históricos y libros centenarios que fueron testigos de la historia boliviana del siglo XX."
+          title: "Los jardines de la casa",
+          desc: "Un lujo en el centro de La Paz. Un lugar de quietud con una hermosa vista del Illimani, emblema de la ciudad."
         },
         {
-          title: "El Estudio del Dr. Gamarra",
-          desc: "Ahora un espacio de cowork, preservando la atmósfera profesional del consultorio de este distinguido cirujano."
+          title: "Un museo en la casa",
+          desc: "Puedes pedir una visita guiada al museo privado, donde descubrirás valiosos e interesantes objetos, que realzan la cultura y el espíritu familiar."
         }
       ],
-      mission: "Nuestra misión es hacerte sentir parte de nuestra familia mientras ofreces una experiencia auténtica conectada con la cultura paceña del siglo XX."
+      photoAlt: "Dr. Juan Gamarra Antezana y María Teresa Fajardo, fundadores de La Casa de Teresita",
+      photoCaption: "Todo esto le da al lugar la fuerte personalidad, que tal vez sin saberlo le imprimieron sus dueños, Don Juan y Teresita, a quienes está dedicado este espacio, como homenaje a sus vidas y recuerdo para las futuras generaciones.",
+      mission: "Nuestra misión es hacerte parte de nuestra familia, y hacer que tu estadía en La Paz sea una experiencia inolvidable."
     },
     reviews: {
       title: "Lo Que Dicen Nuestros Huéspedes",
@@ -260,12 +294,12 @@ export const translations = {
       }
     },
     location: {
-      title: "Cómo Encontrarnos",
-      subtitle: "En el corazón de La Paz, pero tranquilo",
+      title: "Cómo encontrarnos",
+      subtitle: "En el corazón de La Paz.... pero tranquilo!",
       address: "Av. Arce #2995 San Jorge, La Paz",
       nearbyTitle: "Puntos de Interés Cercanos",
       nearby: [
-        "Centro: 10 min en taxi",
+        "Centro: 15 min en taxi",
         "Estación Teleférico: 5 min caminando",
         "Sopocachi: Distancia caminable"
       ],
@@ -273,12 +307,12 @@ export const translations = {
       directions: "Cómo Llegar"
     },
     faq: {
-      title: "Información Práctica",
+      title: "Información práctica",
       subtitle: "Todo lo que necesitas saber antes de reservar",
       items: [
         {
           q: "¿Horarios de check-in y check-out?",
-          a: "Check-in desde las 14:00 con ID válido. Check-out hasta las 12:00 (extensión hasta 18:00 disponible con cargo del 50%)."
+          a: "Check-in desde las 14:00 con ID válido. Check-out hasta las 12:00. Consulte para disponibilidad de 'Early check in' y 'Late check out'. NO HAY ATENCIÓN PERMANENTE DE FRONT DESK. Coordine su llegada en horarios especiales."
         },
         {
           q: "¿Política de cancelación gratuita?",
@@ -286,11 +320,11 @@ export const translations = {
         },
         {
           q: "¿Se aceptan mascotas?",
-          a: "Lamentablemente no aceptamos mascotas para garantizar la comodidad de todos los huéspedes."
+          a: "A pesar de tener mascotas propias, no podemos recibir otras mascotas."
         },
         {
           q: "¿Métodos de pago aceptados?",
-          a: "Aceptamos efectivo y tarjetas (Visa, Mastercard)."
+          a: "Aceptamos efectivo en USD, EUR y Bs, y transferencias bancarias."
         },
         {
           q: "¿Pueden quedarse niños?",
@@ -298,12 +332,12 @@ export const translations = {
         },
         {
           q: "¿Se permite fumar?",
-          a: "No se permite fumar en las habitaciones ni dentro de la casa. La violación conlleva una penalidad de $100."
+          a: "No se permite fumar en las habitaciones ni dentro de la casa. La violación conlleva una penalidad de USD 100. Es permitido fumar en el jardín."
         }
       ]
     },
     finalCta: {
-      title: "¿Listo para Vivir la Experiencia Teresita?",
+      title: "¿Listo para vivir la experiencia con nosotros?",
       subtitle: "Reserva directamente y obtén la mejor garantía",
       checkAvailability: "Verificar Disponibilidad",
       contactWhatsApp: "Contáctanos por WhatsApp"
@@ -323,11 +357,19 @@ export const translations = {
       copyright: "Todos los derechos reservados",
       cancellation: "Política de Cancelación",
       about: "Acerca de",
-      aboutText: "Un hotel boutique histórico preservando el patrimonio de La Paz desde 1916."
+      aboutText: "Un hotel boutique museo, preservando un legado familiar.",
+      yearBuilt: "Establecido en 2022",
+      roomCount: "Solo 9 habitaciones",
+      since: "Desde 2022"
     },
     whatsapp: {
       homeMessage: "¡Hola! Me interesa reservar en La Casa de Teresita. ¿Tienen disponibilidad? Gracias.",
       roomMessage: "¡Hola! Me gustaría reservar la habitación {roomName} en La Casa de Teresita. ¿Tienen disponibilidad? Gracias."
+    },
+    contact: {
+      phone1: "+591 2 2431018",
+      phone2: "+591 2 2430260",
+      mobile: "+591 706 75985"
     },
     rooms: {
       notFound: {
@@ -343,7 +385,17 @@ export const translations = {
       pricePerNight: "USD/noche",
       freeCancellation: "Cancelación gratuita hasta 24h antes de la llegada",
       included: "Qué Está Incluido",
-      bookNow: "Reservar por WhatsApp"
+      bookNow: "Reservar por WhatsApp",
+      electricKettle: "Hervidor eléctrico a solicitud",
+      shower: "Ducha",
+      towels: "Toallas",
+      hairDryer: "Secador de pelo a solicitud",
+      toiletPaper: "Papel higiénico",
+      patioView: "Vista al patio",
+      woodFloor: "Suelo de madera",
+      floatingFloor: "Piso flotante",
+      patio: "Patio",
+      familyNote: "Un baño privado y un espacio para cocineta"
     }
   }
 };

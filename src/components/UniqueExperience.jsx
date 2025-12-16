@@ -8,6 +8,7 @@ const UniqueExperience = () => {
     title: false,
     intro: false,
     features: [false, false, false],
+    photo: false,
     mission: false
   });
   
@@ -15,6 +16,7 @@ const UniqueExperience = () => {
   const titleRef = useRef(null);
   const introRef = useRef(null);
   const featureRefs = useRef([]);
+  const photoRef = useRef(null);
   const missionRef = useRef(null);
 
   const icons = [Book, Music, Briefcase];
@@ -36,6 +38,8 @@ const UniqueExperience = () => {
             setTimeout(() => {
               setIsVisible(prev => ({ ...prev, intro: true }));
             }, 200);
+          } else if (target === photoRef.current) {
+            setIsVisible(prev => ({ ...prev, photo: true }));
           } else if (target === missionRef.current) {
             setIsVisible(prev => ({ ...prev, mission: true }));
           } else {
@@ -60,6 +64,7 @@ const UniqueExperience = () => {
 
     if (titleRef.current) observer.observe(titleRef.current);
     if (introRef.current) observer.observe(introRef.current);
+    if (photoRef.current) observer.observe(photoRef.current);
     if (missionRef.current) observer.observe(missionRef.current);
     featureRefs.current.forEach(ref => {
       if (ref) observer.observe(ref);
@@ -108,7 +113,7 @@ const UniqueExperience = () => {
         </div>
 
         {/* Features avec animation en cascade */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
           {t.uniqueExperience.features.map((feature, index) => {
             const Icon = icons[index];
             return (
@@ -136,6 +141,27 @@ const UniqueExperience = () => {
               </div>
             );
           })}
+        </div>
+
+        {/* Photo des fondateurs avec animation */}
+        <div 
+          ref={photoRef}
+          className={`max-w-3xl mx-auto mb-12 transition-all duration-1000 ${
+            isVisible.photo
+              ? 'opacity-100 scale-100'
+              : 'opacity-0 scale-95'
+          }`}
+        >
+          <div className="rounded-xl overflow-hidden shadow-2xl mb-6">
+            <img 
+              src="/parents.webp" 
+              alt={t.uniqueExperience.photoAlt}
+              className="w-full h-auto object-cover"
+            />
+          </div>
+          <p className="text-center text-gray-700 leading-relaxed italic px-4">
+            {t.uniqueExperience.photoCaption}
+          </p>
         </div>
 
         {/* Mission avec animation */}

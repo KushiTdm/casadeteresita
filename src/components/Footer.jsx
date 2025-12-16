@@ -92,7 +92,7 @@ const Footer = () => {
             </p>
             <div className="flex items-center gap-2 text-[#C4A96A]">
               <Clock className="h-5 w-5" />
-              <span className="text-sm">Since 1916</span>
+              <span className="text-sm">Since 2022</span>
             </div>
           </div>
 
@@ -101,22 +101,11 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-center gap-3">
                 <Phone className="h-5 w-5 text-[#C4A96A]" />
-                <div>
-                  <a href="tel:+59122431018" className="hover:text-[#C4A96A] transition-colors block">
-                    +591 2 2431018
-                  </a>
-                  <a href="tel:+59122430260" className="hover:text-[#C4A96A] transition-colors block text-sm">
-                    +591 2 2430260
-                  </a>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-[#C4A96A]" />
                 <button 
                   onClick={handleWhatsAppClick}
                   className="hover:text-[#C4A96A] transition-colors text-left hover:underline"
                 >
-                  +591 70 675 985 (Mobile - WhatsApp)
+                  +591 70675985 (Mobile - WhatsApp)
                 </button>
               </div>
               <div className="flex items-center gap-3">
@@ -208,21 +197,6 @@ const Footer = () => {
                 </a>
               </div>
             </div>
-
-            <div className="mt-6">
-              <h5 className="font-semibold mb-3">We Accept</h5>
-              <div className="flex gap-3">
-                <div className="bg-white px-3 py-2 rounded text-[#2D5A4A] text-xs font-bold">
-                  VISA
-                </div>
-                <div className="bg-white px-3 py-2 rounded text-[#2D5A4A] text-xs font-bold">
-                  MASTERCARD
-                </div>
-                <div className="bg-white px-3 py-2 rounded text-[#2D5A4A] text-xs font-bold">
-                  CASH
-                </div>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -231,7 +205,7 @@ const Footer = () => {
             {currentYear} La Casa de Teresita. {t.footer.copyright}
           </p>
           <p className="text-sm text-gray-400 mt-2">
-            Boutique Museo & Family Home Since 1916
+            Hotel Boutique Museo & Hogar Familiar
           </p>
         </div>
       </div>
