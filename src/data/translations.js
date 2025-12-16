@@ -6,6 +6,8 @@ export const translations = {
       story: "Our Story",
       rooms: "Rooms",
       gallery: "Gallery",
+      blog: "Blog",
+      museum: "Museum",
       location: "Location",
       contact: "Contact"
     },
@@ -197,6 +199,30 @@ export const translations = {
       floatingFloor: "Floating floor",
       patio: "Patio",
       familyNote: "Private bathroom and kitchenette space"
+    },
+    blog: {
+      title: "Our Stories",
+      subtitle: "Travel tips, historical tales, and cultural insights from La Paz",
+      metaDescription: "Discover stories, travel tips, and historical insights about La Paz and La Casa de Teresita.",
+      filterBy: "Filter by",
+      readMore: "Read More",
+      relatedPosts: "Related Posts",
+      notFound: "Post Not Found",
+      notFoundMessage: "The blog post you're looking for doesn't exist.",
+      backToBlog: "Back to Blog",
+      noPosts: "No blog posts found in this category."
+    },
+    museum: {
+      title: "Our Museum Collection",
+      subtitle: "A curated collection of historic artifacts, pianos, and artworks preserving La Paz's cultural heritage since 1916.",
+      metaDescription: "Discover our historic collection of pianos, furniture, paintings, and artifacts from early 20th century La Paz.",
+      intro1: "La Casa de Teresita houses a remarkable collection of historic artifacts that tell the story of early 20th century La Paz. Each piece has been carefully preserved by our family for over a century.",
+      intro2: "From antique pianos to period furniture and documents, our museum offers a unique window into Bolivia's cultural heritage. Scan the QR codes to learn more about each piece.",
+      filterBy: "Filter by",
+      noArtworks: "No artworks found in this category.",
+      visitTitle: "Visit Our Museum",
+      visitText: "All guests staying at La Casa de Teresita have full access to our museum collection. We also offer guided tours by appointment.",
+      bookTour: "Book a Guided Tour"
     }
   },
   es: {
@@ -205,6 +231,8 @@ export const translations = {
       story: "Nuestra Historia",
       rooms: "Habitaciones",
       gallery: "Galería",
+      blog: "Blog",
+      museum: "Museo",
       location: "Ubicación",
       contact: "Contacto"
     },
@@ -396,6 +424,30 @@ export const translations = {
       floatingFloor: "Piso flotante",
       patio: "Patio",
       familyNote: "Un baño privado y un espacio para cocineta"
+    },
+    blog: {
+      title: "Nuestras Historias",
+      subtitle: "Consejos de viaje, historias históricas e insights culturales de La Paz",
+      metaDescription: "Descubre historias, consejos de viaje e información histórica sobre La Paz y La Casa de Teresita.",
+      filterBy: "Filtrar por",
+      readMore: "Leer Más",
+      relatedPosts: "Artículos Relacionados",
+      notFound: "Artículo No Encontrado",
+      notFoundMessage: "El artículo de blog que buscas no existe.",
+      backToBlog: "Volver al Blog",
+      noPosts: "No se encontraron artículos de blog en esta categoría."
+    },
+    museum: {
+      title: "Nuestra Colección del Museo",
+      subtitle: "Una colección curada de artefactos históricos, pianos y obras de arte que preservan el patrimonio cultural de La Paz desde 1916.",
+      metaDescription: "Descubre nuestra colección histórica de pianos, muebles, pinturas y artefactos del siglo XX temprano en La Paz.",
+      intro1: "La Casa de Teresita alberga una colección notable de artefactos históricos que cuentan la historia de La Paz a principios del siglo XX. Cada pieza ha sido cuidadosamente preservada por nuestra familia durante más de un siglo.",
+      intro2: "Desde pianos antiguos hasta muebles de período y documentos, nuestro museo ofrece una ventana única al patrimonio cultural de Bolivia. Escanea los códigos QR para saber más sobre cada pieza.",
+      filterBy: "Filtrar por",
+      noArtworks: "No se encontraron obras de arte en esta categoría.",
+      visitTitle: "Visita Nuestro Museo",
+      visitText: "Todos los huéspedes que se quedan en La Casa de Teresita tienen acceso completo a nuestra colección del museo. También ofrecemos tours guiados con cita previa.",
+      bookTour: "Reserva un Tour Guiado"
     }
   }
 };
