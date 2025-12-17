@@ -6,7 +6,7 @@ import { enUS, es } from 'date-fns/locale';
 import { useLanguage } from '../context/LanguageContext';
 import { calculateReadingTime } from '../utils/contentLoader';
 
-const BlogCard = ({ post }) => {
+const BlogCard = ({ post, featured = false }) => {
   const { language, t } = useLanguage();
   const locale = language === 'es' ? es : enUS;
   
@@ -21,6 +21,10 @@ const BlogCard = ({ post }) => {
     ? post.excerpt.substring(0, 150) + '...' 
     : post.excerpt;
   
+  // Get featured image (support both old and new format)
+  const featuredImage = post.featuredImage?.src || post.image;
+  const featuredImageAlt = post.featuredImage?.alt || post.title;
+  
   // Category colors
   const categoryColors = {
     Travel: 'bg-blue-100 text-blue-800',
@@ -30,12 +34,12 @@ const BlogCard = ({ post }) => {
   };
   
   return (
-    <article className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group">
+    <article className={`bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group ${featured ? 'md:col-span-1' : ''}`}>
       {/* Featured Image */}
       <Link to={`/blog/${post.slug}`} className="block relative overflow-hidden aspect-video">
         <img 
-          src={post.image} 
-          alt={post.title}
+          src={featuredImage} 
+          alt={featuredImageAlt}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
           loading="lazy"
         />
@@ -45,6 +49,12 @@ const BlogCard = ({ post }) => {
             {post.category}
           </span>
         </div>
+        {/* Featured Badge */}
+        {post.featured && (
+          <div className="absolute top-4 right-4 bg-[#A85C32] text-white px-3 py-1 rounded-full text-sm font-semibold">
+            ⭐ Featured
+          </div>
+        )}
       </Link>
       
       {/* Content */}

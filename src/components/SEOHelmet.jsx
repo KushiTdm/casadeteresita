@@ -7,26 +7,126 @@ const SEOHelmet = ({
   image, 
   type = 'website', 
   url,
-  article = null 
+  article = null,
+  keywords = [],
+  author = 'La Casa de Teresita',
+  publishedTime,
+  modifiedTime
 }) => {
   const siteUrl = 'https://lacasadeteresita.netlify.app';
+  const siteName = 'La Casa de Teresita';
   const fullUrl = url ? `${siteUrl}${url}` : siteUrl;
   const fullImage = image?.startsWith('http') ? image : `${siteUrl}${image || '/house1.jpg'}`;
   
+  // Default keywords if none provided
+  const defaultKeywords = [
+    'La Paz hotel',
+    'boutique hotel La Paz',
+    'historic hotel Bolivia',
+    'La Casa de Teresita',
+    'museum hotel'
+  ];
+  
+  const allKeywords = keywords.length > 0 ? keywords : defaultKeywords;
+  
+  // Schema.org structured data
+  const getStructuredData = () => {
+    const baseData = {
+      "@context": "https://schema.org",
+      "@type": type === 'article' ? 'BlogPosting' : 'WebPage',
+      "headline": title,
+      "description": description,
+      "image": fullImage,
+      "url": fullUrl,
+      "publisher": {
+        "@type": "Organization",
+        "name": siteName,
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${siteUrl}/house1.jpg`
+        }
+      }
+    };
+
+    if (type === 'article' && article) {
+      return {
+        ...baseData,
+        "@type": "BlogPosting",
+        "datePublished": publishedTime || article.publishedTime,
+        "dateModified": modifiedTime || article.modifiedTime || publishedTime || article.publishedTime,
+        "author": {
+          "@type": "Organization",
+          "name": author
+        },
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": fullUrl
+        },
+        ...(article.category && {
+          "articleSection": article.category
+        }),
+        ...(keywords.length > 0 && {
+          "keywords": keywords.join(', ')
+        })
+      };
+    }
+
+    return baseData;
+  };
+
+  // Breadcrumb structured data for articles
+  const getBreadcrumbData = () => {
+    if (type === 'article') {
+      return {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": siteUrl
+          },
+          {
+            "@type": "ListItem",
+            "position": 2,
+            "name": "Blog",
+            "item": `${siteUrl}/blog`
+          },
+          {
+            "@type": "ListItem",
+            "position": 3,
+            "name": title,
+            "item": fullUrl
+          }
+        ]
+      };
+    }
+    return null;
+  };
+
   return (
     <Helmet>
       {/* Basic Meta Tags */}
-      <title>{title} | La Casa de Teresita</title>
+      <title>{title} | {siteName}</title>
       <meta name="description" content={description} />
+      {allKeywords.length > 0 && (
+        <meta name="keywords" content={allKeywords.join(', ')} />
+      )}
+      <meta name="author" content={author} />
       <link rel="canonical" href={fullUrl} />
       
-      {/* Open Graph */}
+      {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />
       <meta property="og:url" content={fullUrl} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
       <meta property="og:image" content={fullImage} />
-      <meta property="og:site_name" content="La Casa de Teresita" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:site_name" content={siteName} />
+      <meta property="og:locale" content="en_US" />
+      <meta property="og:locale:alternate" content="es_BO" />
       
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
@@ -34,47 +134,41 @@ const SEOHelmet = ({
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={fullImage} />
+      <meta name="twitter:image:alt" content={title} />
+      <meta name="twitter:site" content="@lacasadeteresita" />
+      <meta name="twitter:creator" content="@lacasadeteresita" />
       
       {/* Article specific meta tags */}
-      {article && (
+      {type === 'article' && article && (
         <>
-          <meta property="article:published_time" content={article.publishedTime} />
-          <meta property="article:author" content="La Casa de Teresita" />
+          <meta property="article:published_time" content={publishedTime || article.publishedTime} />
+          {(modifiedTime || article.modifiedTime) && (
+            <meta property="article:modified_time" content={modifiedTime || article.modifiedTime} />
+          )}
+          <meta property="article:author" content={author} />
           {article.category && (
             <meta property="article:section" content={article.category} />
           )}
-          {article.tags && article.tags.map((tag, index) => (
+          {keywords.length > 0 && keywords.map((tag, index) => (
             <meta key={index} property="article:tag" content={tag} />
           ))}
-          
-          {/* Schema.org for Articles */}
-          <script type="application/ld+json">
-            {JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": "BlogPosting",
-              "headline": title,
-              "description": description,
-              "image": fullImage,
-              "datePublished": article.publishedTime,
-              "author": {
-                "@type": "Organization",
-                "name": "La Casa de Teresita"
-              },
-              "publisher": {
-                "@type": "Organization",
-                "name": "La Casa de Teresita",
-                "logo": {
-                  "@type": "ImageObject",
-                  "url": `${siteUrl}/house1.jpg`
-                }
-              },
-              "mainEntityOfPage": {
-                "@type": "WebPage",
-                "@id": fullUrl
-              }
-            })}
-          </script>
         </>
+      )}
+      
+      {/* Additional SEO Meta Tags */}
+      <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      <meta name="googlebot" content="index, follow" />
+      
+      {/* Structured Data - Main Content */}
+      <script type="application/ld+json">
+        {JSON.stringify(getStructuredData())}
+      </script>
+      
+      {/* Structured Data - Breadcrumb (for articles) */}
+      {getBreadcrumbData() && (
+        <script type="application/ld+json">
+          {JSON.stringify(getBreadcrumbData())}
+        </script>
       )}
     </Helmet>
   );

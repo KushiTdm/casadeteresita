@@ -289,7 +289,7 @@ export const translations = {
     uniqueExperience: {
       title: "Un viaje en el tiempo...",
       subtitle: "Historia de La Casa de Teresita",
-      intro: "La Casa de Teresita fue el hogar del renombrado cirujano paceño Dr. Juan Gamarra Antezana y María Teresa Fajardo. Hoy abrimos sus puertas compartiendo su importante legado familiar, a viajeros que buscan una experiencia distinta en La Paz.",
+      intro: "La Casa de Teresita fue el hogar del renombrado cirujano paceño Dr. Juan Gamarra Antezana y María Teresa Fajardo. Hoy abrimos sus puertas, compartiendo su importante legado familiar, a viajeros que buscan una experiencia distinta en La Paz.",
       features: [
         {
           title: "Los objetos de la casa",
@@ -305,7 +305,7 @@ export const translations = {
         }
       ],
       photoAlt: "Dr. Juan Gamarra Antezana y María Teresa Fajardo, fundadores de La Casa de Teresita",
-      photoCaption: "Todo esto le da al lugar la fuerte personalidad, que tal vez sin saberlo le imprimieron sus dueños, Don Juan y Teresita, a quienes está dedicado este espacio, como homenaje a sus vidas y recuerdo para las futuras generaciones.",
+      photoCaption: "Todo esto le da al lugar la fuerte personalidad, que tal vez sin saberlo, le imprimieron sus dueños Don Juan y Teresita, a quienes está dedicado este espacio, como homenaje a sus vidas y recuerdo para las futuras generaciones.",
       mission: "Nuestra misión es hacerte parte de nuestra familia, y hacer que tu estadía en La Paz sea una experiencia inolvidable."
     },
     reviews: {

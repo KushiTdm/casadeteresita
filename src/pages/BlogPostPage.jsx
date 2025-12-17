@@ -1,7 +1,7 @@
 // src/pages/BlogPostPage.jsx
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, Clock, Share2, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Share2, ExternalLink } from 'lucide-react';
 import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale';
 import ReactMarkdown from 'react-markdown';
@@ -18,6 +18,7 @@ const BlogPostPage = () => {
   const [post, setPost] = useState(null);
   const [relatedPosts, setRelatedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [shareSuccess, setShareSuccess] = useState(false);
   
   const locale = language === 'es' ? es : enUS;
   
@@ -54,19 +55,50 @@ const BlogPostPage = () => {
       try {
         await navigator.share(shareData);
       } catch (err) {
-        console.log('Share failed:', err);
+        if (err.name !== 'AbortError') {
+          console.log('Share failed:', err);
+          copyToClipboard();
+        }
       }
     } else {
-      // Fallback: Copy to clipboard
-      navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
+      copyToClipboard();
     }
+  };
+  
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setShareSuccess(true);
+    setTimeout(() => setShareSuccess(false), 2000);
+  };
+
+  // Process body to replace image placeholders
+  const processBodyWithImages = (body, articleImages) => {
+    if (!articleImages) return body;
+    
+    let processedBody = body;
+    
+    // Replace {{< image src="image-1" >}} with actual image
+    if (articleImages.image1?.src) {
+      const image1Html = `\n\n![${articleImages.image1.alt || ''}](${articleImages.image1.src})${articleImages.image1.caption ? '\n*' + articleImages.image1.caption + '*' : ''}\n\n`;
+      processedBody = processedBody.replace(/\{\{<\s*image\s+src="image-1"\s*>\}\}/gi, image1Html);
+    }
+    
+    // Replace {{< image src="image-2" >}} with actual image
+    if (articleImages.image2?.src) {
+      const image2Html = `\n\n![${articleImages.image2.alt || ''}](${articleImages.image2.src})${articleImages.image2.caption ? '\n*' + articleImages.image2.caption + '*' : ''}\n\n`;
+      processedBody = processedBody.replace(/\{\{<\s*image\s+src="image-2"\s*>\}\}/gi, image2Html);
+    }
+    
+    return processedBody;
   };
   
   if (loading) {
     return (
       <div className="min-h-screen pt-20 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#A85C32]"></div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#A85C32] mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading article...</p>
+        </div>
       </div>
     );
   }
@@ -95,17 +127,31 @@ const BlogPostPage = () => {
   
   const formattedDate = format(new Date(post.date), 'MMMM d, yyyy', { locale });
   const readingTime = calculateReadingTime(post.body);
+  const keywords = post.keywords || [];
+  const author = post.author || 'La Casa de Teresita';
+  
+  // Get featured image (support both old and new format)
+  const featuredImage = post.featuredImage?.src || post.image;
+  const featuredImageAlt = post.featuredImage?.alt || post.title;
+  
+  // Process body with article images
+  const processedBody = processBodyWithImages(post.body, post.articleImages);
   
   return (
     <div className="min-h-screen pt-20 bg-white">
       <SEOHelmet
         title={post.title}
         description={post.metaDescription || post.excerpt}
-        image={post.image}
+        image={featuredImage}
         url={`/blog/${post.slug}`}
         type="article"
+        keywords={keywords}
+        author={author}
+        publishedTime={post.date}
+        modifiedTime={post.modifiedDate}
         article={{
           publishedTime: post.date,
+          modifiedTime: post.modifiedDate,
           category: post.category
         }}
       />
@@ -113,8 +159,8 @@ const BlogPostPage = () => {
       {/* Hero Image */}
       <div className="relative h-96 md:h-[500px] bg-gray-900">
         <img
-          src={post.image}
-          alt={post.title}
+          src={featuredImage}
+          alt={featuredImageAlt}
           className="w-full h-full object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/30 to-black/60" />
@@ -122,10 +168,17 @@ const BlogPostPage = () => {
         {/* Back Button */}
         <Link
           to="/blog"
-          className="absolute top-4 left-4 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all"
+          className="absolute top-4 left-4 bg-white/90 hover:bg-white p-3 rounded-full shadow-lg transition-all z-10"
         >
           <ArrowLeft className="h-6 w-6 text-[#2D5A4A]" />
         </Link>
+
+        {/* Featured Badge */}
+        {post.featured && (
+          <div className="absolute top-4 right-4 bg-[#A85C32] text-white px-4 py-2 rounded-lg font-semibold shadow-lg">
+            ⭐ Featured
+          </div>
+        )}
       </div>
       
       {/* Article Content */}
@@ -143,7 +196,15 @@ const BlogPostPage = () => {
             {post.title}
           </h1>
           
-          <div className="flex flex-wrap items-center gap-6 text-gray-600">
+          {/* Author & Date */}
+          <div className="flex items-center gap-2 mb-6 text-gray-700">
+            <span className="font-semibold">{author}</span>
+            <span>•</span>
+            <span>{formattedDate}</span>
+          </div>
+          
+          {/* Meta Info */}
+          <div className="flex flex-wrap items-center gap-6 text-gray-600 pb-6 border-b border-gray-200">
             <div className="flex items-center gap-2">
               <Calendar className="h-5 w-5" />
               <span>{formattedDate}</span>
@@ -157,7 +218,7 @@ const BlogPostPage = () => {
               className="flex items-center gap-2 text-[#A85C32] hover:text-[#8B4926] transition-colors"
             >
               <Share2 className="h-5 w-5" />
-              Share
+              <span>{shareSuccess ? 'Link copied!' : 'Share'}</span>
             </button>
           </div>
         </header>
@@ -167,27 +228,165 @@ const BlogPostPage = () => {
           <ReactMarkdown 
             remarkPlugins={[remarkGfm]}
             components={{
-              h2: ({node, ...props}) => <h2 className="text-3xl font-bold text-[#2D5A4A] mt-8 mb-4" style={{ fontFamily: "'Playfair Display', serif" }} {...props} />,
-              h3: ({node, ...props}) => <h3 className="text-2xl font-bold text-[#2D5A4A] mt-6 mb-3" style={{ fontFamily: "'Playfair Display', serif" }} {...props} />,
-              p: ({node, ...props}) => <p className="text-gray-700 leading-relaxed mb-4" {...props} />,
-              blockquote: ({node, ...props}) => <blockquote className="border-l-4 border-[#A85C32] pl-6 italic text-gray-600 my-6" {...props} />,
-              img: ({node, ...props}) => <img className="rounded-lg shadow-lg my-8 w-full" {...props} />,
-              a: ({node, ...props}) => <a className="text-[#A85C32] hover:text-[#8B4926] underline" {...props} />
+              h2: ({node, ...props}) => (
+                <h2 
+                  className="text-3xl font-bold text-[#2D5A4A] mt-12 mb-6 scroll-mt-24" 
+                  style={{ fontFamily: "'Playfair Display', serif" }} 
+                  {...props} 
+                />
+              ),
+              h3: ({node, ...props}) => (
+                <h3 
+                  className="text-2xl font-bold text-[#2D5A4A] mt-8 mb-4 scroll-mt-24" 
+                  style={{ fontFamily: "'Playfair Display', serif" }} 
+                  {...props} 
+                />
+              ),
+              p: ({node, children, ...props}) => {
+                // Check if paragraph contains only an italic caption (from our image processing)
+                const text = children?.toString() || '';
+                if (text.startsWith('*') && text.endsWith('*')) {
+                  return (
+                    <p className="text-center text-sm text-gray-600 italic -mt-8 mb-8" {...props}>
+                      {children}
+                    </p>
+                  );
+                }
+                return (
+                  <p className="text-gray-700 leading-relaxed mb-6 text-lg" {...props} />
+                );
+              },
+              blockquote: ({node, ...props}) => (
+                <blockquote 
+                  className="border-l-4 border-[#A85C32] pl-6 italic text-gray-600 my-8 bg-[#F8F5F2] py-4 rounded-r-lg" 
+                  {...props} 
+                />
+              ),
+              img: ({node, src, alt, ...props}) => (
+                <figure className="my-10">
+                  <img 
+                    className="rounded-xl shadow-xl w-full" 
+                    src={src} 
+                    alt={alt || ''} 
+                    loading="lazy"
+                    {...props} 
+                  />
+                  {alt && (
+                    <figcaption className="text-center text-sm text-gray-600 mt-3 italic">
+                      {alt}
+                    </figcaption>
+                  )}
+                </figure>
+              ),
+              a: ({node, href, children, ...props}) => {
+                const isExternal = href?.startsWith('http');
+                return (
+                  <a 
+                    className="text-[#A85C32] hover:text-[#8B4926] underline font-medium inline-flex items-center gap-1" 
+                    href={href}
+                    target={isExternal ? "_blank" : undefined}
+                    rel={isExternal ? "noopener noreferrer" : undefined}
+                    {...props}
+                  >
+                    {children}
+                    {isExternal && <ExternalLink className="h-4 w-4" />}
+                  </a>
+                );
+              },
+              ul: ({node, ...props}) => (
+                <ul className="list-disc list-inside space-y-2 my-6 text-gray-700" {...props} />
+              ),
+              ol: ({node, ...props}) => (
+                <ol className="list-decimal list-inside space-y-2 my-6 text-gray-700" {...props} />
+              ),
+              li: ({node, ...props}) => (
+                <li className="ml-4" {...props} />
+              ),
+              code: ({node, inline, ...props}) => (
+                inline 
+                  ? <code className="bg-gray-100 text-[#A85C32] px-2 py-1 rounded font-mono text-sm" {...props} />
+                  : <code className="block bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-6 font-mono text-sm" {...props} />
+              ),
+              em: ({node, children, ...props}) => {
+                // Handle captions (text in italic after images)
+                return <em {...props}>{children}</em>;
+              }
             }}
           >
-            {post.body}
+            {processedBody}
           </ReactMarkdown>
         </div>
+
+        {/* External Links Section */}
+        {post.externalLinks && post.externalLinks.length > 0 && (
+          <div className="bg-[#F8F5F2] p-6 rounded-xl my-12">
+            <h3 className="text-xl font-bold text-[#2D5A4A] mb-4 flex items-center gap-2">
+              <ExternalLink className="h-5 w-5" />
+              {language === 'en' ? 'Related Links' : 'Enlaces Relacionados'}
+            </h3>
+            <ul className="space-y-3">
+              {post.externalLinks.map((link, index) => (
+                <li key={index}>
+                  <a 
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-3 p-3 bg-white rounded-lg hover:shadow-md transition-shadow group"
+                  >
+                    <ExternalLink className="h-5 w-5 text-[#A85C32] flex-shrink-0 mt-1 group-hover:scale-110 transition-transform" />
+                    <div>
+                      <div className="font-semibold text-[#2D5A4A] group-hover:text-[#A85C32] transition-colors">
+                        {link.title}
+                      </div>
+                      {link.description && (
+                        <div className="text-sm text-gray-600 mt-1">
+                          {link.description}
+                        </div>
+                      )}
+                      <div className="text-xs text-gray-400 mt-1 break-all">
+                        {link.url}
+                      </div>
+                    </div>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Keywords/Tags */}
+        {keywords.length > 0 && (
+          <div className="mb-12 pb-12 border-b border-gray-200">
+            <div className="flex flex-wrap gap-2">
+              {keywords.map((keyword, index) => (
+                <span 
+                  key={index}
+                  className="px-3 py-1 bg-[#F8F5F2] text-[#2D5A4A] rounded-full text-sm font-medium"
+                >
+                  #{keyword}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
         
         {/* CTA Section */}
         <div className="bg-gradient-to-r from-[#2D5A4A] to-[#A85C32] p-8 rounded-xl text-white text-center mb-12">
-          <h3 className="text-2xl font-bold mb-4">Ready to Experience La Casa de Teresita?</h3>
-          <p className="mb-6">Book your stay in our historic boutique hotel and live the stories you just read about.</p>
+          <h3 className="text-2xl font-bold mb-4">
+            {language === 'en' 
+              ? 'Ready to Experience La Casa de Teresita?' 
+              : '¿Listo para Vivir La Casa de Teresita?'}
+          </h3>
+          <p className="mb-6">
+            {language === 'en'
+              ? 'Book your stay in our historic boutique hotel and live the stories you just read about.'
+              : 'Reserva tu estadía en nuestro hotel boutique histórico y vive las historias que acabas de leer.'}
+          </p>
           <Link
             to="/"
             className="inline-block bg-white text-[#2D5A4A] px-8 py-3 rounded-lg font-bold hover:bg-gray-100 transition-colors"
           >
-            View Rooms & Availability
+            {language === 'en' ? 'View Rooms & Availability' : 'Ver Habitaciones y Disponibilidad'}
           </Link>
         </div>
       </article>

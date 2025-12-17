@@ -10,6 +10,8 @@ import RoomDetailPage from './pages/RoomDetailPage';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import MuseumPage from './pages/MuseumPage';
+import BlogPostDebugger from './pages/BlogPostDebugger';
+
 
 function App() {
   return (
@@ -26,6 +28,7 @@ function App() {
                   <Route path="/blog" element={<BlogPage />} />
                   <Route path="/blog/:slug" element={<BlogPostPage />} />
                   <Route path="/museum" element={<MuseumPage />} />
+                  <Route path="/debug-blog" element={<BlogPostDebugger />} />
                 </Routes>
               </main>
               <Footer />
