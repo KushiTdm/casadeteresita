@@ -20,37 +20,12 @@ async function fetchMarkdownFile(path) {
 }
 
 /**
- * Get list of markdown files from a manifest
- * You need to generate this manifest during build or use a directory listing
- * For now, we'll use a fallback approach with known file patterns
- */
-async function getMarkdownFiles(basePath, language) {
-  // This is a workaround - ideally you'd have a manifest.json
-  // For now, we'll try to fetch files based on common patterns
-  const files = [];
-  
-  // Try to fetch a manifest file first
-  try {
-    const manifestResponse = await fetch(`${basePath}/manifest.json`);
-    if (manifestResponse.ok) {
-      const manifest = await manifestResponse.json();
-      return manifest.files || [];
-    }
-  } catch (error) {
-    console.log('No manifest found, using fallback approach');
-  }
-  
-  return files;
-}
-
-/**
  * Load all blog posts for a specific language
  * @param {string} language - 'en' or 'es'
  * @returns {Promise<Array>} Array of blog posts with metadata and content
  */
 export async function getBlogPosts(language = 'en') {
   try {
-    // Fetch the blog index/manifest
     const manifestPath = `/content/blog/${language}/manifest.json`;
     const manifestResponse = await fetch(manifestPath);
     
@@ -82,8 +57,12 @@ export async function getBlogPosts(language = 'en') {
       }
     }
     
-    // Sort by date, newest first
-    return posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+    // CORRECTION: Tri uniforme par date décroissante pour toutes les langues
+    return posts.sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateB - dateA; // Plus récent en premier
+    });
   } catch (error) {
     console.error('Error loading blog posts:', error);
     return [];
@@ -105,11 +84,27 @@ export async function getBlogPost(slug, language = 'en') {
     
     const { data, content: body } = matter(content);
     
+    // Parse articleImages if they exist
+    let articleImages = null;
+    if (data.articleImages && Array.isArray(data.articleImages)) {
+      articleImages = {};
+      data.articleImages.forEach((img, index) => {
+        if (img && img.src) {
+          articleImages[`image${index + 1}`] = {
+            src: img.src,
+            alt: img.alt || '',
+            caption: img.caption || ''
+          };
+        }
+      });
+    }
+    
     return {
       ...data,
       body,
       slug,
-      language
+      language,
+      articleImages
     };
   } catch (error) {
     console.error('Error loading blog post:', error);
@@ -124,7 +119,6 @@ export async function getBlogPost(slug, language = 'en') {
  */
 export async function getMuseumArtworks(language = 'en') {
   try {
-    // Fetch the museum index/manifest
     const manifestPath = `/content/museum/${language}/manifest.json`;
     const manifestResponse = await fetch(manifestPath);
     

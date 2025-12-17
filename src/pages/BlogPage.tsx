@@ -1,5 +1,6 @@
 // src/pages/BlogPage.jsx
 import { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import { BookOpen, Filter, Star } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { getBlogPostsByCategory } from '../utils/contentLoader';
@@ -7,12 +8,18 @@ import BlogCard from '../components/BlogCard';
 import SEOHelmet from '../components/SEOHelmet';
 
 const BlogPage = () => {
+  const { slug } = useParams();
   const { language, t } = useLanguage();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
   
   const categories = ['All', 'Travel', 'History', 'Culture', 'Tips'];
+
+  useEffect(() => {
+    loadPosts();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [slug, language]);
   
   useEffect(() => {
     loadPosts();
