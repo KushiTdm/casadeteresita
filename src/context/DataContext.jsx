@@ -1,11 +1,10 @@
-// src/context/DataContext.jsx - VERSION AVEC DEBUG
+// src/context/DataContext.jsx - SANS ACCESSOIRES
 import { createContext, useContext, useState, useEffect } from 'react';
 import { roomsDetailed } from '../data/roomsData';
 import { 
   getRooms,
   getEnrichedRooms,
-  getConfig, 
-  getAccessories,
+  getConfig,
   clearCache 
 } from '../services/dataManager';
 
@@ -14,13 +13,12 @@ const DataContext = createContext(undefined);
 export function DataProvider({ children }) {
   // Immediate data (hardcoded fallback) - NO loading state
   const [rooms, setRooms] = useState(roomsDetailed);
-  const [accessories, setAccessories] = useState([]);
   const [config, setConfig] = useState({
     whatsappNumber: '59170675985',
     currency: 'USD',
     checkInTime: '14:00',
     checkOutTime: '12:00',
-    bookingRates: 9.6 // Default fallback
+    bookingRates: 9.6
   });
   
   // Loading states - only for updates
@@ -34,19 +32,16 @@ export function DataProvider({ children }) {
     }
     
     try {
-      // Fetch all data in parallel
-      const [roomsData, configData, accessoriesData] = await Promise.all([
+      // Fetch data in parallel (sans accessories)
+      const [roomsData, configData] = await Promise.all([
         getEnrichedRooms(checkIn, checkOut),
-        getConfig(),
-        getAccessories()
+        getConfig()
       ]);
 
-      // DEBUG: Log what we received
       console.log('🔍 DEBUG - Config loaded:', configData);
       console.log('🔍 DEBUG - bookingRates value:', configData?.bookingRates);
-      console.log('🔍 DEBUG - bookingRates type:', typeof configData?.bookingRates);
 
-      // Only update if we got valid data from Sheets
+      // Update rooms if we got valid data
       if (roomsData && roomsData.length > 0) {
         setRooms(roomsData);
         setDataSource('sheets');
@@ -62,11 +57,6 @@ export function DataProvider({ children }) {
         setConfig(configData);
       } else {
         console.log('⚠️ Config data incomplete, keeping default');
-      }
-
-      // Update accessories if available
-      if (accessoriesData) {
-        setAccessories(accessoriesData);
       }
 
       setLastUpdateTime(new Date());
@@ -106,7 +96,6 @@ export function DataProvider({ children }) {
     <DataContext.Provider
       value={{
         rooms,
-        accessories,
         config,
         isLoading: false,
         isInitialLoad,

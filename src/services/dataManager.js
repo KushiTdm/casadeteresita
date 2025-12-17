@@ -1,8 +1,7 @@
-// src/services/dataManager.js - VERSION COMPLÈTE
+// src/services/dataManager.js - VERSION SANS ACCESSOIRES
 import { roomsDetailed } from '../data/roomsData.js';
 import { 
   fetchRoomsFromSheets, 
-  fetchAccessories,
   fetchSpecialPrices, 
   fetchConfig, 
   fetchAvailability
@@ -14,12 +13,11 @@ const DEFAULT_CONFIG = {
   currency: 'USD',
   checkInTime: '14:00',
   checkOutTime: '12:00',
-  bookingRates: 9.6 // Fallback rating as number
+  bookingRates: 9.6
 };
 
 // Cache
 let roomsCache = null;
-let accessoriesCache = [];
 let specialPricesCache = [];
 let configCache = DEFAULT_CONFIG;
 let availabilityCache = [];
@@ -28,12 +26,10 @@ const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
 /**
  * Get all rooms with fallback to hardcoded data
- * Merges Google Sheets data (prices, names, capacity) with hardcoded details
  */
 export async function getRooms() {
   const now = Date.now();
   
-  // Use cache if recent
   if (roomsCache && (now - lastFetchTime) < CACHE_DURATION) {
     console.log('📦 Using cached rooms');
     return roomsCache;
@@ -45,9 +41,7 @@ export async function getRooms() {
     if (sheetsRooms && sheetsRooms.length > 0) {
       console.log('🔄 Merging Sheets data with hardcoded data...');
       
-      // Merge Sheets data with hardcoded data
       roomsCache = sheetsRooms.map((sheetRoom) => {
-        // Find corresponding hardcoded room by ID
         const hardcodedRoom = roomsDetailed.find(r => r.id === sheetRoom.id);
         
         if (!hardcodedRoom) {
@@ -55,23 +49,21 @@ export async function getRooms() {
           return null;
         }
 
-        // Merge: Override with Sheets data where available
         const mergedRoom = {
           ...hardcodedRoom,
-          // Override with Google Sheets data
           name: sheetRoom.nom ? {
             en: sheetRoom.nom,
             es: sheetRoom.nom
           } : hardcodedRoom.name,
-          price: sheetRoom.prixBase, // Base price from Sheets
-          sheetPrice: sheetRoom.prixBase, // Store original sheet price
-          hardcodedPrice: hardcodedRoom.price, // Store original hardcoded price
-          capaciteMax: sheetRoom.capaciteMax, // Total number of this room type
-          available: sheetRoom.capaciteMax, // Will be calculated with availability
+          price: sheetRoom.prixBase,
+          sheetPrice: sheetRoom.prixBase,
+          hardcodedPrice: hardcodedRoom.price,
+          capaciteMax: sheetRoom.capaciteMax,
+          available: sheetRoom.capaciteMax,
         };
         
         return mergedRoom;
-      }).filter(Boolean); // Remove nulls
+      }).filter(Boolean);
       
       lastFetchTime = now;
       console.log('✅ Merged rooms data:', roomsCache.length, 'rooms');
@@ -81,7 +73,6 @@ export async function getRooms() {
     console.warn('⚠️ Sheets unavailable, using fallback data', error);
   }
 
-  // Fallback to hardcoded data
   roomsCache = roomsDetailed.map(room => ({
     ...room,
     sheetPrice: null,
@@ -90,23 +81,6 @@ export async function getRooms() {
   lastFetchTime = now;
   console.log('📦 Using hardcoded fallback data');
   return roomsCache;
-}
-
-/**
- * Get accessories
- */
-export async function getAccessories() {
-  try {
-    const accessories = await fetchAccessories();
-    if (accessories) {
-      accessoriesCache = accessories;
-      return accessories;
-    }
-  } catch (error) {
-    console.warn('Using cached or empty accessories');
-  }
-  
-  return accessoriesCache;
 }
 
 /**
@@ -138,14 +112,12 @@ export async function getConfig() {
     console.log('🔧 Config received from Sheets:', config);
     
     if (config && config.whatsappNumber) {
-      // Parse bookingRates properly
       let bookingRates = DEFAULT_CONFIG.bookingRates;
       
       if (config.bookingRates !== undefined && config.bookingRates !== null) {
         if (typeof config.bookingRates === 'number') {
           bookingRates = config.bookingRates;
         } else if (typeof config.bookingRates === 'string') {
-          // Handle "9.6" or "9.6/10" format
           const str = config.bookingRates;
           if (str.includes('/')) {
             bookingRates = parseFloat(str.split('/')[0]) || DEFAULT_CONFIG.bookingRates;
@@ -162,15 +134,12 @@ export async function getConfig() {
       };
       
       console.log('✅ Config loaded with booking_rates:', bookingRates);
-      console.log('📦 Final configCache:', configCache);
-      
       return configCache;
     }
   } catch (error) {
     console.warn('⚠️ Using default config due to error:', error);
   }
   
-  console.log('📦 Using DEFAULT_CONFIG:', DEFAULT_CONFIG);
   return configCache;
 }
 
@@ -193,31 +162,21 @@ export async function getAvailability() {
 
 /**
  * Get the base price for a room with proper fallback hierarchy
- * Priority: Google Sheets price -> Hardcoded price
- * @param {Object} room - Room object
- * @returns {number} Base price
  */
 function getBasePrice(room) {
-  // Priority 1: Price from Google Sheets
   if (room.sheetPrice && room.sheetPrice > 0) {
     return room.sheetPrice;
   }
   
-  // Priority 2: Hardcoded price
   if (room.hardcodedPrice && room.hardcodedPrice > 0) {
     return room.hardcodedPrice;
   }
   
-  // Priority 3: Current price property (fallback)
   return room.price || 0;
 }
 
 /**
  * Get the current price for a specific date
- * Takes into account special pricing periods
- * @param {string} roomId - Room identifier
- * @param {Date|string} date - Date to check
- * @returns {Promise<number>} Price for that date
  */
 export async function getCurrentPrice(roomId, date) {
   const rooms = await getRooms();
@@ -231,14 +190,12 @@ export async function getCurrentPrice(roomId, date) {
   const basePrice = getBasePrice(room);
   const specialPrices = await getSpecialPrices();
   
-  // Convert to date
   const checkDate = new Date(date);
   checkDate.setHours(0, 0, 0, 0);
   
   console.log(`🔍 Checking price for ${roomId} on ${checkDate.toISOString().split('T')[0]}`);
   console.log(`   Base price: $${basePrice}`);
   
-  // Check if this date has a special price
   for (const sp of specialPrices) {
     if (sp.chambreId === roomId) {
       const spStartDate = new Date(sp.dateDebut);
@@ -247,7 +204,7 @@ export async function getCurrentPrice(roomId, date) {
       spEndDate.setHours(0, 0, 0, 0);
       
       if (checkDate >= spStartDate && checkDate <= spEndDate) {
-        console.log(`   ✅ Special price found: $${sp.prix} (${sp.dateDebut} to ${sp.dateFin})`);
+        console.log(`   ✅ Special price found: $${sp.prix}`);
         return sp.prix;
       }
     }
@@ -259,11 +216,6 @@ export async function getCurrentPrice(roomId, date) {
 
 /**
  * Calculate total price for a date range
- * Takes into account special pricing periods
- * @param {string} roomId - Room identifier
- * @param {Date|string} checkIn - Check-in date
- * @param {Date|string} checkOut - Check-out date
- * @returns {Promise<{totalPrice: number, nightlyPrices: Array, basePrice: number, nights: number}>}
  */
 export async function calculateTotalPrice(roomId, checkIn, checkOut) {
   const rooms = await getRooms();
@@ -276,13 +228,11 @@ export async function calculateTotalPrice(roomId, checkIn, checkOut) {
   const basePrice = getBasePrice(room);
   const specialPrices = await getSpecialPrices();
   
-  // Convert to dates
   const startDate = new Date(checkIn);
   const endDate = new Date(checkOut);
   startDate.setHours(0, 0, 0, 0);
   endDate.setHours(0, 0, 0, 0);
   
-  // Calculate number of nights
   const nights = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24));
   
   if (nights <= 0) {
@@ -291,9 +241,7 @@ export async function calculateTotalPrice(roomId, checkIn, checkOut) {
 
   console.log(`\n💰 Calculating price for ${roomId} (${nights} nights)`);
   console.log(`   Base price: $${basePrice}`);
-  console.log(`   Special prices available: ${specialPrices.filter(sp => sp.chambreId === roomId).length}`);
 
-  // Calculate price for each night
   const nightlyPrices = [];
   let totalPrice = 0;
   
@@ -305,7 +253,6 @@ export async function calculateTotalPrice(roomId, checkIn, checkOut) {
     let nightPrice = basePrice;
     let priceType = 'base';
     
-    // Check if this date has a special price
     for (const sp of specialPrices) {
       if (sp.chambreId === roomId) {
         const spStartDate = new Date(sp.dateDebut);
@@ -316,14 +263,14 @@ export async function calculateTotalPrice(roomId, checkIn, checkOut) {
         if (currentDate >= spStartDate && currentDate <= spEndDate) {
           nightPrice = sp.prix;
           priceType = 'special';
-          console.log(`   ✅ ${currentDate.toISOString().split('T')[0]}: $${nightPrice} (special price)`);
+          console.log(`   ✅ ${currentDate.toISOString().split('T')[0]}: $${nightPrice} (special)`);
           break;
         }
       }
     }
     
     if (priceType === 'base') {
-      console.log(`   ℹ️ ${currentDate.toISOString().split('T')[0]}: $${nightPrice} (base price)`);
+      console.log(`   ℹ️ ${currentDate.toISOString().split('T')[0]}: $${nightPrice} (base)`);
     }
     
     nightlyPrices.push({
@@ -350,10 +297,6 @@ export async function calculateTotalPrice(roomId, checkIn, checkOut) {
 
 /**
  * Calculate available rooms for a specific date range
- * @param {string} roomId - Room identifier
- * @param {Date|string} checkIn - Check-in date
- * @param {Date|string} checkOut - Check-out date (optional, defaults to checkIn)
- * @returns {Promise<{available: number, capaciteMax: number, isAvailable: boolean}>}
  */
 export async function getAvailableRooms(roomId, checkIn, checkOut = null) {
   const rooms = await getRooms();
@@ -365,13 +308,11 @@ export async function getAvailableRooms(roomId, checkIn, checkOut = null) {
 
   const availability = await getAvailability();
   
-  // Convert dates
   const checkInDate = new Date(checkIn);
   const checkOutDate = checkOut ? new Date(checkOut) : new Date(checkIn);
   checkInDate.setHours(0, 0, 0, 0);
   checkOutDate.setHours(0, 0, 0, 0);
   
-  // Count unavailable rooms during the period
   let unavailableCount = 0;
   
   for (const av of availability) {
@@ -381,7 +322,6 @@ export async function getAvailableRooms(roomId, checkIn, checkOut = null) {
       avStartDate.setHours(0, 0, 0, 0);
       avEndDate.setHours(0, 0, 0, 0);
       
-      // Check if periods overlap
       if (checkInDate <= avEndDate && checkOutDate >= avStartDate) {
         unavailableCount++;
       }
@@ -402,10 +342,6 @@ export async function getAvailableRooms(roomId, checkIn, checkOut = null) {
 
 /**
  * Get enriched room data with current availability and pricing
- * @param {string} roomId - Room identifier
- * @param {Date|string} checkIn - Check-in date (optional)
- * @param {Date|string} checkOut - Check-out date (optional)
- * @returns {Promise<Object>} Room with current price and availability
  */
 export async function getEnrichedRoom(roomId, checkIn = new Date(), checkOut = null) {
   const rooms = await getRooms();
@@ -415,10 +351,7 @@ export async function getEnrichedRoom(roomId, checkIn = new Date(), checkOut = n
     return null;
   }
 
-  // Get current price for check-in date
   const currentPrice = await getCurrentPrice(roomId, checkIn);
-  
-  // Get availability
   const { available, capaciteMax, isAvailable } = await getAvailableRooms(
     roomId, 
     checkIn, 
@@ -437,9 +370,6 @@ export async function getEnrichedRoom(roomId, checkIn = new Date(), checkOut = n
 
 /**
  * Get all enriched rooms with current availability and pricing
- * @param {Date|string} checkIn - Check-in date (optional)
- * @param {Date|string} checkOut - Check-out date (optional)
- * @returns {Promise<Array>} All rooms with current data
  */
 export async function getEnrichedRooms(checkIn = new Date(), checkOut = null) {
   const rooms = await getRooms();
@@ -456,7 +386,6 @@ export async function getEnrichedRooms(checkIn = new Date(), checkOut = null) {
  */
 export function clearCache() {
   roomsCache = null;
-  accessoriesCache = [];
   specialPricesCache = [];
   configCache = DEFAULT_CONFIG;
   availabilityCache = [];
@@ -466,7 +395,6 @@ export function clearCache() {
 
 /**
  * Get data source info
- * @returns {'sheets' | 'fallback' | 'unknown'}
  */
 export function getDataSource() {
   if (!roomsCache) return 'unknown';

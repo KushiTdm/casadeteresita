@@ -1,4 +1,4 @@
-// src/services/googleSheets.js
+// src/services/googleSheets.js - Sans Accessoires
 
 /**
  * Fetch rooms via Netlify Function
@@ -15,22 +15,6 @@ export async function fetchRoomsFromSheets() {
     return rooms;
   } catch (error) {
     console.error('Error fetching rooms from server:', error);
-    return null;
-  }
-}
-
-/**
- * Fetch accessories via Netlify Function
- */
-export async function fetchAccessories() {
-  try {
-    const response = await fetch('/.netlify/functions/fetchAccessories');
-    if (!response.ok) return null;
-    const accessories = await response.json();
-    console.log('✅ Accessories loaded:', accessories.length);
-    return accessories;
-  } catch (error) {
-    console.error('Error fetching accessories:', error);
     return null;
   }
 }
