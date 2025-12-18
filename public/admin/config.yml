@@ -2,8 +2,9 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: "public/images/blog"
-public_folder: "/images/blog"
+# Dossiers racines pour toutes les collections
+media_folder: "public/images"
+public_folder: "/images"
 
 locale: "en"
 i18n:
@@ -29,7 +30,9 @@ collections:
         i18n: false
         hint: "Main image shown in blog listing (1200x630px recommended)"
         fields:
-          - {label: "Image", name: "src", widget: "image"}
+          - {label: "Image", name: "src", widget: "image", 
+             media_folder: "public/images/blog",  # Surcharge pour blog
+             public_folder: "/images/blog"}
           - {label: "Alt Text", name: "alt", widget: "string", hint: "Describe the image for accessibility and SEO (important!)"}
       - {label: "Excerpt", name: "excerpt", widget: "text", i18n: true, hint: "Short summary (150-160 characters) shown in blog listing and search results"}
       - {label: "Body", name: "body", widget: "markdown", i18n: true, hint: "Main content. Use ## for headings."}
@@ -60,7 +63,10 @@ collections:
       - {label: "Artwork Title", name: "title", widget: "string", i18n: true}
       - {label: "Artist", name: "artist", widget: "string", i18n: duplicate, required: false}
       - {label: "Year", name: "year", widget: "string", i18n: duplicate, required: false}
-      - {label: "Image", name: "image", widget: "image", i18n: duplicate}
+      - {label: "Image", name: "image", widget: "image", 
+         media_folder: "public/images/museum",  # Surcharge pour musée
+         public_folder: "/images/museum",
+         i18n: duplicate}
       - {label: "Description", name: "body", widget: "markdown", i18n: true}
       - {label: "QR Code URL", name: "qrCode", widget: "string", i18n: duplicate, required: false}
       - {label: "Category", name: "category", widget: "select", options: ["Painting", "Sculpture", "Piano", "Furniture", "Document"], i18n: duplicate}
