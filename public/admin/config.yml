@@ -60,15 +60,32 @@ collections:
     slug: "{{slug}}"
     i18n: true
     fields:
-      - {label: "Artwork Title", name: "title", widget: "string", i18n: true}
+      - {label: "Artwork Title", name: "title", widget: "string", i18n: true, hint: "Main title (optimized for SEO, 50-60 characters)"}
       - {label: "Artist", name: "artist", widget: "string", i18n: duplicate, required: false}
       - {label: "Year", name: "year", widget: "string", i18n: duplicate, required: false}
       - {label: "Image", name: "image", widget: "image", 
-         media_folder: "public/images/museum",  # Surcharge pour musée
+         media_folder: "public/images/museum",
          public_folder: "/images/museum",
-         i18n: duplicate}
+         i18n: duplicate,
+         hint: "Main image for the artwork"}
+      - label: "Featured Image"
+        name: "featuredImage"
+        widget: "object"
+        i18n: false
+        required: false
+        hint: "SEO-optimized image (same as 'Image' but with alt text)"
+        fields:
+          - {label: "Image", name: "src", widget: "image", 
+             media_folder: "public/images/museum",
+             public_folder: "/images/museum"}
+          - {label: "Alt Text", name: "alt", widget: "string", hint: "Describe the artwork for accessibility and SEO"}
+      - {label: "Excerpt", name: "excerpt", widget: "text", i18n: true, required: false, hint: "Short summary (150-160 characters) for previews and search results"}
       - {label: "Description", name: "body", widget: "markdown", i18n: true}
       - {label: "QR Code URL", name: "qrCode", widget: "string", i18n: duplicate, required: false}
       - {label: "Category", name: "category", widget: "select", options: ["Painting", "Sculpture", "Piano", "Furniture", "Document"], i18n: duplicate}
       - {label: "Location in Museum", name: "location", widget: "string", i18n: true, required: false}
       - {label: "Display Order", name: "order", widget: "number", default: 0, i18n: duplicate}
+      - {label: "Meta Description", name: "metaDescription", widget: "text", i18n: true, required: false, hint: "SEO description (150-160 characters). If empty, excerpt will be used"}
+      - {label: "Meta Keywords", name: "keywords", widget: "list", i18n: true, required: false, hint: "SEO keywords (5-10 recommended)"}
+      - {label: "Published", name: "published", widget: "boolean", default: true, i18n: duplicate}
+      - {label: "Featured Artwork", name: "featured", widget: "boolean", default: false, i18n: duplicate, hint: "Mark as featured to highlight on museum page"}

@@ -1,12 +1,31 @@
 ---
-title: "The Industrial Agricultural Society"
+title: "The Industrial Agricultural Society - José María Gamarra Legacy"
 artist: "José María Gamarra Gutierrez"
 year: "1900-1953"
 image: /images/museum/qr3-sociedad-agricola.jpg
+featuredImage:
+  src: /images/museum/qr3-sociedad-agricola.jpg
+  alt: "Historical document of the Industrial Agricultural Society José María Gamarra S.A., the most important agricultural company in Bolivia (1900-1953)"
 category: Document
 location: Main Hall
 order: 1
 qrCode: https://lacasadeteresita.netlify.app/museum/sociedad-agricola
+
+# SEO Fields
+metaDescription: "Discover the fascinating history of José María Gamarra's Agricultural Society, the most influential coca and banana producer in Bolivia's Yungas region from 1900-1953."
+excerpt: "The remarkable story of José María Gamarra Gutierrez, known as 'El Rey de la Coca' (The Coca King), and his agricultural empire that transformed Bolivia's Yungas region in the early 20th century."
+keywords:
+  - José María Gamarra
+  - Coca King Bolivia
+  - Industrial Agricultural Society Bolivia
+  - Yungas history
+  - Bolivia agricultural history
+  - Tiwanaku coca
+  - La Paz historical museum
+  - Bolivian economic history 1900s
+  - agrarian reform Bolivia
+published: true
+featured: true
 ---
 
 # The Coca King and the Agricultural Revolution
