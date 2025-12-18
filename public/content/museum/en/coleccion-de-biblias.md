@@ -2,9 +2,9 @@
 title: "Bible Collection - Teresita's Religious Library"
 artist: "Teresita"
 year: "19th-20th Centuries"
-image: /images/museum/history7.jpg
+image: /images/museum/religious-library.jpg
 featuredImage:
-  src: /images/museum/history7.jpg
+  src: /images/museum/religious-library.jpg
   alt: "Teresita's Bible collection in different versions and languages, personal religious library available for guests during their stay at La Casa de Teresita"
 category: Document
 location: Library / Rooms
