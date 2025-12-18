@@ -1,4 +1,4 @@
-// src/components/SEOHelmet.jsx
+// src/components/SEOHelmet.jsx - VERSION SEO OPTIMISÉE AVEC HREFLANG
 import { Helmet } from 'react-helmet-async';
 
 const SEOHelmet = ({ 
@@ -11,7 +11,10 @@ const SEOHelmet = ({
   keywords = [],
   author = 'La Casa de Teresita',
   publishedTime,
-  modifiedTime
+  modifiedTime,
+  // 🆕 Nouveaux paramètres pour le SEO multilingue
+  currentLanguage = 'en',
+  alternateLanguages = null // { es: '/es/path', en: '/en/path' }
 }) => {
   const siteUrl = 'https://lacasadeteresita.netlify.app';
   const siteName = 'La Casa de Teresita';
@@ -29,6 +32,20 @@ const SEOHelmet = ({
   
   const allKeywords = keywords.length > 0 ? keywords : defaultKeywords;
   
+  // 🆕 GÉNÉRATION DES BALISES HREFLANG
+  const getHreflangTags = () => {
+    if (!alternateLanguages) return null;
+    
+    return Object.entries(alternateLanguages).map(([lang, path]) => (
+      <link 
+        key={lang}
+        rel="alternate" 
+        hrefLang={lang === 'en' ? 'en' : 'es'} 
+        href={`${siteUrl}${path}`} 
+      />
+    ));
+  };
+  
   // Schema.org structured data
   const getStructuredData = () => {
     const baseData = {
@@ -38,6 +55,8 @@ const SEOHelmet = ({
       "description": description,
       "image": fullImage,
       "url": fullUrl,
+      // 🆕 Ajout de la langue dans les données structurées
+      "inLanguage": currentLanguage === 'en' ? 'en-US' : 'es-BO',
       "publisher": {
         "@type": "Organization",
         "name": siteName,
@@ -116,6 +135,18 @@ const SEOHelmet = ({
       <meta name="author" content={author} />
       <link rel="canonical" href={fullUrl} />
       
+      {/* 🆕 BALISES HREFLANG POUR LE SEO MULTILINGUE */}
+      {getHreflangTags()}
+      
+      {/* 🆕 Balise x-default pour la version par défaut */}
+      {alternateLanguages && (
+        <link 
+          rel="alternate" 
+          hrefLang="x-default" 
+          href={`${siteUrl}${alternateLanguages.en || alternateLanguages.es}`} 
+        />
+      )}
+      
       {/* Open Graph / Facebook */}
       <meta property="og:type" content={type} />
       <meta property="og:url" content={fullUrl} />
@@ -125,8 +156,8 @@ const SEOHelmet = ({
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:site_name" content={siteName} />
-      <meta property="og:locale" content="en_US" />
-      <meta property="og:locale:alternate" content="es_BO" />
+      <meta property="og:locale" content={currentLanguage === 'en' ? 'en_US' : 'es_BO'} />
+      <meta property="og:locale:alternate" content={currentLanguage === 'en' ? 'es_BO' : 'en_US'} />
       
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />

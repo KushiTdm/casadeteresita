@@ -1,4 +1,4 @@
-// src/utils/contentLoader.js
+// src/utils/contentLoader.js - VERSION SEO OPTIMISÉE
 import matter from 'gray-matter';
 
 /**
@@ -51,13 +51,15 @@ export async function getBlogPosts(language = 'en') {
             ...data, 
             body, 
             slug,
-            language 
+            language,
+            // 🆕 Ajout du filename pour le matching multilingue
+            filename 
           });
         }
       }
     }
     
-    // CORRECTION: Tri uniforme par date décroissante pour toutes les langues
+    // 🔧 FIX: TRI UNIFORME PAR DATE DÉCROISSANTE (plus récent en premier)
     return posts.sort((a, b) => {
       const dateA = new Date(a.date);
       const dateB = new Date(b.date);
@@ -104,12 +106,25 @@ export async function getBlogPost(slug, language = 'en') {
       body,
       slug,
       language,
-      articleImages
+      articleImages,
+      // 🆕 Ajout du filename pour le matching multilingue
+      filename: `${slug}.md`
     };
   } catch (error) {
     console.error('Error loading blog post:', error);
     return null;
   }
+}
+
+/**
+ * 🆕 Get alternate language version of a blog post
+ * @param {string} slug - Post slug
+ * @param {string} currentLanguage - Current language
+ * @returns {Promise<Object|null>} Alternate language post or null
+ */
+export async function getAlternateBlogPost(slug, currentLanguage) {
+  const alternateLanguage = currentLanguage === 'en' ? 'es' : 'en';
+  return await getBlogPost(slug, alternateLanguage);
 }
 
 /**
@@ -142,7 +157,9 @@ export async function getMuseumArtworks(language = 'en') {
           ...data, 
           body, 
           slug,
-          language 
+          language,
+          // 🆕 Ajout du filename pour le matching multilingue
+          filename 
         });
       }
     }
@@ -174,12 +191,25 @@ export async function getMuseumArtwork(slug, language = 'en') {
       ...data,
       body,
       slug,
-      language
+      language,
+      // 🆕 Ajout du filename pour le matching multilingue
+      filename: `${slug}.md`
     };
   } catch (error) {
     console.error('Error loading artwork:', error);
     return null;
   }
+}
+
+/**
+ * 🆕 Get alternate language version of a museum artwork
+ * @param {string} slug - Artwork slug
+ * @param {string} currentLanguage - Current language
+ * @returns {Promise<Object|null>} Alternate language artwork or null
+ */
+export async function getAlternateMuseumArtwork(slug, currentLanguage) {
+  const alternateLanguage = currentLanguage === 'en' ? 'es' : 'en';
+  return await getMuseumArtwork(slug, alternateLanguage);
 }
 
 /**

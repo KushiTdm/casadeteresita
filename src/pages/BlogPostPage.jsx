@@ -1,13 +1,18 @@
-// src/pages/BlogPostPage.jsx
+// src/pages/BlogPostPage.jsx - VERSION SEO OPTIMISÉE
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Calendar, Clock, Share2, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Calendar, Clock, Share2, ExternalLink, Globe } from 'lucide-react';
 import { format } from 'date-fns';
 import { enUS, es } from 'date-fns/locale';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { useLanguage } from '../context/LanguageContext';
-import { getBlogPost, getRelatedPosts, calculateReadingTime } from '../utils/contentLoader';
+import { 
+  getBlogPost, 
+  getRelatedPosts, 
+  calculateReadingTime,
+  getAlternateBlogPost // 🆕 Import de la nouvelle fonction
+} from '../utils/contentLoader';
 import SEOHelmet from '../components/SEOHelmet';
 import BlogCard from '../components/BlogCard';
 import WhatsAppButton from '../components/WhatsAppButton';
@@ -16,6 +21,7 @@ const BlogPostPage = () => {
   const { slug } = useParams();
   const { language, t } = useLanguage();
   const [post, setPost] = useState(null);
+  const [alternatePost, setAlternatePost] = useState(null); // 🆕 Version alternative
   const [relatedPosts, setRelatedPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [shareSuccess, setShareSuccess] = useState(false);
@@ -30,10 +36,16 @@ const BlogPostPage = () => {
   const loadPost = async () => {
     setLoading(true);
     try {
+      // Charger l'article dans la langue actuelle
       const loadedPost = await getBlogPost(slug, language);
       setPost(loadedPost);
       
       if (loadedPost) {
+        // 🆕 Charger la version dans l'autre langue
+        const alternate = await getAlternateBlogPost(slug, language);
+        setAlternatePost(alternate);
+        
+        // Charger les articles connexes
         const related = await getRelatedPosts(loadedPost, language);
         setRelatedPosts(related);
       }
@@ -137,6 +149,12 @@ const BlogPostPage = () => {
   // Process body with article images
   const processedBody = processBodyWithImages(post.body, post.articleImages);
   
+  // 🆕 Préparer les URLs alternatives pour hreflang
+  const alternateLanguages = {
+    en: `/blog/${slug}`,
+    es: `/blog/${slug}`
+  };
+  
   return (
     <div className="min-h-screen pt-20 bg-white">
       <SEOHelmet
@@ -149,6 +167,8 @@ const BlogPostPage = () => {
         author={author}
         publishedTime={post.date}
         modifiedTime={post.modifiedDate}
+        currentLanguage={language}
+        alternateLanguages={alternateLanguages}
         article={{
           publishedTime: post.date,
           modifiedTime: post.modifiedDate,
@@ -173,9 +193,17 @@ const BlogPostPage = () => {
           <ArrowLeft className="h-6 w-6 text-[#2D5A4A]" />
         </Link>
 
+        {/* 🆕 Indicateur de version alternative disponible */}
+        {alternatePost && (
+          <div className="absolute top-4 right-4 bg-blue-500/90 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-sm z-10">
+            <Globe className="h-4 w-4" />
+            {language === 'en' ? 'También en Español' : 'Also in English'}
+          </div>
+        )}
+
         {/* Featured Badge */}
         {post.featured && (
-          <div className="absolute top-4 right-4 bg-[#A85C32] text-white px-4 py-2 rounded-lg font-semibold shadow-lg">
+          <div className="absolute top-16 right-4 bg-[#A85C32] text-white px-4 py-2 rounded-lg font-semibold shadow-lg z-10">
             ⭐ Featured
           </div>
         )}
@@ -256,7 +284,7 @@ const BlogPostPage = () => {
                 />
               ),
               p: ({node, children, ...props}) => {
-                // Check if paragraph contains only an italic caption (from our image processing)
+                // Check if paragraph contains only an italic caption
                 const text = children?.toString() || '';
                 if (text.startsWith('*') && text.endsWith('*')) {
                   return (

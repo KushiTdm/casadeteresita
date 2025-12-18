@@ -1,3 +1,4 @@
+// src/components/Header.jsx - VERSION SEO OPTIMISÉE
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Home } from 'lucide-react';
@@ -40,6 +41,32 @@ const Header = () => {
       }
     }
     setIsMobileMenuOpen(false);
+  };
+
+  // 🆕 GESTION INTELLIGENTE DU CHANGEMENT DE LANGUE
+  const handleLanguageToggle = () => {
+    const currentPath = location.pathname;
+    
+    // Si on est sur un article de blog
+    if (currentPath.startsWith('/blog/') && currentPath !== '/blog') {
+      const slug = currentPath.replace('/blog/', '');
+      toggleLanguage();
+      // Rester sur le même article dans la nouvelle langue
+      navigate(`/blog/${slug}`, { replace: true });
+      return;
+    }
+    
+    // Si on est sur une œuvre du musée
+    if (currentPath.startsWith('/museum/') && currentPath !== '/museum') {
+      const slug = currentPath.replace('/museum/', '');
+      toggleLanguage();
+      // Rester sur la même œuvre dans la nouvelle langue
+      navigate(`/museum/${slug}`, { replace: true });
+      return;
+    }
+    
+    // Pour les autres pages, changement simple
+    toggleLanguage();
   };
 
   const linkClass = (isActive) => `font-medium transition-colors cursor-pointer ${
@@ -105,7 +132,7 @@ const Header = () => {
             </button>
 
             <button
-              onClick={toggleLanguage}
+              onClick={handleLanguageToggle}
               className={`px-4 py-2 rounded-md font-medium transition-colors ${
                 shouldUseDarkStyle
                   ? 'bg-[#A85C32] text-white hover:bg-[#8B4926]'
@@ -187,7 +214,7 @@ const Header = () => {
 
             <button
               onClick={() => {
-                toggleLanguage();
+                handleLanguageToggle();
                 setIsMobileMenuOpen(false);
               }}
               className="w-full px-4 py-2 bg-[#A85C32] text-white rounded-md font-medium hover:bg-[#8B4926]"

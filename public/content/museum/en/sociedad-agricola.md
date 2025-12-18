@@ -6,7 +6,7 @@ image: /images/museum/qr3-sociedad-agricola.jpg
 
 featuredImage:
   src: /images/museum/qr3-sociedad-agricola.jpg
-  alt: "Historical business document of Sociedad Agrícola Industrial José María Gamarra S.A., Bolivia's largest agricultural company operating 30 haciendas in Yungas region from 1900 to 1953"
+  alt: "Historic business document of Sociedad Agrícola Industrial José María Gamarra S.A., Bolivia's largest agricultural company operating 30 haciendas in Yungas region producing coca, bananas and coffee from 1900 to 1953 before agrarian reform"
 
 category: Document
 location: Main Hall
@@ -14,23 +14,31 @@ order: 1
 qrCode: https://lacasadeteresita.netlify.app/museum/sociedad-agricola
 
 # SEO Meta Fields
-metaDescription: "Explore the history of Bolivia's most influential agricultural company: José María Gamarra's empire of 30 Yungas haciendas that revolutionized coca, banana, and coffee production before the 1953 agrarian reform."
+metaDescription: "Discover the history of Sociedad Agrícola Industrial José María Gamarra, Bolivia's most powerful agricultural company with 30 Yungas haciendas. Learn how this enterprise revolutionized coca, banana, and coffee production while building hospitals, roads, and stadiums before the 1953 agrarian reform transformed Bolivian society."
 
-excerpt: "The remarkable story of José María Gamarra's Industrial Agricultural Society, Bolivia's dominant agricultural enterprise that transformed the Yungas region with 30 productive haciendas before the 1953 land reforms."
+excerpt: "The remarkable story of José María Gamarra's Industrial Agricultural Society, Bolivia's dominant pre-1953 agricultural enterprise that transformed the Yungas region with 30 productive haciendas, innovative farming techniques, and unprecedented social infrastructure investment."
 
 keywords:
   - José María Gamarra agricultural company
-  - Sociedad Agrícola Industrial Bolivia
-  - Yungas haciendas history
+  - Sociedad Agrícola Industrial Bolivia history
+  - Yungas haciendas 1900-1953
   - El Rey de la Coca business empire
   - Bolivian coca production history
-  - Guayaquil banana Bolivia
+  - Guayaquil banana introduction Bolivia
   - Nor Yungas agricultural development
   - Bolivia agrarian reform 1953
   - Coripata hospital history
   - Ramiro Castillo stadium La Paz
-  - Tiwanaku coca cultivation
+  - Tiwanaku coca varieties cultivation
   - La Paz economic history 1900s
+  - Bolivian coffee industry development
+  - hacienda system Bolivia
+  - pre-reform agriculture Bolivia
+  - Yungas infrastructure development
+  - Bolivian agricultural innovation
+  - coca leaf taxation Bolivia
+  - La Paz department revenue history
+  - corporate social responsibility Bolivia 1900s
 
 published: true
 featured: true
@@ -128,5 +136,3 @@ This historical document is part of our permanent collection showcasing the Gama
 - Contemporary accounts and testimonials from workers
 
 Guests staying at La Casa de Teresita have full access to our museum collection and can arrange guided tours to learn more about this fascinating period in Bolivian economic history.
-
----

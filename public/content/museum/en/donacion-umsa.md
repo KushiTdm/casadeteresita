@@ -6,7 +6,7 @@ image: /images/museum/qr4-donacion-umsa.jpg
 
 featuredImage:
   src: /images/museum/qr4-donacion-umsa.jpg
-  alt: "1937 gratitude parchment from Universidad Mayor de San Andrés (UMSA) commemorating José María Gamarra's donation of Miraflores land for the Faculty of Medicine, where his son Juan later became distinguished surgeon and professor"
+  alt: "1937 gratitude parchment from Universidad Mayor de San Andrés (UMSA) commemorating José María Gamarra's philanthropic donation of prime Miraflores land for Bolivia's Faculty of Medicine, establishing a multi-generational medical legacy"
 
 category: Document
 location: Main Hall
@@ -14,23 +14,31 @@ order: 2
 qrCode: https://lacasadeteresita.netlify.app/museum/donacion-umsa
 
 # SEO Meta Fields
-metaDescription: "Discover the 1937 story of José María Gamarra's transformative land donation to UMSA for Bolivia's Faculty of Medicine, where his son Juan became a renowned surgeon and professor, continuing a family legacy of service."
+metaDescription: "Discover how José María Gamarra's 1937 land donation to UMSA transformed Bolivian medical education. The Miraflores property became the Faculty of Medicine, where his son Juan trained as a distinguished surgeon and professor, creating a family legacy that has shaped generations of Bolivian physicians and healthcare professionals."
 
-excerpt: "The 1937 parchment commemorating José María Gamarra's donation of Miraflores land to UMSA for the Faculty of Medicine, beginning a family medical legacy that trained generations of Bolivian physicians."
+excerpt: "The 1937 parchment commemorating José María Gamarra's transformative donation of prime Miraflores land to UMSA for Bolivia's Faculty of Medicine, launching a remarkable family medical legacy spanning generations of physicians and healthcare innovation."
 
 keywords:
   - UMSA Faculty of Medicine history
   - Universidad Mayor San Andrés donation
-  - José María Gamarra UMSA
+  - José María Gamarra UMSA philanthropy
   - Juan Gamarra surgeon Bolivia
   - Miraflores medical school La Paz
   - Bolivian medical education history
   - American Clinic Obrajes history
-  - Mauricio Aira coca history
-  - Huayna Potosí gold nuggets
-  - Bolivian philanthropy history
-  - La Paz healthcare education
+  - Mauricio Aira coca history journalist
+  - Huayna Potosí gold nuggets discovery
+  - Bolivian philanthropy 1937
+  - La Paz healthcare education development
   - Gamarra family medical legacy
+  - Bolivian surgical pioneers
+  - medical school land donation Bolivia
+  - UMSA gratitude parchment 1937
+  - Bolivian higher education history
+  - La Paz medical infrastructure
+  - physician training Bolivia
+  - healthcare philanthropy Latin America
+  - multi-generational medical service
 
 published: true
 featured: true
