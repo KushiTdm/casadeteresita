@@ -228,6 +228,13 @@ const BlogPostPage = () => {
           <ReactMarkdown 
             remarkPlugins={[remarkGfm]}
             components={{
+              h1: ({node, ...props}) => (
+                <h1 
+                  className="text-4xl font-bold text-[#2D5A4A] mt-12 mb-6 scroll-mt-24" 
+                  style={{ fontFamily: "'Playfair Display', serif" }} 
+                  {...props} 
+                />
+              ),
               h2: ({node, ...props}) => (
                 <h2 
                   className="text-3xl font-bold text-[#2D5A4A] mt-12 mb-6 scroll-mt-24" 
@@ -242,6 +249,12 @@ const BlogPostPage = () => {
                   {...props} 
                 />
               ),
+              h4: ({node, ...props}) => (
+                <h4 
+                  className="text-xl font-bold text-[#2D5A4A] mt-6 mb-3 scroll-mt-24" 
+                  {...props} 
+                />
+              ),
               p: ({node, children, ...props}) => {
                 // Check if paragraph contains only an italic caption (from our image processing)
                 const text = children?.toString() || '';
@@ -253,9 +266,17 @@ const BlogPostPage = () => {
                   );
                 }
                 return (
-                  <p className="text-gray-700 leading-relaxed mb-6 text-lg" {...props} />
+                  <p className="text-gray-700 leading-relaxed mb-6 text-lg" {...props}>
+                    {children}
+                  </p>
                 );
               },
+              strong: ({node, ...props}) => (
+                <strong className="font-bold text-[#2D5A4A]" {...props} />
+              ),
+              em: ({node, ...props}) => (
+                <em className="italic" {...props} />
+              ),
               blockquote: ({node, ...props}) => (
                 <blockquote 
                   className="border-l-4 border-[#A85C32] pl-6 italic text-gray-600 my-8 bg-[#F8F5F2] py-4 rounded-r-lg" 
@@ -294,23 +315,62 @@ const BlogPostPage = () => {
                 );
               },
               ul: ({node, ...props}) => (
-                <ul className="list-disc list-inside space-y-2 my-6 text-gray-700" {...props} />
+                <ul className="space-y-3 my-6 ml-6" {...props} />
               ),
               ol: ({node, ...props}) => (
-                <ol className="list-decimal list-inside space-y-2 my-6 text-gray-700" {...props} />
+                <ol className="space-y-3 my-6 ml-6" {...props} />
               ),
-              li: ({node, ...props}) => (
-                <li className="ml-4" {...props} />
+              li: ({node, children, ...props}) => (
+                <li className="text-gray-700 text-lg leading-relaxed pl-2" {...props}>
+                  {children}
+                </li>
               ),
-              code: ({node, inline, ...props}) => (
-                inline 
-                  ? <code className="bg-gray-100 text-[#A85C32] px-2 py-1 rounded font-mono text-sm" {...props} />
-                  : <code className="block bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-6 font-mono text-sm" {...props} />
+              code: ({node, inline, className, children, ...props}) => {
+                if (inline) {
+                  return (
+                    <code 
+                      className="bg-gray-100 text-[#A85C32] px-2 py-1 rounded font-mono text-sm" 
+                      {...props}
+                    >
+                      {children}
+                    </code>
+                  );
+                }
+                return (
+                  <code 
+                    className="block bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto my-6 font-mono text-sm" 
+                    {...props}
+                  >
+                    {children}
+                  </code>
+                );
+              },
+              pre: ({node, ...props}) => (
+                <pre className="my-6" {...props} />
               ),
-              em: ({node, children, ...props}) => {
-                // Handle captions (text in italic after images)
-                return <em {...props}>{children}</em>;
-              }
+              hr: ({node, ...props}) => (
+                <hr className="my-12 border-gray-300" {...props} />
+              ),
+              table: ({node, ...props}) => (
+                <div className="overflow-x-auto my-8">
+                  <table className="min-w-full divide-y divide-gray-300" {...props} />
+                </div>
+              ),
+              thead: ({node, ...props}) => (
+                <thead className="bg-gray-50" {...props} />
+              ),
+              tbody: ({node, ...props}) => (
+                <tbody className="divide-y divide-gray-200" {...props} />
+              ),
+              tr: ({node, ...props}) => (
+                <tr {...props} />
+              ),
+              th: ({node, ...props}) => (
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider" {...props} />
+              ),
+              td: ({node, ...props}) => (
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700" {...props} />
+              ),
             }}
           >
             {processedBody}
