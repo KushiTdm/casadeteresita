@@ -1,5 +1,6 @@
 // src/pages/MuseumPage.jsx
 import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { Building2, Filter, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { getArtworksByCategory } from '../utils/contentLoader';
@@ -7,12 +8,18 @@ import ArtworkCard from '../components/ArtworkCard';
 import SEOHelmet from '../components/SEOHelmet';
 
 const MuseumPage = () => {
+  const { slug } = useParams();
   const { language, t } = useLanguage();
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
   
   const categories = ['All', 'Painting', 'Sculpture', 'Piano', 'Furniture', 'Document'];
+
+  useEffect(() => {
+      loadArtworks();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }, [slug, language]);
   
   useEffect(() => {
     loadArtworks();
