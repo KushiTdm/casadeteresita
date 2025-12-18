@@ -80,4 +80,4 @@ At La Casa de Teresita, you don't just visit Bolivia; you live within its cultur
 
 **Ready to make La Casa de Teresita the home base for your unforgettable Bolivian food adventure?**
 
-👉 **[Reserve your cultural retreat in La Paz and taste the journey of a lifetime.](https://www.lacasadeteresita.com)**
+👉 **[Reserve your cultural retreat in La Paz and taste the journey of a lifetime.](https://casadeteresita.netlify.app/)**

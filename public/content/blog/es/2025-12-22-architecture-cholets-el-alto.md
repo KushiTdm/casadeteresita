@@ -54,4 +54,4 @@ El Alto es vibrante y agotador. Después de admirar sus palacios de neón, te es
 
 **La Casa de Teresita** es el refugio ideal para descansar. Nuestro hotel-museo ofrece la paz y el silencio que necesitas para recuperarte de la altura y procesar la increíble cultura alteña.
 
-[👉 **Reserva tu estancia en La Casa de Teresita aquí**](https://casamuseum.netlify.app/)
+[👉 **Reserva tu estancia en La Casa de Teresita aquí**](https://casadeteresita.netlify.app/)

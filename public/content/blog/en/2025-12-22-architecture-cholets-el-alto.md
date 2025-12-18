@@ -56,4 +56,4 @@ Visiting El Alto is a powerful sensory experience. After a day exploring these "
 
 **La Casa de Teresita** is your perfect sanctuary. Our museum-hotel in La Paz offers the silence, comfort, and lower altitude you need to relax after your Andean adventure.
 
-[👉 **Book your quiet stay at La Casa de Teresita**](https://casamuseum.netlify.app/)
+[👉 **Book your quiet stay at La Casa de Teresita**](https://casadeteresita.netlify.app//)

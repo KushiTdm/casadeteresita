@@ -80,4 +80,4 @@ En La Casa de Teresita, no solo visitas Bolivia; vives dentro de su cultura. Nue
 
 **¿Listo para hacer de La Casa de Teresita la base de tu inolvidable aventura gastronómica boliviana?**
 
-👉 **[Reserva tu retiro cultural en La Paz y saborea el viaje de tu vida.](https://www.lacasadeteresita.com)**
+👉 **[Reserva tu retiro cultural en La Paz y saborea el viaje de tu vida.](https://casadeteresita.netlify.app)**
