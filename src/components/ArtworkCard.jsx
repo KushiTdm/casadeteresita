@@ -1,11 +1,13 @@
 // src/components/ArtworkCard.jsx
 import { useState } from 'react';
-import { X, MapPin } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { X, MapPin, ExternalLink } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import QRCodeDisplay from './QRCodeDisplay';
 
 const ArtworkCard = ({ artwork }) => {
   const [showModal, setShowModal] = useState(false);
+  const [imageError, setImageError] = useState(false);
   
   // Category icons/colors
   const categoryStyles = {
@@ -15,46 +17,93 @@ const ArtworkCard = ({ artwork }) => {
     Furniture: 'bg-amber-100 text-amber-800',
     Document: 'bg-green-100 text-green-800'
   };
+
+  const handleImageError = (e) => {
+    console.error('❌ Image failed to load:', artwork.image);
+    console.error('   Full URL:', e.target.src);
+    setImageError(true);
+  };
+
+  const handleImageLoad = () => {
+    console.log('✅ Image loaded successfully:', artwork.image);
+  };
   
   return (
     <>
       {/* Card */}
-      <div 
-        className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer group"
-        onClick={() => setShowModal(true)}
-      >
-        {/* Image */}
-        <div className="relative aspect-square overflow-hidden">
-          <img 
-            src={artwork.image} 
-            alt={artwork.title}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-            loading="lazy"
-          />
+      <div className="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group">
+        {/* Image - Cliquable vers la page de détail */}
+        <Link 
+          to={`/museum/${artwork.slug}`} 
+          className="block relative aspect-square overflow-hidden bg-gray-100"
+        >
+          {!imageError ? (
+            <img 
+              src={artwork.image} 
+              alt={artwork.title}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+              loading="lazy"
+              onError={handleImageError}
+              onLoad={handleImageLoad}
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gray-200">
+              <div className="text-center p-4">
+                <span className="text-gray-500 text-sm">Image not found</span>
+                <p className="text-xs text-gray-400 mt-2 break-all">{artwork.image}</p>
+              </div>
+            </div>
+          )}
+          
           {/* Category Badge */}
           <div className="absolute top-4 left-4">
             <span className={`px-3 py-1 rounded-full text-xs font-semibold ${categoryStyles[artwork.category] || 'bg-gray-100 text-gray-800'}`}>
               {artwork.category}
             </span>
           </div>
-        </div>
+        </Link>
         
         {/* Content */}
         <div className="p-4">
-          <h3 className="text-xl font-bold text-[#2D5A4A] mb-1 group-hover:text-[#A85C32] transition-colors">
-            {artwork.title}
-          </h3>
+          <Link to={`/museum/${artwork.slug}`}>
+            <h3 className="text-xl font-bold text-[#2D5A4A] mb-1 group-hover:text-[#A85C32] transition-colors">
+              {artwork.title}
+            </h3>
+          </Link>
           <p className="text-gray-600 text-sm mb-2">
             {artwork.artist} · {artwork.year}
           </p>
-          <div className="flex items-center gap-2 text-sm text-gray-500">
-            <MapPin className="h-4 w-4" />
-            <span>{artwork.location}</span>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-sm text-gray-500">
+              <MapPin className="h-4 w-4" />
+              <span>{artwork.location}</span>
+            </div>
+            
+            {/* Boutons d'action */}
+            <div className="flex gap-2">
+              <Link
+                to={`/museum/${artwork.slug}`}
+                className="text-[#A85C32] hover:text-[#8B4926] transition-colors p-2 rounded-lg hover:bg-[#F8F5F2]"
+                title="View details"
+              >
+                <ExternalLink className="h-4 w-4" />
+              </Link>
+              <button
+                onClick={() => setShowModal(true)}
+                className="text-[#2D5A4A] hover:text-[#1F3D32] transition-colors p-2 rounded-lg hover:bg-[#F8F5F2]"
+                title="Quick preview"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
       
-      {/* Modal */}
+      {/* Modal - Quick Preview */}
       {showModal && (
         <div 
           className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4 overflow-y-auto"
@@ -77,11 +126,21 @@ const ArtworkCard = ({ artwork }) => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Image */}
                 <div className="space-y-4">
-                  <img 
-                    src={artwork.image} 
-                    alt={artwork.title}
-                    className="w-full rounded-lg shadow-lg"
-                  />
+                  {!imageError ? (
+                    <img 
+                      src={artwork.image} 
+                      alt={artwork.title}
+                      className="w-full rounded-lg shadow-lg"
+                      onError={handleImageError}
+                    />
+                  ) : (
+                    <div className="w-full aspect-square rounded-lg shadow-lg bg-gray-200 flex items-center justify-center">
+                      <div className="text-center p-8">
+                        <span className="text-gray-500">Image not available</span>
+                        <p className="text-xs text-gray-400 mt-2 break-all">{artwork.image}</p>
+                      </div>
+                    </div>
+                  )}
                   
                   {/* QR Code */}
                   {artwork.qrCode && (
@@ -117,6 +176,15 @@ const ArtworkCard = ({ artwork }) => {
                   <div className="prose prose-lg max-w-none">
                     <ReactMarkdown>{artwork.body}</ReactMarkdown>
                   </div>
+
+                  {/* Link to full page */}
+                  <Link
+                    to={`/museum/${artwork.slug}`}
+                    className="block w-full mt-6 bg-[#A85C32] text-white text-center py-3 rounded-lg font-semibold hover:bg-[#8B4926] transition-colors"
+                    onClick={() => setShowModal(false)}
+                  >
+                    View Full Details
+                  </Link>
                 </div>
               </div>
             </div>

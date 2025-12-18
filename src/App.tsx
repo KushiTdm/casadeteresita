@@ -11,6 +11,8 @@ import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import MuseumPage from './pages/MuseumPage';
 import BlogPostDebugger from './pages/BlogPostDebugger';
+import MuseumDetailPage from './pages/MuseumDetailPage';
+
 
 
 function App() {
@@ -28,6 +30,7 @@ function App() {
                   <Route path="/blog" element={<BlogPage />} />
                   <Route path="/blog/:slug" element={<BlogPostPage />} />
                   <Route path="/museum" element={<MuseumPage />} />
+                  <Route path="/museum/:slug" element={<MuseumDetailPage />} />
                   <Route path="/debug-blog" element={<BlogPostDebugger />} />
                 </Routes>
               </main>

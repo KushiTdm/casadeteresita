@@ -2,7 +2,7 @@
 title: "The Industrial Agricultural Society"
 artist: "José María Gamarra Gutierrez"
 year: "1900-1953"
-image: /qr3-sociedad-agricola.jpg
+image: /images/museum/qr3-sociedad-agricola.jpg
 category: Document
 location: Main Hall
 order: 1
