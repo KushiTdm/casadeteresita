@@ -1,7 +1,7 @@
-// src/components/ArtworkCard.jsx
+// src/components/ArtworkCard.jsx - WITH MEDIA BADGES
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { X, MapPin, ExternalLink } from 'lucide-react';
+import { X, MapPin, ExternalLink, Youtube, Music } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import QRCodeDisplay from './QRCodeDisplay';
 
@@ -15,7 +15,11 @@ const ArtworkCard = ({ artwork }) => {
     Sculpture: 'bg-blue-100 text-blue-800',
     Piano: 'bg-purple-100 text-purple-800',
     Furniture: 'bg-amber-100 text-amber-800',
-    Document: 'bg-green-100 text-green-800'
+    Document: 'bg-green-100 text-green-800',
+    Textile: 'bg-pink-100 text-pink-800',
+    Activity: 'bg-orange-100 text-orange-800',
+    Viewpoint: 'bg-cyan-100 text-cyan-800',
+    'Stained Glass Art': 'bg-indigo-100 text-indigo-800'
   };
 
   const handleImageError = (e) => {
@@ -27,6 +31,10 @@ const ArtworkCard = ({ artwork }) => {
   const handleImageLoad = () => {
     console.log('✅ Image loaded successfully:', artwork.image);
   };
+  
+  // ✅ Check if artwork has media
+  const hasYoutube = artwork.youtube && artwork.youtube.includes('youtu');
+  const hasSpotify = artwork.spotify && artwork.spotify.includes('spotify');
   
   return (
     <>
@@ -60,6 +68,20 @@ const ArtworkCard = ({ artwork }) => {
             <span className={`px-3 py-1 rounded-full text-xs font-semibold ${categoryStyles[artwork.category] || 'bg-gray-100 text-gray-800'}`}>
               {artwork.category}
             </span>
+          </div>
+
+          {/* ✅ Media Badges */}
+          <div className="absolute top-4 right-4 flex flex-col gap-2">
+            {hasYoutube && (
+              <div className="bg-red-600 text-white p-2 rounded-full shadow-lg" title="Has video">
+                <Youtube className="h-4 w-4" />
+              </div>
+            )}
+            {hasSpotify && (
+              <div className="bg-green-600 text-white p-2 rounded-full shadow-lg" title="Has audio">
+                <Music className="h-4 w-4" />
+              </div>
+            )}
           </div>
         </Link>
         
@@ -157,6 +179,25 @@ const ArtworkCard = ({ artwork }) => {
                     <span className={`inline-block px-3 py-1 rounded-full text-sm font-semibold mb-4 ${categoryStyles[artwork.category]}`}>
                       {artwork.category}
                     </span>
+
+                    {/* ✅ Media Indicators in Modal */}
+                    {(hasYoutube || hasSpotify) && (
+                      <div className="flex gap-2 mb-4">
+                        {hasYoutube && (
+                          <div className="flex items-center gap-1 bg-red-50 text-red-700 px-3 py-1 rounded-full text-sm">
+                            <Youtube className="h-3 w-3" />
+                            <span>Video</span>
+                          </div>
+                        )}
+                        {hasSpotify && (
+                          <div className="flex items-center gap-1 bg-green-50 text-green-700 px-3 py-1 rounded-full text-sm">
+                            <Music className="h-3 w-3" />
+                            <span>Audio</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     <h2 
                       className="text-3xl font-bold text-[#2D5A4A] mb-2"
                       style={{ fontFamily: "'Playfair Display', serif" }}

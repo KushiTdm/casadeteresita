@@ -31,7 +31,7 @@ collections:
         hint: "Main image shown in blog listing (1200x630px recommended)"
         fields:
           - {label: "Image", name: "src", widget: "image", 
-             media_folder: "public/images/blog",  # Surcharge pour blog
+             media_folder: "public/images/blog",
              public_folder: "/images/blog"}
           - {label: "Alt Text", name: "alt", widget: "string", hint: "Describe the image for accessibility and SEO (important!)"}
       - {label: "Excerpt", name: "excerpt", widget: "text", i18n: true, hint: "Short summary (150-160 characters) shown in blog listing and search results"}
@@ -81,8 +81,13 @@ collections:
           - {label: "Alt Text", name: "alt", widget: "string", hint: "Describe the artwork for accessibility and SEO"}
       - {label: "Excerpt", name: "excerpt", widget: "text", i18n: true, required: false, hint: "Short summary (150-160 characters) for previews and search results"}
       - {label: "Description", name: "body", widget: "markdown", i18n: true}
-      - {label: "QR Code URL", name: "qrCode", widget: "string", i18n: duplicate, required: false}
-      - {label: "Category", name: "category", widget: "select", options: ["Painting", "Sculpture", "Piano", "Furniture", "Document"], i18n: duplicate}
+      - {label: "QR Code URL", name: "qrCode", widget: "string", i18n: duplicate, required: false, hint: "URL for QR code generation"}
+      - {label: "YouTube Video", name: "youtube", widget: "string", i18n: duplicate, required: false, hint: "YouTube video URL (e.g., https://youtu.be/xxxxx)"}
+      - {label: "Spotify Audio", name: "spotify", widget: "string", i18n: duplicate, required: false, hint: "Spotify track URL (e.g., https://open.spotify.com/track/xxxxx)"}
+      - {label: "Category", name: "category", widget: "select", 
+         options: ["Painting", "Furniture", "Document", "Textile", "Activity", "Viewpoint", "Stained Glass Art"], 
+         i18n: duplicate,
+         hint: "Select the artwork category"}
       - {label: "Location in Museum", name: "location", widget: "string", i18n: true, required: false}
       - {label: "Display Order", name: "order", widget: "number", default: 0, i18n: duplicate}
       - {label: "Meta Description", name: "metaDescription", widget: "text", i18n: true, required: false, hint: "SEO description (150-160 characters). If empty, excerpt will be used"}
