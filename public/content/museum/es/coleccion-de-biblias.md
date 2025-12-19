@@ -2,9 +2,9 @@
 title: "Colección de Biblias - Biblioteca Religiosa de Teresita"
 artist: "Teresita"
 year: "Siglos XIX-XX"
-image: /images/museum/history7.jpg
+image: /images/museum/religious-library.jpg
 featuredImage:
-  src: /images/museum/history7.jpg
+  src: /images/museum/religious-library.jpg
   alt: "Colección de Biblias de Teresita en diferentes versiones e idiomas, biblioteca religiosa personal disponible para huéspedes durante su estadía en La Casa de Teresita"
 category: Document
 location: Biblioteca / Habitaciones

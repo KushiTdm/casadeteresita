@@ -22,7 +22,6 @@ const MuseumPage = () => {
     'Furniture', 
     'Document', 
     'Textile',
-    'Activity',
     'Viewpoint',
     'Stained Glass Art'
   ];
@@ -33,7 +32,6 @@ const MuseumPage = () => {
     Piano: 'from-purple-900 to-purple-700',
     Furniture: 'from-amber-900 to-amber-700',
     Document: 'from-green-900 to-green-700',
-    Activity: 'from-pink-900 to-pink-700',
     'Stained Glass Art': 'from-indigo-900 to-indigo-700',
     Viewpoint: 'from-cyan-900 to-cyan-700',
     Textile: 'from-rose-900 to-rose-700'
@@ -403,9 +401,6 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
           <div className="hidden md:grid grid-cols-2 gap-6 p-6" style={{ height: '70vh' }}>
             {/* Content - Fixed height with scroll */}
             <div className="overflow-y-auto pr-4 flex flex-col">
-              <div className={`bg-gradient-to-r ${categoryGradient} px-4 py-2 rounded-lg text-white text-sm font-bold inline-block mb-4`}>
-                {currentArticle.category}
-              </div>
 
               <h2 className="text-3xl md:text-4xl font-bold text-[#C4A96A] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
                 {currentArticle.title}
