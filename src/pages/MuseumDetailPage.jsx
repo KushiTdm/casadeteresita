@@ -54,9 +54,10 @@ const MuseumDetailPage = () => {
   };
 
   const handleImageError = (e) => {
-    console.error('❌ Image failed to load:', artwork?.image);
-    setImageError(true);
-  };
+  const imageSrc = artwork?.image || artwork?.featuredImage?.src;
+  console.error('❌ Image failed to load:', imageSrc);
+  setImageError(true);
+};
 
   const getYouTubeVideoId = (url) => {
     if (!url) return null;
@@ -125,13 +126,13 @@ const MuseumDetailPage = () => {
 
   return (
     <div className="min-h-screen pt-20 bg-gradient-to-b from-[#1a1a1a] via-[#2D5A4A] to-[#1a1a1a]">
-      <SEOHelmet
-        title={artwork.title}
-        description={artwork.body?.substring(0, 160)}
-        image={artwork.image}
-        url={`/museum/${artwork.slug}`}
-        type="article"
-      />
+        <SEOHelmet
+          title={artwork.title}
+          description={artwork.excerpt || artwork.body?.substring(0, 160)}
+          image={artwork.image || artwork.featuredImage?.src}
+          url={`/museum/${artwork.slug}`}
+          type="article"
+        />
 
       {/* Miniature flottante */}
       {showMiniature && artwork && (
@@ -159,10 +160,10 @@ const MuseumDetailPage = () => {
           <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-32 bg-gradient-to-b from-[#C4A96A]/20 to-transparent blur-2xl -z-10"></div>
           
           <div className="relative aspect-video bg-black rounded-lg overflow-hidden shadow-xl">
-            {!imageError && artwork.image ? (
+            {!imageError && (artwork.image || artwork.featuredImage?.src) ? (
               <img
-                src={artwork.image}
-                alt={artwork.title}
+                src={artwork.image || artwork.featuredImage?.src}
+                alt={artwork.featuredImage?.alt || artwork.title}
                 className="w-full h-full object-contain"
                 onError={handleImageError}
               />

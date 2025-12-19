@@ -27,14 +27,16 @@ collections:
     fields:
       - {label: "Title", name: "title", widget: "string", i18n: true, hint: "The main title of your blog post (50-60 characters recommended for SEO)"}
       - {label: "Publish Date", name: "date", widget: "datetime", i18n: duplicate}
+      
+      # ✅ SOLUTION : Retirer i18n de l'objet et le mettre sur chaque sous-champ
       - label: "Featured Image"
         name: "featuredImage"
         widget: "object"
-        i18n: false
         hint: "Main image shown in blog listing (1200x630px recommended)"
         fields:
-          - {label: "Image", name: "src", widget: "image"}
-          - {label: "Alt Text", name: "alt", widget: "string", hint: "Describe the image for accessibility and SEO (important!)"}
+          - {label: "Image", name: "src", widget: "image", i18n: duplicate}
+          - {label: "Alt Text", name: "alt", widget: "string", i18n: true, hint: "Describe the image for accessibility and SEO (important!)"}
+      
       - {label: "Excerpt", name: "excerpt", widget: "text", i18n: true, hint: "Short summary (150-160 characters) shown in blog listing and search results"}
       - {label: "Body", name: "body", widget: "markdown", i18n: true, hint: "Main content. Use ## for headings."}
       - {label: "Category", name: "category", widget: "select", options: ["Travel", "History", "Culture", "Tips"], i18n: duplicate}
@@ -70,15 +72,17 @@ collections:
       - {label: "Image", name: "image", widget: "image", 
          i18n: duplicate,
          hint: "Main image for the artwork"}
+      
+      # ✅ SOLUTION : Retirer i18n de l'objet et le mettre sur chaque sous-champ
       - label: "Featured Image"
         name: "featuredImage"
         widget: "object"
-        i18n: false
         required: false
         hint: "SEO-optimized image (same as 'Image' but with alt text)"
         fields:
-          - {label: "Image", name: "src", widget: "image"}
-          - {label: "Alt Text", name: "alt", widget: "string", hint: "Describe the artwork for accessibility and SEO"}
+          - {label: "Image", name: "src", widget: "image", i18n: duplicate}
+          - {label: "Alt Text", name: "alt", widget: "string", i18n: true, hint: "Describe the artwork for accessibility and SEO"}
+      
       - {label: "Excerpt", name: "excerpt", widget: "text", i18n: true, required: false, hint: "Short summary (150-160 characters) for previews and search results"}
       - {label: "Description", name: "body", widget: "markdown", i18n: true}
       - {label: "QR Code URL", name: "qrCode", widget: "string", i18n: duplicate, required: false, hint: "URL for QR code generation"}

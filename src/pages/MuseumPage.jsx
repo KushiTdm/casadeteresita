@@ -327,10 +327,10 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
           <div className="md:hidden flex flex-col" style={{ height: '70vh' }}>
             {/* Image - 50% */}
             <div className="relative h-1/2">
-              <img
-                src={currentArticle.image}
-                alt={currentArticle.title}
-                className="w-full h-full object-cover"
+              <img 
+                src={currentArticle.image || currentArticle.featuredImage?.src}
+                alt={currentArticle.featuredImage?.alt || currentArticle.title}
+                className="w-full h-full object-cover" 
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
               
@@ -458,8 +458,8 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
             <div className="flex flex-col" style={{ height: 'calc(70vh - 3rem)' }}>
               <div className="relative flex-1 bg-[#1a1a1a] rounded-xl overflow-hidden border-2 border-[#C4A96A]">
                 <img
-                  src={currentArticle.image}
-                  alt={currentArticle.title}
+                  src={currentArticle.image || currentArticle.featuredImage?.src}
+                  alt={currentArticle.featuredImage?.alt || currentArticle.title}
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
@@ -467,15 +467,19 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
 
               {/* Thumbnails */}
               <div className="flex gap-2 mt-3 justify-center">
-                {articles.map((article, index) => (
+                {articles.map((artwork, index) => (
                   <button
-                    key={article.slug}
+                    key={artwork.slug}
                     onClick={() => goToSlide(index)}
                     className={`w-16 h-20 rounded overflow-hidden border-2 transition-all ${
                       index === currentIndex ? 'border-[#C4A96A] scale-110' : 'border-[#C4A96A]/30 opacity-60'
                     }`}
                   >
-                    <img src={article.image} alt="" className="w-full h-full object-cover" />
+                    <img 
+                      src={artwork.image || artwork.featuredImage?.src} 
+                      alt="" 
+                      className="w-full h-full object-cover" 
+                    />
                   </button>
                 ))}
               </div>
@@ -517,8 +521,8 @@ const ArtworkMuseumCard = ({ artwork, language, categoryColors, featured = false
         <div className="relative aspect-[4/3] bg-black overflow-hidden border-b-2 border-[#C4A96A]">
           {!imageError ? (
             <img 
-              src={artwork.image} 
-              alt={artwork.title}
+              src={artwork.image || artwork.featuredImage?.src}
+              alt={artwork.featuredImage?.alt || artwork.title}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
               loading="lazy"
               onError={handleImageError}
