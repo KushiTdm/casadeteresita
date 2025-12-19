@@ -69,16 +69,12 @@ collections:
       - {label: "Artwork Title", name: "title", widget: "string", i18n: true, hint: "Main title (optimized for SEO, 50-60 characters)"}
       - {label: "Artist", name: "artist", widget: "string", i18n: duplicate, required: false}
       - {label: "Year", name: "year", widget: "string", i18n: duplicate, required: false}
-      - {label: "Image", name: "image", widget: "image", 
-         i18n: duplicate,
-         hint: "Main image for the artwork"}
       
-      # ✅ SOLUTION : Retirer i18n de l'objet et le mettre sur chaque sous-champ
+      # ✅ Un seul champ - exactement comme le blog
       - label: "Featured Image"
         name: "featuredImage"
         widget: "object"
-        required: false
-        hint: "SEO-optimized image (same as 'Image' but with alt text)"
+        hint: "Main image for the artwork"
         fields:
           - {label: "Image", name: "src", widget: "image", i18n: duplicate}
           - {label: "Alt Text", name: "alt", widget: "string", i18n: true, hint: "Describe the artwork for accessibility and SEO"}
