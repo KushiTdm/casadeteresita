@@ -1,4 +1,4 @@
-// src/pages/MuseumDetailPage.jsx - STYLE MUSÉE
+// src/pages/MuseumDetailPage.jsx - STYLE MUSÉE AVEC MINIATURE
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, MapPin, Calendar, Info, Youtube, Music, Award, Sparkles } from 'lucide-react';
@@ -7,6 +7,7 @@ import remarkGfm from 'remark-gfm';
 import { useLanguage } from '../context/LanguageContext';
 import { getMuseumArtwork } from '../utils/contentLoader';
 import SEOHelmet from '../components/SEOHelmet';
+import ScrollMiniature from '../components/ScrollMiniature';
 
 const MuseumDetailPage = () => {
   const { slug } = useParams();
@@ -14,11 +15,29 @@ const MuseumDetailPage = () => {
   const [artwork, setArtwork] = useState(null);
   const [loading, setLoading] = useState(true);
   const [imageError, setImageError] = useState(false);
+  const [showMiniature, setShowMiniature] = useState(false);
+  const [scrollPosition, setScrollPosition] = useState(0);
 
   useEffect(() => {
     loadArtwork();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, [slug, language]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const position = window.pageYOffset;
+      setScrollPosition(position);
+      // Afficher la miniature après 400px de scroll
+      setShowMiniature(position > 400);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    
+    // Vérifier la position initiale
+    handleScroll();
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const loadArtwork = async () => {
     setLoading(true);
@@ -114,6 +133,14 @@ const MuseumDetailPage = () => {
         type="article"
       />
 
+      {/* Miniature flottante */}
+      {showMiniature && artwork && (
+        <ScrollMiniature 
+          artwork={artwork}
+          scrollPosition={scrollPosition}
+        />
+      )}
+
       {/* Museum Header Banner */}
       <div className="bg-gradient-to-r from-[#2D5A4A] via-[#C4A96A] to-[#2D5A4A] py-3">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-3">
@@ -202,7 +229,7 @@ const MuseumDetailPage = () => {
       </div>
 
       {/* Content Area */}
-      <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+      <article className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-32">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Content - Museum Panel Style */}
           <div className="lg:col-span-2 space-y-8">

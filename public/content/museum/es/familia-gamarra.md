@@ -6,7 +6,7 @@ image: /images/museum/qr9-familia.jpg
 featuredImage:
   src: /images/museum/qr9-familia.jpg
   alt: "Retrato histórico de la familia Gamarra mostrando a Teresita, Juan, sus hijos y nietos, parte del patrimonio familiar de La Casa de Teresita"
-category: Document
+category: Photography
 location: Salón Principal
 order: 6
 qrCode: https://lacasadeteresita.netlify.app/museum/familia-gamarra

@@ -6,7 +6,7 @@ image: /images/museum/qr31-ejercicio-creatividad.jpg
 featuredImage:
   src: /images/museum/qr31-ejercicio-creatividad.jpg
   alt: "Ejercicio de creatividad con piedras que invita a imaginar figuras animales y citando a Miguel Ángel sobre descubrir la estatua dentro de cada bloque de mármol"
-category: Activity
+category: Sculpture
 location: Área de Actividades / Jardín
 order: 22
 qrCode: https://lacasadeteresita.netlify.app/museum/ejercicio-creatividad

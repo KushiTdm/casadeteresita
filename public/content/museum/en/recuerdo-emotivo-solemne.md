@@ -6,7 +6,7 @@ image: /images/museum/qr11-impromtu-shubert.jpg
 featuredImage:
   src: /images/museum/qr11-impromtu-shubert.jpg
   alt: "Commemorative document of the musical tribute where young Bolivian talent José Navarro Silverstein performed Schubert's Impromptu in memory of Teresita"
-category: Document
+category: Piano
 location: Main Hall
 order: 8
 qrCode: https://lacasadeteresita.netlify.app/museum/emotional-solemn-memory

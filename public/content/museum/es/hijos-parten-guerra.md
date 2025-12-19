@@ -6,7 +6,7 @@ image: /images/museum/qr17-partida-hijos.jpg
 featuredImage:
   src: /images/museum/qr17-partida-hijos.jpg
   alt: "Retrato histórico de Francisco Fajardo despidiendo a sus hijos Eduardo y Augusto (padre de Teresita) para cumplir su deber en la Guerra del Chaco, imagen que captura el sacrificio familiar durante el conflicto"
-category: Document
+category: Photography
 location: Salón Principal
 order: 14
 qrCode: https://lacasadeteresita.netlify.app/museum/hijos-parten-guerra

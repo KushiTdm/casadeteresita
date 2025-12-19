@@ -6,7 +6,7 @@ image: /images/museum/history5.jpg
 featuredImage:
   src: /images/museum/history5.jpg
   alt: "Retrato de la familia Patiño: Simón I. Patiño, el Rey del Estaño, su esposa Albina Rodríguez (tía abuela de Teresita) y sus hijos René, Antenor, Graziella, Elena y Luz Mila"
-category: Document
+category: Photography
 location: Biblioteca / Recepción
 order: 20
 qrCode: https://lacasadeteresita.netlify.app/museum/familia-patino

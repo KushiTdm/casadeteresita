@@ -6,7 +6,7 @@ image: /images/museum/qr20-fotografias.jpg
 featuredImage:
   src: /images/museum/qr20-fotografias.jpg
   alt: "Collection of historical photographs of the Gamarra-Fajardo family including Teresita at 9 years old, German School graduation 1950, Juan as child, Niagara Falls trip and family portraits"
-category: Document
+category: Photography
 location: Main Hall
 order: 17
 qrCode: https://lacasadeteresita.netlify.app/museum/family-pictures

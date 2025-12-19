@@ -6,7 +6,7 @@ image: /images/museum/qr31-ejercicio-creatividad.jpg
 featuredImage:
   src: /images/museum/qr31-ejercicio-creatividad.jpg
   alt: "Creativity exercise with stones inviting to imagine animal figures and quoting Michelangelo about discovering the statue within each marble block"
-category: Activity
+category: Sculpture
 location: Activities Area / Garden
 order: 22
 qrCode: https://lacasadeteresita.netlify.app/museum/creativity-exercise

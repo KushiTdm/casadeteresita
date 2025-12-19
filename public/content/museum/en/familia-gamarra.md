@@ -6,7 +6,7 @@ image: /images/museum/qr9-familia.jpg
 featuredImage:
   src: /images/museum/qr9-familia.jpg
   alt: "Historical portrait of the Gamarra family showing Teresita, Juan, their sons and grandchildren, part of the family heritage of La Casa de Teresita"
-category: Document
+category: Photography
 location: Main Hall
 order: 6
 qrCode: https://lacasadeteresita.netlify.app/museum/gamarras-family

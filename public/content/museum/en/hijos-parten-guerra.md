@@ -6,7 +6,7 @@ image: /images/museum/qr17-partida-hijos.jpg
 featuredImage:
   src: /images/museum/qr17-partida-hijos.jpg
   alt: "Historical portrait of Francisco Fajardo bidding farewell to his sons Eduardo and Augusto (Teresita's father) to fulfill their duty in the Chaco War, image capturing family sacrifice during the conflict"
-category: Document
+category: Photography
 location: Main Hall
 order: 14
 qrCode: https://lacasadeteresita.netlify.app/museum/sons-go-to-war
