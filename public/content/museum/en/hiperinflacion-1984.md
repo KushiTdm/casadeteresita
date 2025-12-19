@@ -2,9 +2,9 @@
 title: "The Hyperinflation of 1984 - Historical Economic Crisis of Bolivia"
 artist: "Historical document"
 year: "1982-1985"
-image: /images/museum/qr30-hiperinflacion.jpg
+image: /images/museum/qr30-hiperinflacion.webp
 featuredImage:
-  src: /images/museum/qr30-hiperinflacion.jpg
+  src: /images/museum/qr30-hiperinflacion.webp
   alt: "Documentation about Bolivian hyperinflation of 1982-1985 showing historical banknotes and exchange rate statistics that rose from 144 to 718,000 pesos per dollar"
 category: Document
 location: Reception

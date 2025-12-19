@@ -2,9 +2,9 @@
 title: "Gamarra's Family - Family Portrait"
 artist: "Unknown Photographer"
 year: "20th Century"
-image: /images/museum/qr9-familia.jpg
+image: /images/museum/qr9-familia.webp
 featuredImage:
-  src: /images/museum/qr9-familia.jpg
+  src: /images/museum/qr9-familia.webp
   alt: "Historical portrait of the Gamarra family showing Teresita, Juan, their sons and grandchildren, part of the family heritage of La Casa de Teresita"
 category: Photography
 location: Main Hall

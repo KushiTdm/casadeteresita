@@ -2,9 +2,9 @@
 title: "Weapons and Objects of the Chaco War - Historical Military Collection"
 artist: "Historical military collection"
 year: "1932-1935"
-image: /images/museum/qr15-guerra-chaco.jpg
+image: /images/museum/qr15-guerra-chaco.webp
 featuredImage:
-  src: /images/museum/qr15-guerra-chaco.jpg
+  src: /images/museum/qr15-guerra-chaco.webp
   alt: "Collection of weapons and objects from the Chaco War including Mauser rifle, machine gun, binoculars, pouch, concertina of José María Gamarra and leather leggings"
 category: Document
 location: Main Hall

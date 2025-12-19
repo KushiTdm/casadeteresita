@@ -2,9 +2,9 @@
 title: "Door to the Light - Fernando Montes Peñaranda"
 artist: "Fernando Montes Peñaranda"
 year: "20th Century"
-image: /images/museum/qr8-puerta-luz.jpg
+image: /images/museum/qr8-puerta-luz.webp
 featuredImage:
-  src: /images/museum/qr8-puerta-luz.jpg
+  src: /images/museum/qr8-puerta-luz.webp
   alt: "Artwork 'Door to the Light' painted in charcoal and pastel by renowned Bolivian artist Fernando Montes Peñaranda, exploring aspects of Andean culture"
 category: Painting
 location: Main Hall

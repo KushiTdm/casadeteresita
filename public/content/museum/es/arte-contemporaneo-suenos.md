@@ -2,9 +2,9 @@
 title: "Arte Contemporáneo de Bolivia - Sueños por Bella Martina Noriega Salazar"
 artist: "Bella Martina Noriega Salazar"
 year: "Contemporáneo"
-image: /images/museum/qr32-arte-contemporaneo.jpg
+image: /images/museum/qr32-arte-contemporaneo.webp
 featuredImage:
-  src: /images/museum/qr32-arte-contemporaneo.jpg
+  src: /images/museum/qr32-arte-contemporaneo.webp
   alt: "Obra 'Sueños' de la artista contemporánea boliviana Bella Martina Noriega Salazar, acrílico sobre lienzo de 150cm x 150cm, parte de la colección de La Casa de Teresita"
 category: Painting
 location: Salón Principal / Galería Contemporánea

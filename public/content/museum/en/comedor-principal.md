@@ -2,9 +2,9 @@
 title: "The Main Dining Room - Historical Tableware and Decoration Collection"
 artist: "Various artists and craftsmen"
 year: "17th-20th Centuries"
-image: /images/museum/qr14-comedor.jpg
+image: /images/museum/qr14-comedor.webp
 featuredImage:
-  src: /images/museum/qr14-comedor.jpg
+  src: /images/museum/qr14-comedor.webp
   alt: "Main dining room at La Casa de Teresita with collection of gold-plated cups, Chinese tableware, Peruvian silverware, Murano crystal and historical documents of the Spanish Crown"
 category: Furniture
 location: Main Dining Room

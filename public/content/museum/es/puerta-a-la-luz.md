@@ -2,9 +2,9 @@
 title: "Puerta a la Luz - Fernando Montes Peñaranda"
 artist: "Fernando Montes Peñaranda"
 year: "Siglo XX"
-image: /images/museum/qr8-puerta-luz.jpg
+image: /images/museum/qr8-puerta-luz.webp
 featuredImage:
-  src: /images/museum/qr8-puerta-luz.jpg
+  src: /images/museum/qr8-puerta-luz.webp
   alt: "Obra 'Puerta a la Luz' pintada al pastel y carboncillo por el destacado artista boliviano Fernando Montes Peñaranda, explorando aspectos del mundo andino"
 category: Painting
 location: Salón Principal

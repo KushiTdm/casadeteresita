@@ -2,10 +2,10 @@
 title: "The Coca King - Portrait of José María Gamarra Gutierrez"
 artist: "Ahumada (Chilean portraitist)"
 year: "Early 20th Century"
-image: /images/museum/qr6-rey-coca.jpg
+image: /images/museum/qr6-rey-coca.webp
 
 featuredImage:
-  src: /images/museum/qr6-rey-coca.jpg
+  src: /images/museum/qr6-rey-coca.webp
   alt: "Oil painting portrait of Don José María Gamarra Gutierrez, El Rey de la Coca, by Chilean artist Ahumada - historic Bolivian coca industry leader from Yungas region"
 
 category: Painting

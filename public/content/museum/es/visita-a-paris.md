@@ -2,9 +2,9 @@
 title: "Visita a París - Teresita en el Cabaret Lido"
 artist: "Fotógrafo desconocido"
 year: "Siglo XX"
-image: /images/museum/qr19-paris.jpg
+image: /images/museum/qr19-paris.webp
 featuredImage:
-  src: /images/museum/qr19-paris.jpg
+  src: /images/museum/qr19-paris.webp
   alt: "Fotografía histórica de Teresita en París con su esposo Juan, su madre, hermana y amigos en el famoso cabaret Lido de los Campos Elíseos, testimonio de su amor por la ciudad francesa"
 category: Document
 location: Salón Principal

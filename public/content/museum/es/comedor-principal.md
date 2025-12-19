@@ -2,9 +2,9 @@
 title: "El Comedor Principal - Colección de Vajilla y Decoración Histórica"
 artist: "Varios artistas y artesanos"
 year: "Siglos XVII-XX"
-image: /images/museum/qr14-comedor.jpg
+image: /images/museum/qr14-comedor.webp
 featuredImage:
-  src: /images/museum/qr14-comedor.jpg
+  src: /images/museum/qr14-comedor.webp
   alt: "Comedor principal de La Casa de Teresita con colección de copas con revestimiento de oro, vajilla china, platería peruana, cristal de Murano y documentos históricos de la Corona Española"
 category: Furniture
 location: Comedor Principal

@@ -2,9 +2,9 @@
 title: "Familia Gamarra - Retrato Familiar"
 artist: "Fotógrafo desconocido"
 year: "Siglo XX"
-image: /images/museum/qr9-familia.jpg
+image: /images/museum/qr9-familia.webp
 featuredImage:
-  src: /images/museum/qr9-familia.jpg
+  src: /images/museum/qr9-familia.webp
   alt: "Retrato histórico de la familia Gamarra mostrando a Teresita, Juan, sus hijos y nietos, parte del patrimonio familiar de La Casa de Teresita"
 category: Photography
 location: Salón Principal

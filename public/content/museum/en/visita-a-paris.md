@@ -2,9 +2,9 @@
 title: "Visit to Paris - Teresita at the Lido Cabaret"
 artist: "Unknown photographer"
 year: "20th Century"
-image: /images/museum/qr19-paris.jpg
+image: /images/museum/qr19-paris.webp
 featuredImage:
-  src: /images/museum/qr19-paris.jpg
+  src: /images/museum/qr19-paris.webp
   alt: "Historical photograph of Teresita in Paris with her husband Juan, her mother, sister and friends at the famous Lido cabaret on the Champs-Élysées, testimony of her love for the French city"
 category: Document
 location: Main Hall

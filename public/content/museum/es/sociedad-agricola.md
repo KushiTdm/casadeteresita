@@ -2,9 +2,9 @@
 title: "La Sociedad Agrícola Industrial - El Imperio Económico de José María Gamarra (1900-1953)"
 artist: "José María Gamarra Gutierrez"
 year: "1900-1953"
-image: /images/museum/qr3-sociedad-agricola.jpg
+image: /images/museum/qr3-sociedad-agricola.webp
 featuredImage:
-  src: /images/museum/qr3-sociedad-agricola.jpg
+  src: /images/museum/qr3-sociedad-agricola.webp
   alt: "Documento histórico de la Sociedad Agrícola Industrial José María Gamarra S.A., la mayor empresa agrícola de Bolivia que operó 30 haciendas en la región de los Yungas produciendo coca, plátano y café desde 1900 hasta 1953 antes de la reforma agraria"
 category: Document
 location: Salón Principal

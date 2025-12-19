@@ -2,9 +2,9 @@
 title: "The Main Hall - Historic Pianos and Furniture Collection"
 artist: "Various artists"
 year: "19th-20th Centuries"
-image: /images/museum/qr10-salon-principal.jpg
+image: /images/museum/qr10-salon-principal.webp
 featuredImage:
-  src: /images/museum/qr10-salon-principal.jpg
+  src: /images/museum/qr10-salon-principal.webp
   alt: "View of the main hall at La Casa de Teresita showing two grand pianos Steinway & Sons and Gaveau, French Louis XV furniture and collection of historic Bolivian art"
 category: Furniture
 location: Main Hall

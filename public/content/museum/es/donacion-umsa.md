@@ -2,9 +2,9 @@
 title: "La Donación a la Facultad de Medicina - UMSA: Un Legado Familiar en la Educación Sanitaria Boliviana"
 artist: "José María Gamarra Gutierrez"
 year: "1937"
-image: /images/museum/qr4-donacion-umsa.jpg
+image: /images/museum/qr4-donacion-umsa.webp
 featuredImage:
-  src: /images/museum/qr4-donacion-umsa.jpg
+  src: /images/museum/qr4-donacion-umsa.webp
   alt: "Pergamino de gratitud de 1937 de la Universidad Mayor de San Andrés (UMSA) conmemorando la donación filantrópica de José María Gamarra de un terreno privilegiado en Miraflores para la Facultad de Medicina de Bolivia, estableciendo un legado médico multigeneracional"
 category: Document
 location: Salón Principal

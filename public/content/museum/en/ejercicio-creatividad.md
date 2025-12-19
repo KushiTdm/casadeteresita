@@ -2,9 +2,9 @@
 title: "Creativity Exercise - Art and Perception with Stones"
 artist: "Various participants"
 year: "Ongoing activity"
-image: /images/museum/qr31-ejercicio-creatividad.jpg
+image: /images/museum/qr31-ejercicio-creatividad.webp
 featuredImage:
-  src: /images/museum/qr31-ejercicio-creatividad.jpg
+  src: /images/museum/qr31-ejercicio-creatividad.webp
   alt: "Creativity exercise with stones inviting to imagine animal figures and quoting Michelangelo about discovering the statue within each marble block"
 category: Sculpture
 location: Activities Area / Garden

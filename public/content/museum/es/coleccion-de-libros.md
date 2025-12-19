@@ -2,9 +2,9 @@
 title: "Colección de Libros - Biblioteca Histórica de Francisco Fajardo"
 artist: "Varios autores"
 year: "Siglos XVIII-XX"
-image: /images/museum/qr13-biblioteca.jpg
+image: /images/museum/qr13-biblioteca.webp
 featuredImage:
-  src: /images/museum/qr13-biblioteca.jpg
+  src: /images/museum/qr13-biblioteca.webp
   alt: "Colección de libros históricos de Francisco Fajardo, abuelo de Teresita, biblioteca patrimonial conservada en La Casa de Teresita, La Paz"
 category: Document
 location: Biblioteca

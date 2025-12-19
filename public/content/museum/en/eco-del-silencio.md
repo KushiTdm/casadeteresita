@@ -2,9 +2,9 @@
 title: "Contemporary Art of Bolivia - The Echo of Silence by Consuelo Mendieta Cervantes"
 artist: "Consuelo Mendieta Cervantes"
 year: "Contemporary"
-image: /images/museum/qr33-arte-contemporaneo2.jpg
+image: /images/museum/qr33-arte-contemporaneo2.webp
 featuredImage:
-  src: /images/museum/qr33-arte-contemporaneo2.jpg
+  src: /images/museum/qr33-arte-contemporaneo2.webp
   alt: "Work 'The Echo of Silence' by contemporary Bolivian artist Consuelo Mendieta Cervantes, acrylic on canvas 140cm x 100cm, part of La Casa de Teresita's contemporary collection"
 category: Painting
 location: Contemporary Gallery

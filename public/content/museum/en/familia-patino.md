@@ -2,9 +2,9 @@
 title: "The Patiño Family - Simón I. Patiño, the Tin King"
 artist: "Patiño family"
 year: "First half 20th Century"
-image: /images/museum/familia-patino.jpg
+image: /images/museum/familia-patino.webp
 featuredImage:
-  src: /images/museum/familia-patino.jpg
+  src: /images/museum/familia-patino.webp
   alt: "Portrait of the Patiño family: Simón I. Patiño, the Tin King, his wife Albina Rodríguez (Teresita's great-aunt) and their children René, Antenor, Graziella, Elena and Luz Mila"
 category: Photography
 location: Library / Reception

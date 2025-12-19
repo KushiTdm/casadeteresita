@@ -2,9 +2,9 @@
 title: 'Mirador Illimani La Paz | Vista Panorámica del Nevado y la Ciudad'
 artist: 'Vista Panorámica de La Paz'
 year: 'Punto de Observación Contemporáneo'
-image: /images/museum/qr34-mirador-illimani.jpg
+image: /images/museum/qr34-mirador-illimani.webp
 featuredImage:
-  src: /images/museum/qr34-mirador-illimani.jpg
+  src: /images/museum/qr34-mirador-illimani.webp
   alt: 'Vista panorámica desde el Mirador Illimani en La Paz Bolivia mostrando el nevado Illimani, puente Libertad, Muela del Diablo y barrios de la zona sur'
 category: 'Punto de Interés'
 location: 'Mirador Illimani, La Paz, Bolivia'

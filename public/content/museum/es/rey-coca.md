@@ -2,9 +2,9 @@
 title: "El Rey de la Coca - Retrato de José María Gamarra Gutierrez"
 artist: "Ahumada (retratista chileno)"
 year: "Principios del siglo XX"
-image: /images/museum/qr6-rey-coca.jpg
+image: /images/museum/qr6-rey-coca.webp
 featuredImage:
-  src: /images/museum/qr6-rey-coca.jpg
+  src: /images/museum/qr6-rey-coca.webp
   alt: "Retrato al óleo de Don José María Gamarra Gutierrez, El Rey de la Coca, por el artista chileno Ahumada - histórico líder de la industria de la coca boliviana de la región de los Yungas"
 category: Painting
 location: Salón Principal

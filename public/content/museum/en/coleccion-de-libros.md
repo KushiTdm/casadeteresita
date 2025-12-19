@@ -2,9 +2,9 @@
 title: "Book Collection - Historical Library of Francisco Fajardo"
 artist: "Various authors"
 year: "18th-20th Centuries"
-image: /images/museum/qr13-biblioteca.jpg
+image: /images/museum/qr13-biblioteca.webp
 featuredImage:
-  src: /images/museum/qr13-biblioteca.jpg
+  src: /images/museum/qr13-biblioteca.webp
   alt: "Historical book collection of Francisco Fajardo, Teresita's grandfather, heritage library preserved at La Casa de Teresita, La Paz"
 category: Document
 location: Library

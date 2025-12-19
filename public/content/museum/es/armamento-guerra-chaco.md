@@ -2,9 +2,9 @@
 title: "Armamento y Objetos de la Guerra del Chaco - Colección Militar Histórica"
 artist: "Colección militar histórica"
 year: "1932-1935"
-image: /images/museum/qr15-guerra-chaco.jpg
+image: /images/museum/qr15-guerra-chaco.webp
 featuredImage:
-  src: /images/museum/qr15-guerra-chaco.jpg
+  src: /images/museum/qr15-guerra-chaco.webp
   alt: "Colección de armamento y objetos de la Guerra del Chaco incluyendo fusil Mauser, ametralladora, binoculares, cartuchera, concertina de José María Gamarra y protectores de pantorilla"
 category: Document
 location: Salón Principal

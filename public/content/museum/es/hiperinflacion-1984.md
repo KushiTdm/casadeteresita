@@ -2,9 +2,9 @@
 title: "La Hiperinflación de 1984 - Crisis Económica Histórica de Bolivia"
 artist: "Documento histórico"
 year: "1982-1985"
-image: /images/museum/qr30-hiperinflacion.jpg
+image: /images/museum/qr30-hiperinflacion.webp
 featuredImage:
-  src: /images/museum/qr30-hiperinflacion.jpg
+  src: /images/museum/qr30-hiperinflacion.webp
   alt: "Documentación sobre la hiperinflación boliviana de 1982-1985 mostrando billetes históricos y estadísticas del tipo de cambio que subió de 144 a 718,000 pesos por dólar"
 category: Document
 location: Recepción

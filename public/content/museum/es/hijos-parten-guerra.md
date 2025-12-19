@@ -2,9 +2,9 @@
 title: "Los Hijos Parten a la Guerra - Retrato Familiar Histórico"
 artist: "Fotógrafo desconocido"
 year: "Circa 1932-1935"
-image: /images/museum/qr17-partida-hijos.jpg
+image: /images/museum/qr17-partida-hijos.webp
 featuredImage:
-  src: /images/museum/qr17-partida-hijos.jpg
+  src: /images/museum/qr17-partida-hijos.webp
   alt: "Retrato histórico de Francisco Fajardo despidiendo a sus hijos Eduardo y Augusto (padre de Teresita) para cumplir su deber en la Guerra del Chaco, imagen que captura el sacrificio familiar durante el conflicto"
 category: Photography
 location: Salón Principal

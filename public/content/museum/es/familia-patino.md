@@ -2,9 +2,9 @@
 title: "La Familia Patiño - Simón I. Patiño, el Rey del Estaño"
 artist: "Familia Patiño"
 year: "Primera mitad siglo XX"
-image: /images/museum/familia-patino.jpg
+image: /images/museum/familia-patino.webp
 featuredImage:
-  src: /images/museum/familia-patino.jpg
+  src: /images/museum/familia-patino.webp
   alt: "Retrato de la familia Patiño: Simón I. Patiño, el Rey del Estaño, su esposa Albina Rodríguez (tía abuela de Teresita) y sus hijos René, Antenor, Graziella, Elena y Luz Mila"
 category: Photography
 location: Biblioteca / Recepción

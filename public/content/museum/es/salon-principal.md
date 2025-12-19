@@ -2,9 +2,9 @@
 title: "El Salón Principal - Colección Histórica de Pianos y Muebles"
 artist: "Varios artistas"
 year: "Siglos XIX-XX"
-image: /images/museum/qr10-salon-principal.jpg
+image: /images/museum/qr10-salon-principal.webp
 featuredImage:
-  src: /images/museum/qr10-salon-principal.jpg
+  src: /images/museum/qr10-salon-principal.webp
   alt: "Vista del salón principal de La Casa de Teresita mostrando dos pianos de media cola Steinway & Sons y Gaveau, muebles franceses Luis XV y colección de arte histórico boliviano"
 category: Furniture
 location: Salón Principal

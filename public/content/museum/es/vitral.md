@@ -2,9 +2,9 @@
 title: 'Vitral Illimani | Arte en Vidrio de La Casa de Teresita'
 artist: 'Ernesto Gamarra F. (diseño) & Manuel Segales (ejecución)'
 year: 'Obra en Vitral'
-image: /images/museum/qr35-vitral.jpg
+image: /images/museum/qr35-vitral.webp
 featuredImage:
-  src: /images/museum/qr35-vitral.jpg
+  src: /images/museum/qr35-vitral.webp
   alt: 'Vitral en La Casa de Teresita que representa el Illimani y el puente Libertad, inspirado en la vista posterior de la casa, ejecutado por el maestro vitralista Manuel Segales'
 category: 'Arte en Vidrio'
 location: 'La Casa de Teresita, La Paz'

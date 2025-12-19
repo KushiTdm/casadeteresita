@@ -2,10 +2,10 @@
 title: "The Medical School Donation - UMSA: A Family's Gift to Bolivian Healthcare Education"
 artist: "José María Gamarra Gutierrez"
 year: "1937"
-image: /images/museum/qr4-donacion-umsa.jpg
+image: /images/museum/qr4-donacion-umsa.webp
 
 featuredImage:
-  src: /images/museum/qr4-donacion-umsa.jpg
+  src: /images/museum/qr4-donacion-umsa.webp
   alt: "1937 gratitude parchment from Universidad Mayor de San Andrés (UMSA) commemorating José María Gamarra's philanthropic donation of prime Miraflores land for Bolivia's Faculty of Medicine, establishing a multi-generational medical legacy"
 
 category: Document

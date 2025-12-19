@@ -2,9 +2,9 @@
 title: "Cuadro de Arturo Borda - Escena Militar (1951)"
 artist: "Arturo Borda"
 year: "1951"
-image: /images/museum/qr7-militar-gm.jpg
+image: /images/museum/qr7-militar-gm.webp
 featuredImage:
-  src: /images/museum/qr7-militar-gm.jpg
+  src: /images/museum/qr7-militar-gm.webp
   alt: "Cuadro al óleo de 1951 por Arturo Borda, pintor boliviano, representando una escena militar de la Segunda Guerra Mundial, pieza exclusiva de la colección familiar"
 category: Painting
 location: Salón Principal

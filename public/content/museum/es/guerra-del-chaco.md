@@ -2,9 +2,9 @@
 title: "La Guerra del Chaco - Documento Histórico (1932-1935)"
 artist: "Documento histórico"
 year: "1932-1935"
-image: /images/museum/qr15-guerra-chaco.jpg
+image: /images/museum/qr15-guerra-chaco.webp
 featuredImage:
-  src: /images/museum/qr15-guerra-chaco.jpg
+  src: /images/museum/qr15-guerra-chaco.webp
   alt: "Documento histórico sobre la Guerra del Chaco entre Bolivia y Paraguay (1932-1935), conflicto que cobró más de 90,000 vidas y definió fronteras en Sudamérica"
 category: Document
 location: Salón Principal

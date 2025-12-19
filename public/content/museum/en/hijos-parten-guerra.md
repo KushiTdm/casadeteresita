@@ -2,9 +2,9 @@
 title: "The Sons Go to War - Historical Family Portrait"
 artist: "Unknown photographer"
 year: "Circa 1932-1935"
-image: /images/museum/qr17-partida-hijos.jpg
+image: /images/museum/qr17-partida-hijos.webp
 featuredImage:
-  src: /images/museum/qr17-partida-hijos.jpg
+  src: /images/museum/qr17-partida-hijos.webp
   alt: "Historical portrait of Francisco Fajardo bidding farewell to his sons Eduardo and Augusto (Teresita's father) to fulfill their duty in the Chaco War, image capturing family sacrifice during the conflict"
 category: Photography
 location: Main Hall

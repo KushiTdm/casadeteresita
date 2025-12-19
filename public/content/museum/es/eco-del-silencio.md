@@ -2,9 +2,9 @@
 title: "Arte Contemporáneo de Bolivia - El Eco del Silencio por Consuelo Mendieta Cervantes"
 artist: "Consuelo Mendieta Cervantes"
 year: "Contemporáneo"
-image: /images/museum/qr33-arte-contemporaneo2.jpg
+image: /images/museum/qr33-arte-contemporaneo2.webp
 featuredImage:
-  src: /images/museum/qr33-arte-contemporaneo2.jpg
+  src: /images/museum/qr33-arte-contemporaneo2.webp
   alt: "Obra 'El Eco del Silencio' de la artista contemporánea boliviana Consuelo Mendieta Cervantes, acrílico sobre lienzo de 140cm x 100cm, parte de la colección contemporánea de La Casa de Teresita"
 category: Painting
 location: Galería Contemporánea

@@ -2,9 +2,9 @@
 title: "Arturo Borda's Painting - Military Scene (1951)"
 artist: "Arturo Borda"
 year: "1951"
-image: /images/museum/qr7-militar-gm.jpg
+image: /images/museum/qr7-militar-gm.webp
 featuredImage:
-  src: /images/museum/qr7-militar-gm.jpg
+  src: /images/museum/qr7-militar-gm.webp
   alt: "1951 oil painting by Bolivian painter Arturo Borda depicting a Second World War military scene, exclusive piece from the family collection"
 category: Painting
 location: Main Hall

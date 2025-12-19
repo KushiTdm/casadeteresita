@@ -2,9 +2,9 @@
 title: 'Illimani Viewpoint La Paz | Panoramic View of the Snowy Peak and City'
 artist: 'Panoramic View of La Paz'
 year: 'Contemporary Viewpoint'
-image: /images/museum/qr34-mirador-illimani.jpg
+image: /images/museum/qr34-mirador-illimani.webp
 featuredImage:
-  src: /images/museum/qr34-mirador-illimani.jpg
+  src: /images/museum/qr34-mirador-illimani.webp
   alt: 'Panoramic view from Illimani Viewpoint in La Paz Bolivia showing Illimani snowy peak, Libertad Bridge, Muela del Diablo and southern neighborhoods'
 category: 'Viewpoint'
 location: 'Illimani Viewpoint, La Paz, Bolivia'
