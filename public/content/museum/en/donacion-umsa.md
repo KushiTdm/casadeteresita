@@ -45,154 +45,36 @@ featured: true
 datePublished: "2024-01-15"
 dateModified: "2024-12-18"
 ---
+# School Of Medicine (UMSA)
 
-# A Legacy of Education and Medicine: When Philanthropy Shaped Healthcare
+In 1937, Don José María Gamarra donate his property of Miraflores to the University Mayor de San Andres for the construction of the faculty of Medicine and others related. Many years later his son Juan (Teresita’s husband) graduated from this school and continued his studies in United States of America.
 
-In 1937, Don José María Gamarra made a transformative donation to the Universidad Mayor de San Andrés (UMSA) that would ripple through generations of Bolivian healthcare: the land in the Miraflores area for the construction of the Faculty of Medicine and related departments. This wasn't merely a real estate gift—it was an investment in Bolivia's medical future and a statement of belief in education as the foundation of national development.
 
-## The 1937 Donation: Land for Learning
+As Juan became a very well-known surgeon and teacher of the medical School in La Paz, Don José María considered that his son Juan was the one to preserve the parchment of thanks from the University, so now we have it on display here.
 
-The Miraflores area in 1937 was prime real estate in La Paz, strategically positioned and valuable. When Don José María decided to donate this significant property to UMSA specifically for medical education, he demonstrated a sophisticated understanding of Bolivia's needs. The country faced a severe shortage of trained medical professionals, particularly outside major urban centers.
 
-The donated land provided space for:
-- The main Faculty of Medicine building
-- Related academic departments and laboratories
-- Student facilities and research areas
-- Future expansion as medical education grew
+We suggest to read this nice story about Dr Juan Gamarra and his father Don José María written by Mauricio Aira.
 
-This donation came during a period when Latin American universities were expanding rapidly, but often struggled to find adequate facilities. Don José María's gift solved a critical infrastructure problem that might have delayed medical education development in Bolivia by decades.
+## Paralel History Of Silver And Coca Leave, But Also Of Coca Leave And Gold. by Mauricio Aira
 
-## A Family Connected to Medicine: From Donor to Distinguished Graduate
+An article from Humberto Vacaflor describes in a poetical way the old rivalry between the silver and coca leave, this brought to my mind a pleasant memory of the so called “Coca King”, José María Gamarra, father from the medical doctor Juan Gamarra who operated my feet after being born with a malformation.
 
-Years later, in a remarkable full-circle moment, Don José María's son **Juan Gamarra Antezana** graduated from this very medical school that his father had helped create. But Juan didn't simply pass through—he excelled, becoming one of Bolivia's most distinguished medical professionals.
 
-### Juan's Medical Journey
+After been Operated at “Clinica Americana de Obrajes” I established a relationship with Don José María because we shared the same room. He was recovering from a minor surgery, and during this time he patiently told me the reason of his honorable tittle of “El Rey de la Coca” (Coca King).  Showing me a shining necklace made with golden nuggets of different sizes, he put his eye in one in particular “this is the nugget” he said, “the  biggest one”, (it has three centimeter long and 1 centimeter wide), “that was found in  Los Yungas”, “it was found at the feet of the Huayna Potosi”, part of the Andes Mountain range where gold is born in a selfish way and runs through the waters , little by little.
 
-After graduating from UMSA's Faculty of Medicine, Juan continued his specialization in the United States, where he trained in advanced surgical techniques at a time when such international medical education was rare for Latin American physicians. This combination of Bolivian medical foundation and American surgical specialization made him uniquely qualified.
 
-Upon returning to Bolivia, Juan Gamarra Antezana established himself as:
-- A distinguished surgeon at the American Clinic in Obrajes, La Paz
-- A professor at UMSA's Faculty of Medicine
-- A pioneer in several surgical techniques in Bolivia
-- A mentor to countless medical students
+A sincere friendship arose, and from me a great admiration for his work example and all the effort he made through his life. I remember he said “Nowadays there is not any “cocani” (Coca leave seller) who doesn’t sell my product, it’s everywhere”
+We are talking of the year 1957, long away from the cocaine boom that started in Bolivia during Banzer Government in 1975. In that time coca leaves were used in 98% for “acullico” (personal consumption) and coca from La Paz was the most noted one.
+In fact, Humberto, the parallelism of coca and silver is historic, mysterious, endearing, as it is with gold.
 
-The symmetry is profound: the institution his father helped build became the foundation of his own career, and he then gave back to that institution as an educator, training the next generation of Bolivian physicians.
 
-## The Parchment of Gratitude: A Symbol Preserved
+Cleary you run into producers of Yungas who found gold nuggets in some occasions. And in this moment the natural, spontaneous alliance occurred.
 
-Many years after the original 1937 donation, when Juan had established himself as a notable surgeon and respected professor, Don José María decided that the university's parchment of gratitude should be preserved by his son. This decision carried deep symbolic meaning.
 
-The parchment represents:
-- **Gratitude**: The university's formal recognition of philanthropic vision
-- **Family legacy**: The connection between father's generosity and son's achievement
-- **Commitment**: A family's multi-generational dedication to education
-- **Service**: The principle that success brings responsibility to community
+Don José María invited me to his house, saying “when you arrive to Plaza del Estudiante you will see the Sucre monument, my house is located where his sword points” I arrived to the house and once there he told me curious histories about coca leave that I will keep for another moment.
 
-This ornate document, carefully preserved and now displayed in La Casa de Teresita's museum, serves as a tangible link between past generosity and present inspiration. Visitors can see the original calligraphy, official seals, and formal language that universities used to honor major benefactors in the 1930s.
 
-## A Beautiful Friendship: The Story of Mauricio Aira
+I wanted also to give thanks to Juan Gamarra, (I never had the opportunity) Thanks to his work I was able to walk straight, he was the one who took the initiative and did it for free, correcting the abnormality with the reduction of the calcaneus.
+Also thanks to his father, the “Coca King” Don José María Gamarra, since I was able to hear from him the first histories of Coca leave.
 
-One of the most touching testimonials to the Gamarra family's character comes from journalist Mauricio Aira, who wrote a memorable article titled "Parallel History of Silver and Coca, but also of Coca and Gold." This piece provides intimate insight into both José María and Juan's characters.
-
-### An Unexpected Bond in a Hospital Room
-
-The story began in an unlikely setting: a hospital room at the American Clinic in Obrajes, where both Mauricio Aira and Don José María Gamarra were recovering from surgeries. Aira had just undergone corrective surgery on his feet, performed by Dr. Juan Gamarra, while Don José María was recuperating from minor surgery.
-
-This chance hospital roommate arrangement led to hours of conversation that Aira would treasure for the rest of his life. As Aira recovered from his operation, Don José María—with the patience and generosity of spirit that characterized his life—shared stories of his remarkable journey as "El Rey de la Coca."
-
-### The Gold Necklace: A Treasure from the Earth
-
-During one of these conversations, Don José María showed Aira a gleaming necklace made of gold nuggets of various sizes. The craftsmanship was exceptional, but what truly captivated was the story behind the largest nugget.
-
-*"This is the largest nugget,"* Don José María explained, holding a piece approximately three centimeters long and perhaps one or more centimeters wide. *"It's the biggest ever found in Los Yungas. We discovered it among the coca plantations when we were drying the leaves at the foot of Huayna Potosí."*
-
-He went on to explain the geology and folklore surrounding gold in the Yungas region. The majestic Huayna Potosí mountain, he told Aira, is where gold is born—flowing, almost selfishly, little by little, throughout the course of the mountain waters. Over millennia, these gold particles accumulate in specific areas, occasionally forming nuggets of exceptional size.
-
-The discovery of this particular nugget hadn't been intentional—coca workers found it while preparing the leaves for drying, an everyday activity that suddenly became extraordinary. This accidental discovery embodied the Gamarra story: success that came from attention to detail, presence in the field, and the fortunate intersection of hard work and natural blessing.
-
-### A Friendship Built on Admiration
-
-As Aira later wrote, a sincere friendship emerged between them during those hospital days. On his part, it was admiration for the example of work and effort that Don José María had exercised throughout an entire lifetime.
-
-*"Today there isn't a single cocani (coca leaf seller) who doesn't sell my product. The coca I produce is everywhere,"* Don José María told him, not boasting, but simply stating a fact. This conversation took place in 1957, still far from the cocaine boom that would hit Bolivia starting in 1975 during the Bánzer Government. In truth, 98% of coca was used for traditional acullico (chewing), and the paceña variety produced by Gamarra was the most sought after—if not the only one that serious consumers would accept.
-
-### Coca, Silver, and Gold: The Natural Trilogy
-
-In his article, Aira reflected on the historical, mysterious, and deeply meaningful parallelism between coca and silver in Bolivian history—but also with gold, as Don José María's story demonstrated. Without doubt, he noted, Yungas producers occasionally found gold nuggets, creating a natural, spontaneous, and enriching alloy of economic resources.
-
-This wasn't just romantic storytelling—it was economic reality. The Yungas region's wealth came from its unique combination of:
-- **Coca**: The traditional Andean stimulant, legal and culturally essential
-- **Gold**: Deposited by mountain streams over millennia
-- **Coffee and Bananas**: Agricultural diversification enabled by the perfect climate
-- **Human enterprise**: The vision and work ethic of people like Gamarra
-
-### An Invitation Remembered
-
-Before they parted ways, Don José María extended an invitation that Aira would never forget:
-
-*"When you reach Plaza del Estudiante, look at the Sucre monument—in the direction his sword points, you'll find my house without getting lost."*
-
-Indeed, Aira visited, and Don José María shared more curious stories about coca that Aira reserved for future articles. Among them, although for only a few minutes, was Juan Gamarra, the physician whom Aira never had the opportunity to properly thank.
-
-The surgery had been performed free of charge—Juan's own initiative, not something requested or expected. This act of generosity, like his father's land donation decades earlier, embodied the family's philosophy: success brings responsibility to serve.
-
-### A Surgeon's Gift: Walking Straight
-
-Thanks to Juan Gamarra's skilled surgery—specifically, the reduction of the calcaneus bones to correct a congenital malformation—Aira was able to walk with straight feet for the rest of his life. This wasn't cosmetic surgery; it was life-changing medical intervention that improved Aira's mobility, reduced pain, and enhanced his quality of life fundamentally.
-
-And thanks to his father, the Coca King Don José María Gamarra, Aira learned the first stories of the coca leaf—stories rooted in reality, not the mythology and propaganda that would later distort coca's image during the drug war era.
-
-## Historical Significance: More Than a Document
-
-This parchment represents far more than institutional gratitude. It symbolizes the interconnection of:
-
-### Education as Foundation
-Don José María understood that Bolivia's development required educated professionals. By donating land for medical education, he invested in the nation's future healthcare capacity.
-
-### Family Legacy
-The donation set in motion a family tradition of medical service. Juan's career directly resulted from the institution his father helped build, creating a living legacy rather than just a financial one.
-
-### Social Contribution
-Both father and son embodied a philosophy that success creates obligation. Don José María's wealth from agriculture translated into philanthropy. Juan's surgical skill translated into teaching and free medical care.
-
-### Institutional Development
-The medical school built on this donated land has trained generations of Bolivian physicians. Thousands of doctors who practice throughout Bolivia received their foundation at the Faculty of Medicine that Don José María's donation made possible.
-
-## The Medical School's Evolution
-
-From its 1937 founding on the donated Miraflores land, UMSA's Faculty of Medicine has grown into one of South America's respected medical schools. The institution has:
-- Trained over 10,000 physicians
-- Established specialized departments in all major medical fields
-- Created research centers contributing to public health knowledge
-- Developed rural medicine programs serving Bolivia's underserved areas
-- Built international partnerships with medical schools worldwide
-
-Every one of these achievements traces back, in part, to the space provided by that original land donation.
-
-## Modern Reflection: Philanthropy's Ripple Effect
-
-The Gamarra family's gift demonstrates how strategic philanthropy creates lasting impact. Unlike consumable charity, the land donation created:
-- **Permanent infrastructure**: Buildings that continue serving students
-- **Institutional capacity**: An educational institution that perpetuates knowledge
-- **Professional multiplier**: Each trained physician treats thousands of patients
-- **Economic development**: Healthcare professionals contributing to society
-- **Cultural shift**: Normalizing education-focused philanthropy in Bolivia
-
-Juan's decision to display his father's gratitude parchment at La Casa de Teresita ensures that visitors can learn this story and perhaps be inspired to similar generosity in their own capacities.
-
-## Visit the Exhibition at La Casa de Teresita
-
-This parchment is displayed alongside other Gamarra family documents and artifacts that tell the story of a family's multi-generational commitment to Bolivia's development. The exhibition includes:
-
-- The original 1937 UMSA gratitude parchment
-- Photographs of Juan Gamarra in surgical practice
-- His medical degree and certifications
-- Surgical instruments from his practice
-- Letters and documents relating to his teaching career
-- Historical context about medical education in 1930s Bolivia
-
-Guided tours provide deeper insight into how this single act of philanthropy influenced Bolivian healthcare for nearly a century.
-
----
-
-*This exhibit connects to our other displays: "The Industrial Agricultural Society" showing José María's business success that enabled his philanthropy, and "The Coca King - Portrait" showing the man himself.*
+_Posted by Mauricio Aira in the newsletter "Potosino soy!"(Edited article)_
