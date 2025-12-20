@@ -2,9 +2,9 @@
 title: "The Gamarra Couple | María Teresa Fajardo and Dr. Juan Gamarra Antezana Family Portrait"
 artist: "Family Portrait"
 year: "Family Heritage"
-image: /images/museum/los-Esposos-Gamarra.jpg
+image: /images/museum/los-esposos-gamarra.jpg
 featuredImage:
-  src: /images/museum/los-Esposos-Gamarra.webp
+  src: /images/museum/los-esposos-gamarra.jpg
   alt: "Portrait of María Teresa Fajardo (Tere) and Dr. Juan Gamarra Antezana, the founding couple of La Casa de Teresita in La Paz Bolivia family heritage"
 category: "Family Portrait"
 location: "La Casa de Teresita, La Paz"
