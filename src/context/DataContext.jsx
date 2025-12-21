@@ -1,4 +1,4 @@
-// src/context/DataContext.jsx - SANS ACCESSOIRES
+// src/context/DataContext.jsx - OPTIMISÉ POUR PERFORMANCES
 import { createContext, useContext, useState, useEffect } from 'react';
 import { roomsDetailed } from '../data/roomsData';
 import { 
@@ -11,7 +11,7 @@ import {
 const DataContext = createContext(undefined);
 
 export function DataProvider({ children }) {
-  // Immediate data (hardcoded fallback) - NO loading state
+  // Données immédiates (hardcoded fallback) - PAS de loading
   const [rooms, setRooms] = useState(roomsDetailed);
   const [config, setConfig] = useState({
     whatsappNumber: '59170675985',
@@ -21,48 +21,66 @@ export function DataProvider({ children }) {
     bookingRates: 9.6
   });
   
-  // Loading states - only for updates
+  // Loading states - uniquement pour updates
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const [dataSource, setDataSource] = useState('fallback');
   const [lastUpdateTime, setLastUpdateTime] = useState(null);
 
+  // ✅ OPTIMISATION: Chargement ASYNCHRONE avec requestIdleCallback
   const loadData = async (checkIn = new Date(), checkOut = null, silent = false) => {
     if (!silent) {
       console.log('📊 Loading data progressively...');
     }
     
     try {
-      // Fetch data in parallel (sans accessories)
-      const [roomsData, configData] = await Promise.all([
-        getEnrichedRooms(checkIn, checkOut),
+      // ✅ Charger en parallèle mais ne pas bloquer le rendu
+      const loadPromise = Promise.all([
+        getRooms(),
         getConfig()
       ]);
 
-      console.log('🔍 DEBUG - Config loaded:', configData);
-      console.log('🔍 DEBUG - bookingRates value:', configData?.bookingRates);
-
-      // Update rooms if we got valid data
-      if (roomsData && roomsData.length > 0) {
-        setRooms(roomsData);
-        setDataSource('sheets');
-        console.log('✅ Updated with Google Sheets data');
+      // ✅ Utiliser requestIdleCallback pour ne pas bloquer
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(async () => {
+          const [roomsData, configData] = await loadPromise;
+          updateState(roomsData, configData, checkIn, checkOut);
+        });
       } else {
-        setDataSource('fallback');
-        console.log('📦 Using hardcoded fallback data');
+        // Fallback: setTimeout
+        setTimeout(async () => {
+          const [roomsData, configData] = await loadPromise;
+          updateState(roomsData, configData, checkIn, checkOut);
+        }, 0);
       }
-
-      // Update config if available
-      if (configData && configData.whatsappNumber) {
-        console.log('✅ Updating config state with:', configData);
-        setConfig(configData);
-      } else {
-        console.log('⚠️ Config data incomplete, keeping default');
-      }
-
-      setLastUpdateTime(new Date());
     } catch (error) {
       console.error('❌ Error loading data:', error);
       setDataSource('fallback');
+      setIsInitialLoad(false);
+    }
+  };
+
+  // ✅ Fonction helper pour mettre à jour le state
+  const updateState = async (roomsData, configData, checkIn, checkOut) => {
+    try {
+      // Update rooms si disponibles
+      if (roomsData && roomsData.length > 0) {
+        // ✅ Enrichir avec availability EN ARRIÈRE-PLAN
+        const enrichedRooms = await getEnrichedRooms(checkIn, checkOut);
+        setRooms(enrichedRooms);
+        setDataSource('sheets');
+        console.log('✅ Rooms updated with Sheets data');
+      } else {
+        setDataSource('fallback');
+        console.log('📦 Using hardcoded fallback');
+      }
+
+      // Update config si disponible
+      if (configData && configData.whatsappNumber) {
+        setConfig(configData);
+        console.log('✅ Config updated');
+      }
+
+      setLastUpdateTime(new Date());
     } finally {
       setIsInitialLoad(false);
     }
@@ -74,30 +92,24 @@ export function DataProvider({ children }) {
   };
 
   useEffect(() => {
-    // Initial load in background
+    // ✅ Initial load ASYNCHRONE (ne bloque pas le premier rendu)
     loadData(new Date(), null, true);
 
-    // Auto-refresh every 5 minutes (silent updates)
+    // ✅ Auto-refresh toutes les 5 minutes (silent)
     const interval = setInterval(() => {
-      console.log('🔄 Auto-refreshing data (silent)...');
+      console.log('🔄 Auto-refresh (silent)...');
       loadData(new Date(), null, true);
     }, 5 * 60 * 1000);
 
     return () => clearInterval(interval);
   }, []);
 
-  // DEBUG: Log when config changes
-  useEffect(() => {
-    console.log('🔄 Config state updated:', config);
-    console.log('   bookingRates:', config.bookingRates, typeof config.bookingRates);
-  }, [config]);
-
   return (
     <DataContext.Provider
       value={{
         rooms,
         config,
-        isLoading: false,
+        isLoading: false, // ✅ Toujours false pour éviter les bloqueurs
         isInitialLoad,
         dataSource,
         lastUpdateTime,
