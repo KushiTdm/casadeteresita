@@ -1,6 +1,6 @@
-// src/pages/MuseumPage.jsx - VERSION AMÉLIORÉE (VRAIES DONNÉES)
+// src/pages/MuseumPage.jsx - VERSION AVEC URLs CORRECTES
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { Building2, Filter, MessageCircle, Award, Sparkles, MapPin, Calendar, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { getArtworksByCategory } from '../utils/contentLoader';
@@ -8,7 +8,8 @@ import SEOHelmet from '../components/SEOHelmet';
 
 const MuseumPage = () => {
   const { slug } = useParams();
-  const { language, t } = useLanguage();
+  const location = useLocation();
+  const { language, setLanguage, t } = useLanguage();
   const [artworks, setArtworks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -36,6 +37,15 @@ const MuseumPage = () => {
     Viewpoint: 'from-cyan-900 to-cyan-700',
     Textile: 'from-rose-900 to-rose-700'
   };
+
+  // Détecter la langue depuis l'URL
+  useEffect(() => {
+    const pathLanguage = location.pathname.startsWith('/es/') ? 'es' : 'en';
+    if (pathLanguage !== language) {
+      console.log(`🌐 Changing language to: ${pathLanguage} (from URL)`);
+      setLanguage(pathLanguage);
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     loadArtworks();
@@ -81,8 +91,13 @@ const MuseumPage = () => {
       <SEOHelmet
         title={t.museum.title}
         description={t.museum.metaDescription}
-        url="/museum"
+        url={`/${language}/museum`}
         type="website"
+        currentLanguage={language}
+        alternateLanguages={{
+          en: '/en/museum',
+          es: '/es/museum'
+        }}
       />
       
       <div className="pt-16 md:pt-20">
@@ -130,7 +145,7 @@ const MuseumPage = () => {
           </div>
         </section>
 
-        {/* ✅ SLIDER AMÉLIORÉ - MAX 70VH - FEATURED ONLY */}
+        {/* SLIDER avec URLs correctes */}
         {!loading && featuredArtworks.length > 0 && (
           <ImprovedMuseumSlider 
             articles={featuredArtworks}
@@ -139,7 +154,7 @@ const MuseumPage = () => {
           />
         )}
         
-        {/* ✅ COLLECTION COMPLÈTE - TOUS LES ARTWORKS */}
+        {/* COLLECTION COMPLÈTE */}
         {!loading && artworks.length > 0 && (
           <section className="max-w-7xl mx-auto px-3 sm:px-4 pb-12 md:pb-20">
             <div className="mb-8 md:mb-12">
@@ -204,7 +219,7 @@ const MuseumPage = () => {
                 </div>
               </div>
 
-              {/* ✅ GRID AVEC HAUTEUR FIXE - ALL ARTWORKS */}
+              {/* GRID avec URLs correctes */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {artworks.map((artwork) => (
                   <ArtworkMuseumCard 
@@ -277,7 +292,7 @@ const MuseumPage = () => {
   );
 };
 
-// ✅ SLIDER AMÉLIORÉ - MAX 70VH - HAUTEUR FIXE
+// ✅ SLIDER avec URLs correctes
 const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -308,7 +323,6 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
 
   return (
     <div className="w-full py-8 md:py-12">
-      {/* Featured Banner */}
       <div className="bg-gradient-to-r from-[#C4A96A] via-[#A85C32] to-[#C4A96A] py-2 mb-8">
         <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-2">
           <Award className="h-4 w-4 text-[#1a1a1a] animate-pulse" />
@@ -319,13 +333,11 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
         </div>
       </div>
 
-      {/* Slider Container - MAX 70VH */}
       <div className="max-w-7xl mx-auto px-4">
         <div className="relative bg-gradient-to-br from-[#2D5A4A] to-[#1a1a1a] rounded-xl border-4 border-[#C4A96A] overflow-hidden" style={{ maxHeight: '70vh' }}>
           
           {/* Mobile Layout */}
           <div className="md:hidden flex flex-col" style={{ height: '70vh' }}>
-            {/* Image - 50% */}
             <div className="relative h-1/2">
               <img 
                 src={currentArticle.image || currentArticle.featuredImage?.src}
@@ -350,7 +362,6 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
               </div>
             </div>
 
-            {/* Content - 50% with fixed height + scroll */}
             <div className="h-1/2 overflow-y-auto p-4">
               <div className="min-h-full flex flex-col">
                 <h2 className="text-xl font-bold text-[#C4A96A] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
@@ -382,8 +393,9 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
                   )}
                 </div>
 
+                {/* ✅ FIX: Ajout du préfixe langue */}
                 <Link 
-                  to={`/museum/${currentArticle.slug}`}
+                  to={`/${language}/museum/${currentArticle.slug}`}
                   className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#C4A96A] to-[#A85C32] text-[#1a1a1a] px-4 py-2 rounded-lg font-bold text-sm mb-2"
                 >
                   <Eye className="h-4 w-4" />
@@ -399,7 +411,6 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
 
           {/* Desktop Layout */}
           <div className="hidden md:grid grid-cols-2 gap-6 p-6" style={{ height: '70vh' }}>
-            {/* Content - Fixed height with scroll */}
             <div className="overflow-y-auto pr-4 flex flex-col">
 
               <h2 className="text-3xl md:text-4xl font-bold text-[#C4A96A] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
@@ -432,8 +443,9 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
               </div>
 
               <div className="flex items-center gap-4 mt-auto">
+                {/* ✅ FIX: Ajout du préfixe langue */}
                 <Link 
-                  to={`/museum/${currentArticle.slug}`}
+                  to={`/${language}/museum/${currentArticle.slug}`}
                   className="inline-flex items-center gap-2 bg-gradient-to-r from-[#C4A96A] to-[#A85C32] text-[#1a1a1a] px-6 py-3 rounded-lg font-bold"
                 >
                   <Eye className="h-5 w-5" />
@@ -454,7 +466,6 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
               </div>
             </div>
 
-            {/* Image - Fixed height */}
             <div className="flex flex-col" style={{ height: 'calc(70vh - 3rem)' }}>
               <div className="relative flex-1 bg-[#1a1a1a] rounded-xl overflow-hidden border-2 border-[#C4A96A]">
                 <img
@@ -465,7 +476,6 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
               </div>
 
-              {/* Thumbnails */}
               <div className="flex gap-2 mt-3 justify-center">
                 {articles.map((artwork, index) => (
                   <button
@@ -491,7 +501,7 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
   );
 };
 
-// ✅ CARD AVEC HAUTEUR FIXE
+// ✅ CARD avec URL correcte
 const ArtworkMuseumCard = ({ artwork, language, categoryColors, featured = false }) => {
   const [imageError, setImageError] = useState(false);
 
@@ -502,8 +512,9 @@ const ArtworkMuseumCard = ({ artwork, language, categoryColors, featured = false
   const categoryGradient = categoryColors[artwork.category] || 'from-gray-900 to-gray-700';
 
   return (
+    // ✅ FIX: Ajout du préfixe langue dans le Link
     <Link 
-      to={`/museum/${artwork.slug}`}
+      to={`/${language}/museum/${artwork.slug}`}
       className="group block h-full"
     >
       <article className={`h-full flex flex-col bg-[#1a1a1a] rounded-lg overflow-hidden border-2 ${

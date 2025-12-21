@@ -1,4 +1,4 @@
-// src/components/BlogCard.jsx
+// src/components/BlogCard.jsx - FIXED VERSION WITH LANGUAGE PREFIX
 import { Link } from 'react-router-dom';
 import { Calendar, Clock, ArrowRight } from 'lucide-react';
 import { format } from 'date-fns';
@@ -33,10 +33,13 @@ const BlogCard = ({ post, featured = false }) => {
     Tips: 'bg-green-100 text-green-800'
   };
   
+  // 🔧 FIX: Construire l'URL avec le préfixe de langue
+  const blogPostUrl = `/${language}/blog/${post.slug}`;
+  
   return (
     <article className={`bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group ${featured ? 'md:col-span-1' : ''}`}>
       {/* Featured Image */}
-      <Link to={`/blog/${post.slug}`} className="block relative overflow-hidden aspect-video">
+      <Link to={blogPostUrl} className="block relative overflow-hidden aspect-video">
         <img 
           src={featuredImage} 
           alt={featuredImageAlt}
@@ -72,7 +75,7 @@ const BlogCard = ({ post, featured = false }) => {
         </div>
         
         {/* Title */}
-        <Link to={`/blog/${post.slug}`}>
+        <Link to={blogPostUrl}>
           <h3 className="text-2xl font-bold text-[#2D5A4A] mb-3 group-hover:text-[#A85C32] transition-colors line-clamp-2">
             {post.title}
           </h3>
@@ -85,7 +88,7 @@ const BlogCard = ({ post, featured = false }) => {
         
         {/* Read More Button */}
         <Link 
-          to={`/blog/${post.slug}`}
+          to={blogPostUrl}
           className="inline-flex items-center gap-2 text-[#A85C32] font-semibold hover:text-[#8B4926] transition-colors group/link"
         >
           {t.blog.readMore}

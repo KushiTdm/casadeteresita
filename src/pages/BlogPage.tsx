@@ -1,6 +1,6 @@
-// src/pages/BlogPage.jsx - VERSION AVEC DÉTECTION LANGUE DEPUIS URL
+// src/pages/BlogPage.jsx - ROUTES FIXED
 import { useState, useEffect } from 'react';
-import { useParams, useLocation, Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { BookOpen, Filter, Star } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { getBlogPostsByCategory } from '../utils/contentLoader';
@@ -16,7 +16,7 @@ const BlogPage = () => {
   
   const categories = ['All', 'Travel', 'History', 'Culture', 'Tips'];
 
-  // Détecter la langue depuis l'URL
+  // 🔧 FIX: Détecter la langue depuis l'URL au chargement
   useEffect(() => {
     const pathLanguage = location.pathname.startsWith('/es/') ? 'es' : 'en';
     if (pathLanguage !== language) {
@@ -72,7 +72,7 @@ const BlogPage = () => {
     ? 'Discover stories, travel tips, cultural insights and historical tales about La Paz, Bolivia. Read our blog for insider information about visiting La Casa de Teresita and exploring La Paz.'
     : 'Descubre historias, consejos de viaje, insights culturales y relatos históricos sobre La Paz, Bolivia. Lee nuestro blog para información privilegiada sobre visitar La Casa de Teresita y explorar La Paz.';
   
-  // URL avec préfixe langue
+  // 🔧 FIX: URL avec préfixe langue
   const currentUrl = `/${language}/blog`;
   
   return (
