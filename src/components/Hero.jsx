@@ -36,7 +36,7 @@ const Hero = () => {
           backgroundImage: `url('/house1.jpg')`,
         }}
       >
-        {/* ✅ CORRECTION : Image hero avec fetchpriority="high" */}
+        {/* ✅ Image hero avec fetchpriority="high" */}
         <img 
           src="/house1.jpg"
           alt="La Casa de Teresita - Historic Boutique Hotel La Paz"
@@ -44,8 +44,9 @@ const Hero = () => {
           height="1080"
           fetchPriority="high"
           decoding="async"
+          loading="eager"
           className="absolute inset-0 w-full h-full object-cover"
-          style={{ display: 'none' }} // Utiliser background-image pour le visuel
+          style={{ display: 'none' }}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60" />
       </div>

@@ -2,7 +2,7 @@
 User-agent: *
 Allow: /
 Disallow: /admin/
-Disallow: /api/
+Disallow: /debug-blog
 
 # Sitemap
 Sitemap: https://lacasadeteresita.netlify.app/sitemap.xml
@@ -13,9 +13,11 @@ Crawl-delay: 1
 # Specific rules for common bots
 User-agent: Googlebot
 Allow: /
+Crawl-delay: 0
 
 User-agent: Bingbot
 Allow: /
+Crawl-delay: 1
 
 User-agent: Slurp
 Allow: /

@@ -29,6 +29,11 @@
     <meta name="twitter:description" content="Stay in a historic 1916 mansion in La Paz. Gardens, century-old pianos, authentic rooms. Rated 9.6/10." />
     <meta name="twitter:image" content="https://lacasadeteresita.netlify.app/house1.jpg" />
 
+    <!-- Preload Critical Resources -->
+    <link rel="preload" href="/house1.jpg" as="image" fetchpriority="high">
+    <link rel="preconnect" href="https://sheets.googleapis.com">
+    <link rel="dns-prefetch" href="https://sheets.googleapis.com">
+
     <!-- Additional SEO -->
     <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
     <meta name="googlebot" content="index, follow" />
@@ -40,10 +45,13 @@
     <meta name="geo.position" content="-16.5;-68.15" />
     <meta name="ICBM" content="-16.5, -68.15" />
 
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Fonts - OPTIMISÉ -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+    <noscript>
+      <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    </noscript>
 
     <!-- Schema.org Structured Data -->
     <script type="application/ld+json">
@@ -161,6 +169,57 @@
       "url": "https://lacasadeteresita.netlify.app"
     }
     </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Hotel",
+        "name": "La Casa de Teresita",
+        "description": "Historic boutique hotel in a 1916 mansion in La Paz. Three gardens, century-old piano collections, and authentic rooms.",
+        "image": [
+          "https://lacasadeteresita.netlify.app/house1.jpg",
+          "https://lacasadeteresita.netlify.app/garden.webp",
+          "https://lacasadeteresita.netlify.app/piano.webp"
+        ],
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Av. Arce 2995, San Jorge",
+          "addressLocality": "La Paz",
+          "addressRegion": "La Paz",
+          "addressCountry": "BO"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": "-16.5",
+          "longitude": "-68.15"
+        },
+        "url": "https://lacasadeteresita.netlify.app",
+        "telephone": ["+591-2-2431018", "+591-706-75985"],
+        "email": "info@lacasadeteresita.com",
+        "priceRange": "$40-$90 USD",
+        "starRating": {
+          "@type": "Rating",
+          "ratingValue": "4.5",
+          "bestRating": "5"
+        },
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "9.6",
+          "bestRating": "10",
+          "ratingCount": "247"
+        },
+        "amenityFeature": [
+          {"@type": "LocationFeatureSpecification", "name": "Free WiFi", "value": true},
+          {"@type": "LocationFeatureSpecification", "name": "Breakfast Included", "value": true},
+          {"@type": "LocationFeatureSpecification", "name": "Private Parking", "value": true},
+          {"@type": "LocationFeatureSpecification", "name": "Garden", "value": true}
+        ],
+        "checkinTime": "14:00",
+        "checkoutTime": "12:00",
+        "numberOfRooms": "9",
+        "petsAllowed": false
+      }
+      </script>
 
     <!-- Breadcrumb Schema -->
     <script type="application/ld+json">

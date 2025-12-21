@@ -53,6 +53,11 @@ const MuseumDetailPage = () => {
     }
   };
 
+  const alternateLanguages = {
+  en: `/museum/${slug}`,
+  es: `/museum/${slug}`
+  };
+
   const handleImageError = (e) => {
   const imageSrc = artwork?.image || artwork?.featuredImage?.src;
   console.error('❌ Image failed to load:', imageSrc);
@@ -132,6 +137,8 @@ const MuseumDetailPage = () => {
           image={artwork.image || artwork.featuredImage?.src}
           url={`/museum/${artwork.slug}`}
           type="article"
+          currentLanguage={language}
+          alternateLanguages={alternateLanguages}
         />
 
       {/* Miniature flottante */}
