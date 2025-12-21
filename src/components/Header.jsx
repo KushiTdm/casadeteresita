@@ -1,4 +1,4 @@
-// src/components/Header.jsx - VERSION SEO OPTIMISÉE
+// src/components/Header.jsx - VERSION AVEC ROUTES LANGUE
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Home } from 'lucide-react';
@@ -47,21 +47,23 @@ const Header = () => {
   const handleLanguageToggle = () => {
     const currentPath = location.pathname;
     
-    // Si on est sur un article de blog
-    if (currentPath.startsWith('/blog/') && currentPath !== '/blog') {
-      const slug = currentPath.replace('/blog/', '');
+    // Si on est sur un article de blog avec préfixe langue
+    const blogMatch = currentPath.match(/^\/(en|es)\/blog\/(.+)$/);
+    if (blogMatch) {
+      const [, currentLang, slug] = blogMatch;
+      const newLang = currentLang === 'en' ? 'es' : 'en';
       toggleLanguage();
-      // Rester sur le même article dans la nouvelle langue
-      navigate(`/blog/${slug}`, { replace: true });
+      navigate(`/${newLang}/blog/${slug}`, { replace: true });
       return;
     }
     
-    // Si on est sur une œuvre du musée
-    if (currentPath.startsWith('/museum/') && currentPath !== '/museum') {
-      const slug = currentPath.replace('/museum/', '');
+    // Si on est sur une œuvre du musée avec préfixe langue
+    const museumMatch = currentPath.match(/^\/(en|es)\/museum\/(.+)$/);
+    if (museumMatch) {
+      const [, currentLang, slug] = museumMatch;
+      const newLang = currentLang === 'en' ? 'es' : 'en';
       toggleLanguage();
-      // Rester sur la même œuvre dans la nouvelle langue
-      navigate(`/museum/${slug}`, { replace: true });
+      navigate(`/${newLang}/museum/${slug}`, { replace: true });
       return;
     }
     
@@ -110,16 +112,18 @@ const Header = () => {
               {t.nav.rooms}
             </button>
 
+            {/* 🆕 LIEN BLOG AVEC PRÉFIXE LANGUE */}
             <Link
-              to="/blog"
+              to={`/${language}/blog`}
               className={linkClass(location.pathname.includes('/blog'))}
             >
               {t.nav.blog}
             </Link>
 
+            {/* 🆕 LIEN MUSEUM AVEC PRÉFIXE LANGUE */}
             <Link
-              to="/museum"
-              className={linkClass(location.pathname === '/museum')}
+              to={`/${language}/museum`}
+              className={linkClass(location.pathname.includes('/museum'))}
             >
               {t.nav.museum}
             </Link>
@@ -186,7 +190,7 @@ const Header = () => {
             </button>
 
             <Link
-              to="/blog"
+              to={`/${language}/blog`}
               onClick={() => setIsMobileMenuOpen(false)}
               className={`block text-gray-700 hover:text-[#A85C32] font-medium ${
                 location.pathname.includes('/blog') ? 'text-[#A85C32]' : ''
@@ -196,10 +200,10 @@ const Header = () => {
             </Link>
 
             <Link
-              to="/museum"
+              to={`/${language}/museum`}
               onClick={() => setIsMobileMenuOpen(false)}
               className={`block text-gray-700 hover:text-[#A85C32] font-medium ${
-                location.pathname === '/museum' ? 'text-[#A85C32]' : ''
+                location.pathname.includes('/museum') ? 'text-[#A85C32]' : ''
               }`}
             >
               {t.nav.museum}

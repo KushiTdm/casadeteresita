@@ -318,6 +318,9 @@ const BlogPostPage = () => {
                     src={src} 
                     alt={alt || ''} 
                     loading="lazy"
+                    width="1200" 
+                    height="630"      
+                    decoding="async"
                     {...props} 
                   />
                   {alt && (
