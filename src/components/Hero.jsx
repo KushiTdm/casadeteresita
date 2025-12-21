@@ -1,3 +1,4 @@
+// src/components/Hero.jsx 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, BookOpen } from 'lucide-react';
@@ -8,7 +9,6 @@ const Hero = () => {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    // Déclencher l'animation après le montage du composant
     setTimeout(() => setIsLoaded(true), 100);
   }, []);
 
@@ -36,11 +36,21 @@ const Hero = () => {
           backgroundImage: `url('/house1.jpg')`,
         }}
       >
+        {/* ✅ CORRECTION : Image hero avec fetchpriority="high" */}
+        <img 
+          src="/house1.jpg"
+          alt="La Casa de Teresita - Historic Boutique Hotel La Paz"
+          width="1920"
+          height="1080"
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ display: 'none' }} // Utiliser background-image pour le visuel
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/60" />
       </div>
 
       <div className="relative z-10 text-center px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-        {/* Titre principal avec animation fade-in + slide-up */}
         <h1
           className={`text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-tight transition-all duration-1000 ${
             isLoaded
@@ -52,7 +62,6 @@ const Hero = () => {
           {t.hero.title}
         </h1>
         
-        {/* Sous-titre avec animation retardée */}
         <div className="mb-6">
           <p
             className={`text-2xl sm:text-3xl md:text-4xl text-[#C4A96A] font-semibold mb-4 transition-all duration-1000 delay-200 ${
@@ -75,7 +84,6 @@ const Hero = () => {
           </p>
         </div>
 
-        {/* Boutons avec animation retardée */}
         <div
           className={`flex flex-col sm:flex-row gap-4 justify-center items-center mt-12 transition-all duration-1000 delay-500 ${
             isLoaded
@@ -103,7 +111,6 @@ const Hero = () => {
         </div>
       </div>
 
-      {/* Indicateur de scroll avec animation retardée */}
       <div
         className={`absolute bottom-10 left-1/2 transform -translate-x-1/2 animate-bounce transition-all duration-1000 delay-700 ${
           isLoaded ? 'opacity-100' : 'opacity-0'

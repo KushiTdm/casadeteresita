@@ -1,4 +1,4 @@
-// src/components/SEOHelmet.jsx - VERSION SEO OPTIMISÉE AVEC HREFLANG
+// src/components/SEOHelmet.jsx - VERSION SEO OPTIMISÉE
 import { Helmet } from 'react-helmet-async';
 
 const SEOHelmet = ({ 
@@ -12,16 +12,15 @@ const SEOHelmet = ({
   author = 'La Casa de Teresita',
   publishedTime,
   modifiedTime,
-  // 🆕 Nouveaux paramètres pour le SEO multilingue
   currentLanguage = 'en',
-  alternateLanguages = null // { es: '/es/path', en: '/en/path' }
+  alternateLanguages = null
 }) => {
   const siteUrl = 'https://lacasadeteresita.netlify.app';
   const siteName = 'La Casa de Teresita';
   const fullUrl = url ? `${siteUrl}${url}` : siteUrl;
   const fullImage = image?.startsWith('http') ? image : `${siteUrl}${image || '/house1.jpg'}`;
   
-  // Default keywords if none provided
+  // Default keywords
   const defaultKeywords = [
     'La Paz hotel',
     'boutique hotel La Paz',
@@ -32,7 +31,21 @@ const SEOHelmet = ({
   
   const allKeywords = keywords.length > 0 ? keywords : defaultKeywords;
   
-  // 🆕 GÉNÉRATION DES BALISES HREFLANG
+  // ✅ CORRECTION 1 : Titre optimisé sans répétition
+  const formatTitle = () => {
+    if (title.includes(siteName)) return title;
+    if (url === '/') return `${siteName} | Historic Boutique Hotel La Paz Bolivia`;
+    if (title.length > 50) return `${title} | ${siteName}`;
+    return `${title} | ${siteName}`;
+  };
+
+  // ✅ CORRECTION 2 : Description optimisée (155 caractères max)
+  const formatDescription = () => {
+    if (!description) return 'Historic 1916 mansion in La Paz. Boutique museum hotel with gardens, piano collections & authentic rooms. Rated 9.6/10. Book direct.';
+    return description.length > 155 ? description.substring(0, 152) + '...' : description;
+  };
+  
+  // Hreflang tags
   const getHreflangTags = () => {
     if (!alternateLanguages) return null;
     
@@ -46,23 +59,29 @@ const SEOHelmet = ({
     ));
   };
   
-  // Schema.org structured data
+  // ✅ CORRECTION 3 : Schema.org complet avec publisher pour articles
   const getStructuredData = () => {
     const baseData = {
       "@context": "https://schema.org",
       "@type": type === 'article' ? 'BlogPosting' : 'WebPage',
       "headline": title,
-      "description": description,
-      "image": fullImage,
+      "description": formatDescription(),
+      "image": {
+        "@type": "ImageObject",
+        "url": fullImage,
+        "width": 1200,
+        "height": 630
+      },
       "url": fullUrl,
-      // 🆕 Ajout de la langue dans les données structurées
       "inLanguage": currentLanguage === 'en' ? 'en-US' : 'es-BO',
       "publisher": {
         "@type": "Organization",
         "name": siteName,
         "logo": {
           "@type": "ImageObject",
-          "url": `${siteUrl}/house1.jpg`
+          "url": `${siteUrl}/house1.jpg`,
+          "width": 600,
+          "height": 60
         }
       }
     };
@@ -93,7 +112,7 @@ const SEOHelmet = ({
     return baseData;
   };
 
-  // Breadcrumb structured data for articles
+  // Breadcrumb structured data
   const getBreadcrumbData = () => {
     if (type === 'article') {
       return {
@@ -127,18 +146,18 @@ const SEOHelmet = ({
   return (
     <Helmet>
       {/* Basic Meta Tags */}
-      <title>{title} | {siteName}</title>
-      <meta name="description" content={description} />
+      <title>{formatTitle()}</title>
+      <meta name="description" content={formatDescription()} />
       {allKeywords.length > 0 && (
         <meta name="keywords" content={allKeywords.join(', ')} />
       )}
       <meta name="author" content={author} />
       <link rel="canonical" href={fullUrl} />
       
-      {/* 🆕 BALISES HREFLANG POUR LE SEO MULTILINGUE */}
+      {/* Hreflang tags */}
       {getHreflangTags()}
       
-      {/* 🆕 Balise x-default pour la version par défaut */}
+      {/* x-default */}
       {alternateLanguages && (
         <link 
           rel="alternate" 
@@ -147,14 +166,15 @@ const SEOHelmet = ({
         />
       )}
       
-      {/* Open Graph / Facebook */}
+      {/* Open Graph */}
       <meta property="og:type" content={type} />
       <meta property="og:url" content={fullUrl} />
-      <meta property="og:title" content={title} />
-      <meta property="og:description" content={description} />
+      <meta property="og:title" content={formatTitle()} />
+      <meta property="og:description" content={formatDescription()} />
       <meta property="og:image" content={fullImage} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
+      <meta property="og:image:alt" content={title} />
       <meta property="og:site_name" content={siteName} />
       <meta property="og:locale" content={currentLanguage === 'en' ? 'en_US' : 'es_BO'} />
       <meta property="og:locale:alternate" content={currentLanguage === 'en' ? 'es_BO' : 'en_US'} />
@@ -162,14 +182,12 @@ const SEOHelmet = ({
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:url" content={fullUrl} />
-      <meta name="twitter:title" content={title} />
-      <meta name="twitter:description" content={description} />
+      <meta name="twitter:title" content={formatTitle()} />
+      <meta name="twitter:description" content={formatDescription()} />
       <meta name="twitter:image" content={fullImage} />
       <meta name="twitter:image:alt" content={title} />
-      <meta name="twitter:site" content="@lacasadeteresita" />
-      <meta name="twitter:creator" content="@lacasadeteresita" />
       
-      {/* Article specific meta tags */}
+      {/* Article specific */}
       {type === 'article' && article && (
         <>
           <meta property="article:published_time" content={publishedTime || article.publishedTime} />
@@ -186,16 +204,16 @@ const SEOHelmet = ({
         </>
       )}
       
-      {/* Additional SEO Meta Tags */}
+      {/* Additional SEO */}
       <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
       <meta name="googlebot" content="index, follow" />
       
-      {/* Structured Data - Main Content */}
+      {/* Structured Data */}
       <script type="application/ld+json">
         {JSON.stringify(getStructuredData())}
       </script>
       
-      {/* Structured Data - Breadcrumb (for articles) */}
+      {/* Breadcrumb */}
       {getBreadcrumbData() && (
         <script type="application/ld+json">
           {JSON.stringify(getBreadcrumbData())}
