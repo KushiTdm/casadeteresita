@@ -30,6 +30,7 @@ if (import.meta.env.PROD && 'performance' in window) {
   });
 }
 
+// ✅ Structure simplifiée - tous les providers sont dans App.tsx
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />

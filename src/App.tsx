@@ -15,9 +15,10 @@ import MuseumDetailPage from './pages/MuseumDetailPage';
 function App() {
   return (
     <HelmetProvider>
-      <LanguageProvider>
-        <DataProvider>
-          <Router>
+      <Router>
+        {/* ✅ LanguageProvider APRÈS Router */}
+        <LanguageProvider>
+          <DataProvider>
             <div className="min-h-screen">
               <Header />
               <main>
@@ -40,7 +41,7 @@ function App() {
                   <Route path="/en/museum/:slug" element={<MuseumDetailPage />} />
                   <Route path="/es/museum/:slug" element={<MuseumDetailPage />} />
                   
-                  {/* Redirections depuis anciennes URLs (optionnel) */}
+                  {/* Redirections depuis anciennes URLs */}
                   <Route path="/blog" element={<Navigate to="/en/blog" replace />} />
                   <Route path="/blog/:slug" element={<Navigate to="/en/blog/:slug" replace />} />
                   <Route path="/museum" element={<Navigate to="/en/museum" replace />} />
@@ -50,9 +51,9 @@ function App() {
               <Footer />
               <WhatsAppButton />
             </div>
-          </Router>
-        </DataProvider>
-      </LanguageProvider>
+          </DataProvider>
+        </LanguageProvider>
+      </Router>
     </HelmetProvider>
   );
 }
