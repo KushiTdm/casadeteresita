@@ -1,12 +1,12 @@
 ---
 title: "Dr. Juan Gamarra Antezana - Pioneer of Cardiac Surgery in Bolivia"
-artist: "Dr. Juan Gamarra Antezana"
+artist: "Casa de Teresita"
 year: "1953-1970"
 image: /images/museum/dr-gamarra-antezana.webp
 featuredImage:
   src: /images/museum/dr-gamarra-antezana.webp
   alt: "Portrait of Dr. Juan Gamarra Antezana, pioneer of cardiac surgery in Bolivia who performed the first ductus arteriosus ligation in 1953 and trained generations of doctors at UMSA"
-category: Document
+category: Others
 location: Main Hall
 order: 18
 qrCode: https://lacasadeteresita.netlify.app/museum/dr-juan-gamarra-antezana

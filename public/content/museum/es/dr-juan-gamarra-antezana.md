@@ -1,12 +1,12 @@
 ---
 title: "Dr. Juan Gamarra Antezana - Pionero de la Cirugía Cardíaca en Bolivia"
-artist: "Dr. Juan Gamarra Antezana"
+artist: "Casa de Teresita"
 year: "1953-1970"
 image: /images/museum/dr-gamarra-antezana.webp
 featuredImage:
   src: /images/museum/dr-gamarra-antezana.webp
   alt: "Retrato del Dr. Juan Gamarra Antezana, pionero de la cirugía cardíaca en Bolivia quien realizó la primera ligadura de ductus arterioso en 1953 y formó generaciones de médicos en la UMSA"
-category: Document
+category: Others
 location: Salón Principal
 order: 18
 qrCode: https://lacasadeteresita.netlify.app/museum/dr-juan-gamarra-antezana

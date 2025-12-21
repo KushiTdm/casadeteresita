@@ -6,7 +6,7 @@ image: /images/museum/qr34-mirador-illimani.webp
 featuredImage:
   src: /images/museum/qr34-mirador-illimani.webp
   alt: 'Panoramic view from Illimani Viewpoint in La Paz Bolivia showing Illimani snowy peak, Libertad Bridge, Muela del Diablo and southern neighborhoods'
-category: 'Viewpoint'
+category: 'Others'
 location: 'Illimani Viewpoint, La Paz, Bolivia'
 order: 25
 qrCode: 'https://lacasadeteresita.netlify.app/en/museum/mirador-illimani'

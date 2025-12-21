@@ -1,12 +1,12 @@
 ---
 title: "Armamento y Objetos de la Guerra del Chaco - Colección Militar Histórica"
-artist: "Colección militar histórica"
+artist: "Casa de Teresita"
 year: "1932-1935"
 image: /images/museum/qr15-guerra-chaco.webp
 featuredImage:
   src: /images/museum/qr15-guerra-chaco.webp
   alt: "Colección de armamento y objetos de la Guerra del Chaco incluyendo fusil Mauser, ametralladora, binoculares, cartuchera, concertina de José María Gamarra y protectores de pantorilla"
-category: Document
+category: Others
 location: Salón Principal
 order: 13
 qrCode: https://lacasadeteresita.netlify.app/museum/armamento-guerra-chaco

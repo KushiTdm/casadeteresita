@@ -1,6 +1,6 @@
 ---
 title: "Colección de Biblias - Biblioteca Religiosa de Teresita"
-artist: "Teresita"
+artist: "Casa de Teresita"
 year: "Siglos XIX-XX"
 image: /images/museum/religious-library.webp
 featuredImage:

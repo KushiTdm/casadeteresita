@@ -1,6 +1,6 @@
 ---
 title: "Familia Gamarra - Retrato Familiar"
-artist: "Fotógrafo desconocido"
+artist: "Casa de Teresita"
 year: "Siglo XX"
 image: /images/museum/qr9-familia.webp
 featuredImage:

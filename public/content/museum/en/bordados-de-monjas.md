@@ -6,7 +6,7 @@ image: /images/museum/qr12-bordados.jpg
 featuredImage:
   src: /images/museum/qr12-bordados.jpg
   alt: "19th century embroidery by cloister nuns with author signature, religious textile work in La Casa de Teresita collection, La Paz"
-category: Textile
+category: Others
 location: Main Hall
 order: 9
 qrCode: https://lacasadeteresita.netlify.app/museum/nun-embroidery

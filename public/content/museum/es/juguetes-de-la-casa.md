@@ -1,12 +1,12 @@
 ---
 title: "Los Juguetes de la Casa - Recuerdos de la Infancia Familiar"
-artist: "Colección familiar"
+artist: "Casa de Teresita"
 year: "Siglo XX"
 image: /images/museum/qr24-juguetes.webp
 featuredImage:
   src: /images/museum/qr24-juguetes.webp
   alt: "Colección de juguetes históricos que acompañaron los momentos de alegría familiar en La Casa de Teresita, testimonio de la infancia y vida doméstica en La Paz"
-category: Document
+category: Others
 location: Salón Principal / Habitaciones
 order: 19
 qrCode: https://lacasadeteresita.netlify.app/museum/juguetes-de-la-casa

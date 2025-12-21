@@ -1,12 +1,12 @@
 ---
 title: "An Emotional and Solemn Memory - Musical Tribute to Teresita"
-artist: "José Navarro Silverstein"
+artist: "Casa de Teresita"
 year: "Contemporary"
 image: /images/museum/qr11-impromtu-shubert.webp
 featuredImage:
   src: /images/museum/qr11-impromtu-shubert.webp
   alt: "Commemorative document of the musical tribute where young Bolivian talent José Navarro Silverstein performed Schubert's Impromptu in memory of Teresita"
-category: Piano
+category: Others
 location: Main Hall
 order: 8
 qrCode: https://lacasadeteresita.netlify.app/museum/emotional-solemn-memory
@@ -40,4 +40,4 @@ datePublished: "2024-01-15"
 dateModified: "2024-12-18"
 ---
 
-On the farewell of Teresita to her eternal home, the young Bolivian Talent José Navarro Silverstein, played in her memory the "Impromptu" of Shubert.
+On the farewell of Teresita to her eternal home, the young Bolivian Talent José Navarro Silverstein, played in her memory the "Impromptu #3" of Shubert.

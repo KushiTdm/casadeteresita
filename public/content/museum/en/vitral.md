@@ -1,12 +1,12 @@
 ---
 title: 'Stained Glass Window Illimani | La Casa de Teresita Stained Glass Art'
-artist: 'Ernesto Gamarra F. (design) & Manuel Segales (execution)'
-year: 'Stained Glass Artwork'
+artist: 'Casa de Teresita'
+year: 'Contemporary'
 image: /images/museum/qr35-vitral.webp
 featuredImage:
   src: /images/museum/qr35-vitral.webp
   alt: 'Stained glass window at La Casa de Teresita depicting Illimani mountain and Libertad Bridge, inspired by back view of the house, executed by master glassmaker Manuel Segales'
-category: 'Stained Glass Art'
+category: 'Others'
 location: 'La Casa de Teresita, La Paz'
 order: 26
 qrCode: 'https://lacasadeteresita.netlify.app/en/museum/vitral'

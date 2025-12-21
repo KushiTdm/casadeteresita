@@ -1,6 +1,6 @@
 ---
 title: "The Medical School Donation - UMSA: A Family's Gift to Bolivian Healthcare Education"
-artist: "José María Gamarra Gutierrez"
+artist: "UMSA"
 year: "1937"
 image: /images/museum/qr4-donacion-umsa.webp
 

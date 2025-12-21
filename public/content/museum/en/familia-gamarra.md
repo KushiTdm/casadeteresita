@@ -1,6 +1,6 @@
 ---
 title: "Gamarra's Family - Family Portrait"
-artist: "Unknown Photographer"
+artist: "Casa de Teresita"
 year: "20th Century"
 image: /images/museum/qr9-familia.webp
 featuredImage:

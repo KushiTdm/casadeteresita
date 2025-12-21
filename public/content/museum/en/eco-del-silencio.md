@@ -41,6 +41,7 @@ dateModified: "2024-12-18"
 ## "The Echo of Silence"
 
 Original piece by artist Consuelo Mendieta Cervantes.
+Valley of las animas
 
 - Dimensions 140cm x 100cm
 - Acrylic on canvas

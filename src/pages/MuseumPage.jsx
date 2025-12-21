@@ -17,14 +17,10 @@ const MuseumPage = () => {
   
   const categories = [
     'All', 
-    'Painting', 
-    'Sculpture', 
-    'Piano', 
+    'Painting',
     'Furniture', 
     'Document', 
-    'Textile',
-    'Viewpoint',
-    'Stained Glass Art'
+    'Others'
   ];
 
   const categoryColors = {
@@ -137,13 +133,23 @@ const MuseumPage = () => {
               <p className="text-sm md:text-base text-gray-200 leading-relaxed">
                 {t.museum.intro1}
               </p>
+
               <div className="w-16 h-1 bg-gradient-to-r from-transparent via-[#C4A96A] to-transparent mx-auto"></div>
+
               <p className="text-sm md:text-base text-gray-200 leading-relaxed">
                 {t.museum.intro2}
+              </p>
+
+              <div className="w-16 h-1 bg-gradient-to-r from-transparent via-[#C4A96A] to-transparent mx-auto"></div>
+
+              <p className="text-sm md:text-base text-gray-200 leading-relaxed">
+                {t.museum.intro3}
               </p>
             </div>
           </div>
         </section>
+
+
 
         {/* SLIDER avec URLs correctes */}
         {!loading && featuredArtworks.length > 0 && (
@@ -385,12 +391,6 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
                       <span>{currentArticle.year}</span>
                     </div>
                   )}
-                  {currentArticle.location && (
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-3 w-3 text-[#C4A96A]" />
-                      <span className="truncate">{currentArticle.location}</span>
-                    </div>
-                  )}
                 </div>
 
                 {/* ✅ FIX: Ajout du préfixe langue */}
@@ -432,12 +432,6 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4 text-[#C4A96A]" />
                     <span>{currentArticle.year}</span>
-                  </div>
-                )}
-                {currentArticle.location && (
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4 text-[#C4A96A]" />
-                    <span>{currentArticle.location}</span>
                   </div>
                 )}
               </div>
@@ -574,12 +568,6 @@ const ArtworkMuseumCard = ({ artwork, language, categoryColors, featured = false
               <div className="flex items-center gap-2">
                 <Calendar className="h-3 w-3 text-[#C4A96A]" />
                 <span>{artwork.year}</span>
-              </div>
-            )}
-            {artwork.location && (
-              <div className="flex items-center gap-2">
-                <MapPin className="h-3 w-3 text-[#C4A96A]" />
-                <span className="text-xs truncate">{artwork.location}</span>
               </div>
             )}
           </div>

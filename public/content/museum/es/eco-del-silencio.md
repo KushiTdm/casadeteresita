@@ -41,6 +41,7 @@ dateModified: "2024-12-18"
 ## "El Eco del Silencio"
 
 Pieza original de la artista Consuelo Mendieta Cervantes.
+Valle De Las Ánimas
 
 - Dimensiones 140cm x 100cm
 - Acrílico sobre lienzo

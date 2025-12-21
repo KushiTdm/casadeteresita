@@ -1,12 +1,12 @@
 ---
 title: "La Guerra del Chaco - Documento Histórico (1932-1935)"
-artist: "Documento histórico"
+artist: "Casa de Teresita"
 year: "1932-1935"
 image: /images/museum/qr15-guerra-chaco.webp
 featuredImage:
   src: /images/museum/qr15-guerra-chaco.webp
   alt: "Documento histórico sobre la Guerra del Chaco entre Bolivia y Paraguay (1932-1935), conflicto que cobró más de 90,000 vidas y definió fronteras en Sudamérica"
-category: Document
+category: Others
 location: Salón Principal
 order: 12
 qrCode: https://lacasadeteresita.netlify.app/museum/guerra-del-chaco

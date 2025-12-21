@@ -1,12 +1,12 @@
 ---
 title: "Chaco War - Historical Document (1932-1935)"
-artist: "Historical document"
+artist: "Casa de Teresita"
 year: "1932-1935"
 image: /images/museum/qr15-guerra-chaco.webp
 featuredImage:
   src: /images/museum/qr15-guerra-chaco.webp
   alt: "Historical document about the Chaco War between Bolivia and Paraguay (1932-1935), conflict that claimed over 90,000 lives and defined borders in South America"
-category: Document
+category: Others
 location: Main Hall
 order: 12
 qrCode: https://lacasadeteresita.netlify.app/museum/chaco-war

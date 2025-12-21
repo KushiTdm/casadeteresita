@@ -1,12 +1,12 @@
 ---
 title: "The Toys of the House - Family Childhood Memories"
-artist: "Family collection"
+artist: "Casa de Teresita"
 year: "20th Century"
 image: /images/museum/qr24-juguetes.webp
 featuredImage:
   src: /images/museum/qr24-juguetes.webp
   alt: "Collection of historical toys that accompanied moments of family joy at La Casa de Teresita, testimony of childhood and domestic life in La Paz"
-category: Document
+category: Others
 location: Main Hall / Rooms
 order: 19
 qrCode: https://lacasadeteresita.netlify.app/museum/toys-of-the-house

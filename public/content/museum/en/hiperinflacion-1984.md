@@ -1,6 +1,6 @@
 ---
 title: "The Hyperinflation of 1984 - Historical Economic Crisis of Bolivia"
-artist: "Historical document"
+artist: "Casa de Teresita"
 year: "1982-1985"
 image: /images/museum/qr30-hiperinflacion.webp
 featuredImage:

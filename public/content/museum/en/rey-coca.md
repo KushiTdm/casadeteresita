@@ -1,7 +1,7 @@
 ---
 title: "The Coca King - Portrait of José María Gamarra Gutierrez"
 artist: "Ahumada (Chilean portraitist)"
-year: "Early 20th Century"
+year: "Mid-20th Century"
 image: /images/museum/qr6-rey-coca.webp
 
 featuredImage:

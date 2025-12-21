@@ -96,10 +96,6 @@ const ArtworkCard = ({ artwork }) => {
             {artwork.artist} · {artwork.year}
           </p>
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-sm text-gray-500">
-              <MapPin className="h-4 w-4" />
-              <span>{artwork.location}</span>
-            </div>
             
             {/* Boutons d'action */}
             <div className="flex gap-2">
@@ -207,11 +203,6 @@ const ArtworkCard = ({ artwork }) => {
                     <p className="text-xl text-gray-600 mb-4">
                       {artwork.artist} · {artwork.year}
                     </p>
-                  </div>
-                  
-                  <div className="flex items-center gap-2 text-gray-600 bg-[#F8F5F2] p-3 rounded-lg">
-                    <MapPin className="h-5 w-5 text-[#A85C32]" />
-                    <span>{artwork.location}</span>
                   </div>
                   
                   <div className="prose prose-lg max-w-none">

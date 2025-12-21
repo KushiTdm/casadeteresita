@@ -6,7 +6,7 @@ image: /images/museum/qr34-mirador-illimani.webp
 featuredImage:
   src: /images/museum/qr34-mirador-illimani.webp
   alt: 'Vista panorámica desde el Mirador Illimani en La Paz Bolivia mostrando el nevado Illimani, puente Libertad, Muela del Diablo y barrios de la zona sur'
-category: 'Punto de Interés'
+category: 'Others'
 location: 'Mirador Illimani, La Paz, Bolivia'
 order: 25
 qrCode: 'https://lacasadeteresita.netlify.app/museum/mirador-illimani'

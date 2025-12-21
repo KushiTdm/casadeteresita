@@ -1,12 +1,12 @@
 ---
 title: "Ejercicio de Creatividad - Arte y Percepción con Piedras"
-artist: "Varios participantes"
+artist: "Casa de Teresita"
 year: "Actividad continua"
 image: /images/museum/qr31-ejercicio-creatividad.webp
 featuredImage:
   src: /images/museum/qr31-ejercicio-creatividad.webp
   alt: "Ejercicio de creatividad con piedras que invita a imaginar figuras animales y citando a Miguel Ángel sobre descubrir la estatua dentro de cada bloque de mármol"
-category: Sculpture
+category: Others
 location: Área de Actividades / Jardín
 order: 22
 qrCode: https://lacasadeteresita.netlify.app/museum/ejercicio-creatividad

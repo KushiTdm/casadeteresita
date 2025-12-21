@@ -1,12 +1,12 @@
 ---
 title: "Un Recuerdo Emotivo y Solemne - Homenaje Musical a Teresita"
-artist: "José Navarro Silverstein"
+artist: "Casa de Teresita"
 year: "Contemporáneo"
 image: /images/museum/qr11-impromtu-shubert.webp
 featuredImage:
   src: /images/museum/qr11-impromtu-shubert.webp
   alt: "Documento conmemorativo del homenaje musical donde el joven talento boliviano José Navarro Silverstein interpretó el Impromptu de Schubert en memoria de Teresita"
-category: Piano
+category: Others
 location: Salón Principal
 order: 8
 qrCode: https://lacasadeteresita.netlify.app/museum/recuerdo-emotivo-solemne
@@ -40,4 +40,4 @@ datePublished: "2024-01-15"
 dateModified: "2024-12-18"
 ---
 
-En ocasión de la despedida de Teresita a su morada eterna, el joven talento boliviano José Navarro Silverstein, interpretó en su memoria el Impromtu de Shubert.
+En ocasión de la despedida de Teresita a su morada eterna, el joven talento boliviano José Navarro Silverstein, interpretó en su memoria el Impromtu #3 de Shubert.

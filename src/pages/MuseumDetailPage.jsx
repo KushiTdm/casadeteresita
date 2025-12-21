@@ -205,15 +205,6 @@ const MuseumDetailPage = () => {
                   </span>
                 </>
               )}
-              {artwork.location && (
-                <>
-                  <span className="text-[#1a1a1a]/50">•</span>
-                  <span className="flex items-center gap-1">
-                    <MapPin className="h-4 w-4" />
-                    {artwork.location}
-                  </span>
-                </>
-              )}
             </div>
           </div>
         </div>
@@ -373,17 +364,6 @@ const MuseumDetailPage = () => {
                         {language === 'en' ? 'Classification' : 'Clasificación'}
                       </div>
                       <div className="font-semibold text-gray-200">{artwork.category}</div>
-                    </div>
-                  )}
-                  {artwork.location && (
-                    <div>
-                      <div className="text-xs text-[#C4A96A]/70 uppercase tracking-wider mb-1">
-                        {language === 'en' ? 'On Display' : 'En Exhibición'}
-                      </div>
-                      <div className="font-semibold text-gray-200 flex items-center gap-2">
-                        <MapPin className="h-4 w-4 text-[#C4A96A]" />
-                        {artwork.location}
-                      </div>
                     </div>
                   )}
                 </div>

@@ -6,7 +6,7 @@ image: /images/museum/qr12-bordados.jpg
 featuredImage:
   src: /images/museum/qr12-bordados.jpg
   alt: "Bordados del siglo XIX realizados por monjas de claustro con firma de autor, obra textil religiosa en la colección de La Casa de Teresita, La Paz"
-category: Textile
+category: Others
 location: Salón Principal
 order: 9
 qrCode: https://lacasadeteresita.netlify.app/museum/bordados-de-monjas

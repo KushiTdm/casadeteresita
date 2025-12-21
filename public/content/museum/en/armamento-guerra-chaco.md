@@ -1,12 +1,12 @@
 ---
 title: "Weapons and Objects of the Chaco War - Historical Military Collection"
-artist: "Historical military collection"
+artist: "Casa de Teresita"
 year: "1932-1935"
 image: /images/museum/qr15-guerra-chaco.webp
 featuredImage:
   src: /images/museum/qr15-guerra-chaco.webp
   alt: "Collection of weapons and objects from the Chaco War including Mauser rifle, machine gun, binoculars, pouch, concertina of José María Gamarra and leather leggings"
-category: Document
+category: Others
 location: Main Hall
 order: 13
 qrCode: https://lacasadeteresita.netlify.app/museum/weapons-chaco-war

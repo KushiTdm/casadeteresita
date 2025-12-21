@@ -1,12 +1,12 @@
 ---
 title: "Creativity Exercise - Art and Perception with Stones"
-artist: "Various participants"
+artist: "Casa de Teresita"
 year: "Ongoing activity"
 image: /images/museum/qr31-ejercicio-creatividad.webp
 featuredImage:
   src: /images/museum/qr31-ejercicio-creatividad.webp
   alt: "Creativity exercise with stones inviting to imagine animal figures and quoting Michelangelo about discovering the statue within each marble block"
-category: Sculpture
+category: Others
 location: Activities Area / Garden
 order: 22
 qrCode: https://lacasadeteresita.netlify.app/museum/creativity-exercise

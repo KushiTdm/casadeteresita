@@ -1,7 +1,7 @@
 ---
 title: "El Rey de la Coca - Retrato de José María Gamarra Gutierrez"
 artist: "Ahumada (retratista chileno)"
-year: "Principios del siglo XX"
+year: "Mediados del siglo XX"
 image: /images/museum/qr6-rey-coca.webp
 featuredImage:
   src: /images/museum/qr6-rey-coca.webp

@@ -1,6 +1,6 @@
 ---
 title: "La Donación a la Facultad de Medicina - UMSA: Un Legado Familiar en la Educación Sanitaria Boliviana"
-artist: "José María Gamarra Gutierrez"
+artist: "UMSA"
 year: "1937"
 image: /images/museum/qr4-donacion-umsa.webp
 featuredImage:
