@@ -1,4 +1,4 @@
-// src/components/SEOHelmet.jsx - VERSION SEO OPTIMISÉE
+// src/components/SEOHelmet.jsx - VERSION AVEC ROUTES MULTILINGUES COMPLÈTES
 import { Helmet } from 'react-helmet-async';
 
 const SEOHelmet = ({ 
@@ -17,7 +17,21 @@ const SEOHelmet = ({
 }) => {
   const siteUrl = 'https://lacasadeteresita.netlify.app';
   const siteName = 'La Casa de Teresita';
-  const fullUrl = url ? `${siteUrl}${url}` : siteUrl;
+  
+  // 🔧 FIX: S'assurer que l'URL contient toujours le préfixe langue
+  const normalizeUrl = (path) => {
+    if (!path) return siteUrl;
+    
+    // Si l'URL contient déjà /en/ ou /es/, la retourner telle quelle
+    if (path.match(/^\/(en|es)\//)) {
+      return `${siteUrl}${path}`;
+    }
+    
+    // Sinon, ajouter le préfixe de langue actuelle
+    return `${siteUrl}/${currentLanguage}${path}`;
+  };
+  
+  const fullUrl = normalizeUrl(url);
   const fullImage = image?.startsWith('http') ? image : `${siteUrl}${image || '/house1.jpg'}`;
   
   // Default keywords
@@ -31,35 +45,40 @@ const SEOHelmet = ({
   
   const allKeywords = keywords.length > 0 ? keywords : defaultKeywords;
   
-  // ✅ CORRECTION 1 : Titre optimisé sans répétition
+  // Titre optimisé sans répétition
   const formatTitle = () => {
     if (title.includes(siteName)) return title;
-    if (url === '/') return `${siteName} | Historic Boutique Hotel La Paz Bolivia`;
+    if (url === '/' || url === `/${currentLanguage}`) return `${siteName} | Historic Boutique Hotel La Paz Bolivia`;
     if (title.length > 50) return `${title} | ${siteName}`;
     return `${title} | ${siteName}`;
   };
 
-  // ✅ CORRECTION 2 : Description optimisée (155 caractères max)
+  // Description optimisée (155 caractères max)
   const formatDescription = () => {
     if (!description) return 'Historic 1916 mansion in La Paz. Boutique museum hotel with gardens, piano collections & authentic rooms. Rated 9.6/10. Book direct.';
     return description.length > 155 ? description.substring(0, 152) + '...' : description;
   };
   
-  // Hreflang tags
+  // 🔧 FIX: Hreflang tags avec URLs normalisées
   const getHreflangTags = () => {
     if (!alternateLanguages) return null;
     
-    return Object.entries(alternateLanguages).map(([lang, path]) => (
-      <link 
-        key={lang}
-        rel="alternate" 
-        hrefLang={lang === 'en' ? 'en' : 'es'} 
-        href={`${siteUrl}${path}`} 
-      />
-    ));
+    return Object.entries(alternateLanguages).map(([lang, path]) => {
+      // S'assurer que le path contient le préfixe langue
+      const normalizedPath = path.match(/^\/(en|es)\//) ? path : `/${lang}${path}`;
+      
+      return (
+        <link 
+          key={lang}
+          rel="alternate" 
+          hrefLang={lang === 'en' ? 'en' : 'es'} 
+          href={`${siteUrl}${normalizedPath}`} 
+        />
+      );
+    });
   };
   
-  // ✅ CORRECTION 3 : Schema.org complet avec publisher pour articles
+  // Schema.org avec URLs complètes
   const getStructuredData = () => {
     const baseData = {
       "@context": "https://schema.org",
@@ -112,7 +131,7 @@ const SEOHelmet = ({
     return baseData;
   };
 
-  // Breadcrumb structured data
+  // Breadcrumb avec URLs normalisées
   const getBreadcrumbData = () => {
     if (type === 'article') {
       return {
@@ -129,7 +148,7 @@ const SEOHelmet = ({
             "@type": "ListItem",
             "position": 2,
             "name": "Blog",
-            "item": `${siteUrl}/blog`
+            "item": `${siteUrl}/${currentLanguage}/blog`
           },
           {
             "@type": "ListItem",
