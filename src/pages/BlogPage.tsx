@@ -1,6 +1,6 @@
-// src/pages/BlogPage.jsx
+// src/pages/BlogPage.jsx - VERSION AVEC DÉTECTION LANGUE DEPUIS URL
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, useLocation, Link } from 'react-router-dom';
 import { BookOpen, Filter, Star } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { getBlogPostsByCategory } from '../utils/contentLoader';
@@ -8,18 +8,27 @@ import BlogCard from '../components/BlogCard';
 import SEOHelmet from '../components/SEOHelmet';
 
 const BlogPage = () => {
-  const { slug } = useParams();
-  const { language, t } = useLanguage();
+  const location = useLocation();
+  const { language, setLanguage, t } = useLanguage();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
   
   const categories = ['All', 'Travel', 'History', 'Culture', 'Tips'];
 
+  // Détecter la langue depuis l'URL
+  useEffect(() => {
+    const pathLanguage = location.pathname.startsWith('/es/') ? 'es' : 'en';
+    if (pathLanguage !== language) {
+      console.log(`🌐 Changing language to: ${pathLanguage} (from URL)`);
+      setLanguage(pathLanguage);
+    }
+  }, [location.pathname]);
+
   useEffect(() => {
     loadPosts();
     window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, [slug, language]);
+  }, [language]);
   
   useEffect(() => {
     loadPosts();
@@ -63,14 +72,22 @@ const BlogPage = () => {
     ? 'Discover stories, travel tips, cultural insights and historical tales about La Paz, Bolivia. Read our blog for insider information about visiting La Casa de Teresita and exploring La Paz.'
     : 'Descubre historias, consejos de viaje, insights culturales y relatos históricos sobre La Paz, Bolivia. Lee nuestro blog para información privilegiada sobre visitar La Casa de Teresita y explorar La Paz.';
   
+  // URL avec préfixe langue
+  const currentUrl = `/${language}/blog`;
+  
   return (
     <div className="min-h-screen pt-20 bg-[#F8F5F2]">
       <SEOHelmet
         title={t.blog.title}
         description={pageDescription}
-        url="/blog"
+        url={currentUrl}
         type="website"
         keywords={blogKeywords}
+        currentLanguage={language}
+        alternateLanguages={{
+          en: '/en/blog',
+          es: '/es/blog'
+        }}
       />
       
       {/* Hero Section */}

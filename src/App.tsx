@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { LanguageProvider } from './context/LanguageContext';
 import { DataProvider } from './context/DataContext';
@@ -12,8 +12,6 @@ import BlogPostPage from './pages/BlogPostPage';
 import MuseumPage from './pages/MuseumPage';
 import MuseumDetailPage from './pages/MuseumDetailPage';
 
-
-
 function App() {
   return (
     <HelmetProvider>
@@ -24,12 +22,29 @@ function App() {
               <Header />
               <main>
                 <Routes>
+                  {/* Home */}
                   <Route path="/" element={<HomePage />} />
+                  
+                  {/* Rooms */}
                   <Route path="/rooms/:roomSlug" element={<RoomDetailPage />} />
-                  <Route path="/blog" element={<BlogPage />} />
-                  <Route path="/blog/:slug" element={<BlogPostPage />} />
-                  <Route path="/museum" element={<MuseumPage />} />
-                  <Route path="/museum/:slug" element={<MuseumDetailPage />} />
+                  
+                  {/* Blog avec préfixes langue */}
+                  <Route path="/en/blog" element={<BlogPage />} />
+                  <Route path="/es/blog" element={<BlogPage />} />
+                  <Route path="/en/blog/:slug" element={<BlogPostPage />} />
+                  <Route path="/es/blog/:slug" element={<BlogPostPage />} />
+                  
+                  {/* Museum avec préfixes langue */}
+                  <Route path="/en/museum" element={<MuseumPage />} />
+                  <Route path="/es/museum" element={<MuseumPage />} />
+                  <Route path="/en/museum/:slug" element={<MuseumDetailPage />} />
+                  <Route path="/es/museum/:slug" element={<MuseumDetailPage />} />
+                  
+                  {/* Redirections depuis anciennes URLs (optionnel) */}
+                  <Route path="/blog" element={<Navigate to="/en/blog" replace />} />
+                  <Route path="/blog/:slug" element={<Navigate to="/en/blog/:slug" replace />} />
+                  <Route path="/museum" element={<Navigate to="/en/museum" replace />} />
+                  <Route path="/museum/:slug" element={<Navigate to="/en/museum/:slug" replace />} />
                 </Routes>
               </main>
               <Footer />
