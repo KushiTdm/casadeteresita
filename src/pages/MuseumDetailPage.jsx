@@ -115,7 +115,7 @@ const MuseumDetailPage = () => {
               : 'La obra que buscas no existe.'}
           </p>
           <Link
-            to="/museum"
+            to={`/${language}/museum`}
             className="inline-flex items-center gap-2 bg-[#C4A96A] text-[#1a1a1a] px-8 py-4 rounded-lg font-semibold hover:bg-[#A85C32] transition-colors"
           >
             <ArrowLeft className="h-5 w-5" />
@@ -211,7 +211,7 @@ const MuseumDetailPage = () => {
 
         {/* Back Button */}
         <Link
-          to="/museum"
+          to="//${language}/museum"
           className="absolute top-4 left-4 bg-[#C4A96A]/90 hover:bg-[#C4A96A] text-[#1a1a1a] p-3 rounded-full shadow-lg transition-all z-10 backdrop-blur-sm"
         >
           <ArrowLeft className="h-6 w-6" />
@@ -438,7 +438,7 @@ const MuseumDetailPage = () => {
               : 'Continúa tu viaje por nuestra colección histórica de artefactos y obras de arte'}
           </p>
           <Link
-            to="/museum"
+            to={`/${language}/museum`}
             className="inline-flex items-center gap-3 bg-gradient-to-r from-[#C4A96A] to-[#A85C32] text-[#1a1a1a] px-8 py-4 rounded-lg font-bold hover:scale-105 transition-transform shadow-lg"
           >
             <Award className="h-5 w-5" />
