@@ -480,6 +480,91 @@ export async function getAlternateMuseumArtwork(slug, currentLanguage) {
   return await getMuseumArtwork(slug, alternateLanguage);
 }
 
+/**
+ * 🆕 Load PUBLIC museum artworks only (excluant QR-only)
+ */
+export async function getPublicMuseumArtworks(language = 'en') {
+  const allArtworks = await getMuseumArtworks(language);
+  
+  // Filtrer uniquement les artworks publics
+  const publicArtworks = allArtworks.filter(artwork => {
+    // Si pas de champ accessibility, considérer comme public par défaut
+    const accessibility = artwork.accessibility || 'public';
+    return accessibility === 'public';
+  });
+  
+  // Trier avec gestion de "auto"
+  const sortedArtworks = sortArtworksByOrder(publicArtworks);
+  
+  console.log(`📋 Public artworks (${language}): ${sortedArtworks.length}/${allArtworks.length}`);
+  
+  return sortedArtworks;
+}
+
+/**
+ * 🔧 Fonction de tri qui gère "auto" et les valeurs numériques
+ */
+function sortArtworksByOrder(artworks) {
+  return artworks.sort((a, b) => {
+    // Récupérer les valeurs d'order
+    const orderA = a.order;
+    const orderB = b.order;
+    
+    // Convertir "auto" en nombre très élevé (9999) pour le placer à la fin
+    const numA = orderA === 'auto' ? 9999 : (typeof orderA === 'number' ? orderA : parseInt(orderA) || 0);
+    const numB = orderB === 'auto' ? 9999 : (typeof orderB === 'number' ? orderB : parseInt(orderB) || 0);
+    
+    return numA - numB;
+  });
+}
+
+/**
+ * 🆕 Load QR-only museum artworks (pour statistiques/admin)
+ */
+export async function getQROnlyArtworks(language = 'en') {
+  const allArtworks = await getMuseumArtworks(language);
+  
+  const qrOnlyArtworks = allArtworks.filter(artwork => {
+    return artwork.accessibility === 'qr-only';
+  });
+  
+  console.log(`🔐 QR-only artworks (${language}): ${qrOnlyArtworks.length}`);
+  
+  return qrOnlyArtworks;
+}
+
+/**
+ * ℹ️ Vérifier si un artwork est accessible
+ */
+export function isArtworkAccessible(artwork) {
+  if (!artwork) return false;
+  
+  // Vérifier si publié
+  if (artwork.published === false) return false;
+  
+  // Les artworks QR-only sont toujours accessibles via URL directe
+  return true;
+}
+
+/**
+ * 📊 Obtenir les statistiques de visibilité
+ */
+export async function getArtworkVisibilityStats(language = 'en') {
+  const allArtworks = await getMuseumArtworks(language);
+  
+  const stats = {
+    total: allArtworks.length,
+    public: allArtworks.filter(a => (a.accessibility || 'public') === 'public').length,
+    qrOnly: allArtworks.filter(a => a.accessibility === 'qr-only').length,
+    published: allArtworks.filter(a => a.published !== false).length,
+    draft: allArtworks.filter(a => a.published === false).length,
+    featured: allArtworks.filter(a => a.featured === true).length
+  };
+  
+  console.table(stats);
+  return stats;
+}
+
 // ==========================================
 // 🔍 FILTER FUNCTIONS
 // ==========================================
@@ -496,8 +581,12 @@ export async function getBlogPostsByCategory(category, language = 'en') {
 /**
  * Get artworks filtered by category (AVEC CACHE)
  */
-export async function getArtworksByCategory(category, language = 'en') {
-  const artworks = await getMuseumArtworks(language);
+export async function getArtworksByCategory(category, language = 'en', includeQROnly = false) {
+  // Utiliser getPublicMuseumArtworks au lieu de getMuseumArtworks
+  const artworks = includeQROnly 
+    ? await getMuseumArtworks(language)  // Tous
+    : await getPublicMuseumArtworks(language); // Publics uniquement
+  
   if (!category || category === 'All') return artworks;
   return artworks.filter(artwork => artwork.category === category);
 }
