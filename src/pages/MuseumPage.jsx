@@ -96,7 +96,7 @@ const MuseumPage = () => {
         }}
       />
       
-      <div className="pt-16 md:pt-20">
+      <div className="pt-20 md:pt-20">
         
         {/* Header Banner - COMPACT */}
         <div className="bg-gradient-to-r from-[#C4A96A] via-[#A85C32] to-[#C4A96A] py-2 shadow-lg sticky top-0 z-10">
