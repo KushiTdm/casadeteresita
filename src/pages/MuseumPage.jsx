@@ -1,9 +1,9 @@
-// src/pages/MuseumPage.jsx - VERSION COMPLÈTE AVEC SLIDER
+// src/pages/MuseumPage.jsx - VERSION SANS SLIDER NI STATS
 import { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
-import { Building2, Filter, MessageCircle, Award, Sparkles, Calendar, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Building2, Filter, MessageCircle, Award, Sparkles, Calendar, Eye } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { getPublicMuseumArtworks, getArtworkVisibilityStats } from '../utils/contentLoader';
+import { getPublicMuseumArtworks } from '../utils/contentLoader';
 import SEOHelmet from '../components/SEOHelmet';
 
 const MuseumPage = () => {
@@ -14,8 +14,6 @@ const MuseumPage = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showFilters, setShowFilters] = useState(false);
-  const [showStats, setShowStats] = useState(false); // Pour debug
-  const [stats, setStats] = useState(null);
   
   const categories = [
     'All', 
@@ -59,7 +57,6 @@ const MuseumPage = () => {
     try {
       console.log('🔍 Loading PUBLIC artworks for:', language, 'category:', selectedCategory);
       
-      // ✅ Utiliser getPublicMuseumArtworks pour les articles accessibles au public
       const loadedArtworks = await getPublicMuseumArtworks(language);
       
       // Filtrer par catégorie si nécessaire
@@ -69,12 +66,6 @@ const MuseumPage = () => {
       
       console.log('✅ Public artworks loaded:', filteredArtworks.length);
       setArtworks(filteredArtworks);
-      
-      // Charger les stats en mode dev
-      if (import.meta.env.DEV) {
-        const visibilityStats = await getArtworkVisibilityStats(language);
-        setStats(visibilityStats);
-      }
     } catch (error) {
       console.error('Error loading artworks:', error);
       setArtworks([]);
@@ -93,8 +84,6 @@ const MuseumPage = () => {
     const url = `https://wa.me/${phoneNumber}?text=${message}`;
     window.open(url, '_blank');
   };
-
-  const featuredArtworks = artworks.filter(art => art.featured);
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1a1a1a] via-[#2D5A4A] to-[#1a1a1a]">
@@ -122,48 +111,6 @@ const MuseumPage = () => {
             <Sparkles className="h-4 w-4 text-[#1a1a1a] animate-pulse" />
           </div>
         </div>
-
-        {/* 🔧 DEV ONLY: Stats Debug */}
-        {import.meta.env.DEV && stats && (
-          <div className="max-w-7xl mx-auto px-4 py-4">
-            <button
-              onClick={() => setShowStats(!showStats)}
-              className="bg-blue-900/50 text-blue-200 px-4 py-2 rounded-lg text-sm font-mono"
-            >
-              {showStats ? '🔽 Hide Stats' : '🔼 Show Visibility Stats (Dev)'}
-            </button>
-            
-            {showStats && (
-              <div className="mt-2 bg-gray-900 border border-blue-500/30 rounded-lg p-4 font-mono text-xs text-blue-200">
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  <div>
-                    <div className="text-blue-400 font-bold">Total:</div>
-                    <div className="text-xl">{stats.total}</div>
-                  </div>
-                  <div>
-                    <div className="text-green-400 font-bold">Public:</div>
-                    <div className="text-xl">{stats.public}</div>
-                  </div>
-                  <div>
-                    <div className="text-yellow-400 font-bold">QR-only:</div>
-                    <div className="text-xl">{stats.qrOnly}</div>
-                  </div>
-                  <div>
-                    <div className="text-purple-400 font-bold">Featured:</div>
-                    <div className="text-xl">{stats.featured}</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-400 font-bold">Draft:</div>
-                    <div className="text-xl">{stats.draft}</div>
-                  </div>
-                </div>
-                <div className="mt-3 pt-3 border-t border-blue-500/30 text-blue-300">
-                  ℹ️ Showing <strong>{artworks.length}</strong> public artworks on this page
-                </div>
-              </div>
-            )}
-          </div>
-        )}
         
         {/* Hero Section */}
         <section className="py-8 md:py-12">
@@ -200,15 +147,6 @@ const MuseumPage = () => {
             </div>
           </div>
         </section>
-
-        {/* Featured Slider - Seulement s'il y a des œuvres featured */}
-        {!loading && featuredArtworks.length > 0 && (
-          <ImprovedMuseumSlider 
-            articles={featuredArtworks}
-            language={language}
-            categoryColors={categoryColors}
-          />
-        )}
         
         {/* Complete Collection */}
         {!loading && artworks.length > 0 && (
@@ -348,203 +286,6 @@ const MuseumPage = () => {
   );
 };
 
-// Composant Slider amélioré
-const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  const nextSlide = () => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setCurrentIndex((prev) => (prev + 1) % articles.length);
-    setTimeout(() => setIsAnimating(false), 500);
-  };
-
-  const prevSlide = () => {
-    if (isAnimating) return;
-    setIsAnimating(true);
-    setCurrentIndex((prev) => (prev - 1 + articles.length) % articles.length);
-    setTimeout(() => setIsAnimating(false), 500);
-  };
-
-  const goToSlide = (index) => {
-    if (isAnimating || index === currentIndex) return;
-    setIsAnimating(true);
-    setCurrentIndex(index);
-    setTimeout(() => setIsAnimating(false), 500);
-  };
-
-  const currentArticle = articles[currentIndex];
-  const categoryGradient = categoryColors[currentArticle.category] || 'from-gray-900 to-gray-700';
-
-  return (
-    <div className="w-full py-8 md:py-12">
-      <div className="bg-gradient-to-r from-[#C4A96A] via-[#A85C32] to-[#C4A96A] py-2 mb-8">
-        <div className="max-w-7xl mx-auto px-4 flex items-center justify-center gap-2">
-          <Award className="h-4 w-4 text-[#1a1a1a] animate-pulse" />
-          <span className="text-xs font-bold text-[#1a1a1a] tracking-widest uppercase">
-            {language === 'en' ? 'Featured Highlights' : 'Piezas Destacadas'}
-          </span>
-          <Sparkles className="h-4 w-4 text-[#1a1a1a] animate-pulse" />
-        </div>
-      </div>
-
-      <div className="max-w-7xl mx-auto px-4">
-        <div className="relative bg-gradient-to-br from-[#2D5A4A] to-[#1a1a1a] rounded-xl border-4 border-[#C4A96A] overflow-hidden" style={{ maxHeight: '70vh' }}>
-          
-          {/* Mobile Layout */}
-          <div className="md:hidden flex flex-col" style={{ height: '70vh' }}>
-            <div className="relative h-1/2">
-              <img 
-                src={currentArticle.image || currentArticle.featuredImage?.src}
-                alt={currentArticle.featuredImage?.alt || currentArticle.title}
-                className="w-full h-full object-cover" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-              
-              <div className="absolute top-2 left-2">
-                <div className={`bg-gradient-to-r ${categoryGradient} px-3 py-1 rounded text-xs font-bold text-white`}>
-                  {currentArticle.category}
-                </div>
-              </div>
-
-              <div className="absolute bottom-2 right-2 flex gap-2">
-                <button onClick={prevSlide} className="w-8 h-8 rounded-full bg-[#1a1a1a]/80 border border-[#C4A96A] text-[#C4A96A] flex items-center justify-center">
-                  <ChevronLeft className="h-4 w-4" />
-                </button>
-                <button onClick={nextSlide} className="w-8 h-8 rounded-full bg-[#1a1a1a]/80 border border-[#C4A96A] text-[#C4A96A] flex items-center justify-center">
-                  <ChevronRight className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-
-            <div className="h-1/2 overflow-y-auto p-4">
-              <div className="min-h-full flex flex-col">
-                <h2 className="text-xl font-bold text-[#C4A96A] mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  {currentArticle.title}
-                </h2>
-
-                <p className="text-sm text-gray-300 mb-3 flex-grow line-clamp-3">
-                  {currentArticle.excerpt || currentArticle.body?.substring(0, 150) || ''}
-                </p>
-
-                <div className="space-y-2 text-xs text-gray-300 mb-3">
-                  {currentArticle.artist && (
-                    <div className="flex items-center gap-2">
-                      <div className="w-1 h-1 rounded-full bg-[#C4A96A]"></div>
-                      <span className="italic truncate">{currentArticle.artist}</span>
-                    </div>
-                  )}
-                  {currentArticle.year && (
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-3 w-3 text-[#C4A96A]" />
-                      <span>{currentArticle.year}</span>
-                    </div>
-                  )}
-                </div>
-
-                {/* ✅ URL avec préfixe langue */}
-                <Link 
-                  to={`/${language}/museum/${currentArticle.slug}`}
-                  className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#C4A96A] to-[#A85C32] text-[#1a1a1a] px-4 py-2 rounded-lg font-bold text-sm mb-2"
-                >
-                  <Eye className="h-4 w-4" />
-                  {language === 'en' ? 'View Details' : 'Ver Detalles'}
-                </Link>
-
-                <div className="text-[#C4A96A] font-bold text-center text-sm">
-                  {currentIndex + 1} / {articles.length}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Desktop Layout */}
-          <div className="hidden md:grid grid-cols-2 gap-6 p-6" style={{ height: '70vh' }}>
-            <div className="overflow-y-auto pr-4 flex flex-col">
-
-              <h2 className="text-3xl md:text-4xl font-bold text-[#C4A96A] mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
-                {currentArticle.title}
-              </h2>
-
-              <p className="text-gray-300 leading-relaxed mb-6 flex-grow">
-                {currentArticle.excerpt || currentArticle.body?.substring(0, 300) || ''}
-              </p>
-
-              <div className="space-y-2 text-sm text-gray-300 mb-6 pt-4 border-t border-[#C4A96A]/20">
-                {currentArticle.artist && (
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 rounded-full bg-[#C4A96A]"></div>
-                    <span className="italic">{currentArticle.artist}</span>
-                  </div>
-                )}
-                {currentArticle.year && (
-                  <div className="flex items-center gap-2">
-                    <Calendar className="h-4 w-4 text-[#C4A96A]" />
-                    <span>{currentArticle.year}</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex items-center gap-4 mt-auto">
-                {/* ✅ URL avec préfixe langue */}
-                <Link 
-                  to={`/${language}/museum/${currentArticle.slug}`}
-                  className="inline-flex items-center gap-2 bg-gradient-to-r from-[#C4A96A] to-[#A85C32] text-[#1a1a1a] px-6 py-3 rounded-lg font-bold"
-                >
-                  <Eye className="h-5 w-5" />
-                  {language === 'en' ? 'View Details' : 'Ver Detalles'}
-                </Link>
-
-                <div className="flex items-center gap-3">
-                  <button onClick={prevSlide} className="w-12 h-12 rounded-full border-2 border-[#C4A96A]/30 bg-[#1a1a1a] hover:bg-[#2D5A4A] text-[#C4A96A] flex items-center justify-center">
-                    <ChevronLeft className="h-5 w-5" />
-                  </button>
-                  <div className="text-[#C4A96A] font-bold min-w-[60px] text-center">
-                    {currentIndex + 1} / {articles.length}
-                  </div>
-                  <button onClick={nextSlide} className="w-12 h-12 rounded-full border-2 border-[#C4A96A]/30 bg-[#1a1a1a] hover:bg-[#2D5A4A] text-[#C4A96A] flex items-center justify-center">
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex flex-col" style={{ height: 'calc(70vh - 3rem)' }}>
-              <div className="relative flex-1 bg-[#1a1a1a] rounded-xl overflow-hidden border-2 border-[#C4A96A]">
-                <img
-                  src={currentArticle.image || currentArticle.featuredImage?.src}
-                  alt={currentArticle.featuredImage?.alt || currentArticle.title}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
-              </div>
-
-              <div className="flex gap-2 mt-3 justify-center">
-                {articles.map((artwork, index) => (
-                  <button
-                    key={artwork.slug}
-                    onClick={() => goToSlide(index)}
-                    className={`w-16 h-20 rounded overflow-hidden border-2 transition-all ${
-                      index === currentIndex ? 'border-[#C4A96A] scale-110' : 'border-[#C4A96A]/30 opacity-60'
-                    }`}
-                  >
-                    <img 
-                      src={artwork.image || artwork.featuredImage?.src} 
-                      alt="" 
-                      className="w-full h-full object-cover" 
-                    />
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 // Composant Card pour les œuvres
 const ArtworkMuseumCard = ({ artwork, language, categoryColors, featured = false }) => {
   const [imageError, setImageError] = useState(false);
@@ -556,7 +297,6 @@ const ArtworkMuseumCard = ({ artwork, language, categoryColors, featured = false
   const categoryGradient = categoryColors[artwork.category] || 'from-gray-900 to-gray-700';
 
   return (
-    // ✅ URL avec préfixe langue
     <Link 
       to={`/${language}/museum/${artwork.slug}`}
       className="group block h-full"

@@ -39,51 +39,8 @@ datePublished: '2024-01-25'
 dateModified: '2024-12-18'
 ---
 
-## Vitral: Illimani y Puente Libertad
+## Vitral
 
-Obra original en vitral inspirada en la **vista del lado posterior de la casa**. Esta pieza única captura dos símbolos icónicos de La Paz a través de la técnica tradicional del vitral.
-
-### Creación Artística
-
-- **Diseñador**: Ernesto Gamarra F.
-- **Maestro Vitralista**: Manuel Segales (ejecución)
-- **Inspiración**: Vista posterior de la casa
-- **Técnica**: Vitral tradicional con emplomado
-
-### Elementos Simbólicos
-
-El vitral representa:
-
-1. **Nevado Illimani**: El emblemático cerro paceño visible desde la casa
-2. **Puente Libertad**: Uno de los denominados "puentes Trillizos" que une:
-   - Barrio San Jorge (Av. Arce)
-   - Barrio Miraflores (Av. Los Leones)
-
-### Valor Artístico y Cultural
-
-Este vitral tiene especial significación en la colección porque:
-
-- **Traduce arquitectura en arte**: Convierte una vista funcional en expresión artística
-- **Preserva oficio tradicional**: Muestra el dominio del vitral boliviano
-- **Crea diálogos lumínicos**: Transforma la luz natural en narrativa colorida
-- **Conecta interior y exterior**: Tiende puentes entre el espacio museístico y el paisaje urbano paceño
-
-### Maestría Técnica
-
-Ejecutado por el maestro vitralista **Manuel Segales**, esta obra demuestra:
-
-- Precisión en corte y ensamblaje de vidrios
-- Comprensión de propiedades de luz y color
-- Integración de diseño contemporáneo con técnica tradicional
-- Adaptación arquitectónica a la estructura de la casa
-
-### Valor en la Colección de La Casa de Teresita
-
-Este vitral enriquece la experiencia museográfica al:
-
-1. **Añadir una dimensión lumínica**: Introduce la luz como medio artístico
-2. **Mostrar continuidad de oficios**: Vincula técnicas tradicionales con expresión contemporánea
-3. **Crear conexiones visuales**: Relaciona el arte interior con el paisaje urbano exterior
-4. **Documentar maestría local**: Destaca artistas bolivianos en oficios especializados
-
-Como parte de la sección contemporánea, esta obra demuestra cómo **técnicas tradicionales** pueden reinterpretar **visiones contemporáneas**, creando un diálogo entre el patrimonio artesanal y la visión artística moderna en el panorama cultural boliviano.
+inspirado en la vista del lado posterior de la casa, representa el Illimani, cerro emblemático de La Paz, el puente Libertad, (uno de los denominados puentes Trillizos) que une los barrios de San Jorge (Av. Arce) con Miraflores (Av. Los Leones) 
+Diseño: Ernesto gamarra f. 
+Ejecución: Manuel Segales, vitralista.

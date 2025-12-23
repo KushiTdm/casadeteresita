@@ -10,8 +10,7 @@ category: Document
 location: Salón Principal
 order: 16
 qrCode: https://lacasadeteresita.netlify.app/museum/visita-a-paris
-youtube: "https://youtu.be/-hU_X6Vr1MY"
-spotify: "https://open.spotify.com/track/3cGMK5oIwTvy4IZNVtWSxc?si=3a4798c6f7b649cd"
+youtube: "https://youtu.be/rzeLynj1GYM?si=MgQI-SKJvDxzA2G5"
 
 # Campos Meta SEO
 metaDescription: "Fotografía histórica de Teresita en París con su esposo Juan, su madre, hermana y amigos bolivianos en el famoso cabaret Lido de los Campos Elíseos, testimonio de su amor por la ciudad francesa que visitó en múltiples ocasiones."

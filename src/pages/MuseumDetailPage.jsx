@@ -211,7 +211,7 @@ const MuseumDetailPage = () => {
 
         {/* Back Button */}
         <Link
-          to="//${language}/museum"
+          to={`/${language}/museum`}
           className="absolute top-4 left-4 bg-[#C4A96A]/90 hover:bg-[#C4A96A] text-[#1a1a1a] p-3 rounded-full shadow-lg transition-all z-10 backdrop-blur-sm"
         >
           <ArrowLeft className="h-6 w-6" />
@@ -435,7 +435,7 @@ const MuseumDetailPage = () => {
           <p className="text-xl mb-8 text-gray-300 max-w-2xl mx-auto">
             {language === 'en'
               ? 'Continue your journey through our historic collection of artifacts and artworks'
-              : 'Continúa tu viaje por nuestra colección histórica de artefactos y obras de arte'}
+              : 'Continúa tu viaje por nuestra variada colección'}
           </p>
           <Link
             to={`/${language}/museum`}

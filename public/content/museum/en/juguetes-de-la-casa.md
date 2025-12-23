@@ -11,7 +11,6 @@ location: Main Hall / Rooms
 order: 19
 qrCode: https://lacasadeteresita.netlify.app/museum/toys-of-the-house
 youtube: "https://youtu.be/DNZUKm0ApEM"
-spotify: "https://open.spotify.com/track/2stkLJ0JNcXkIRDNF3ld6c?si=0cf41d8b177e4c14"
 
 # SEO Meta Fields
 metaDescription: "Collection of historical toys that accompanied moments of family joy at La Casa de Teresita, testimony of childhood, domestic life and playful memories that add warmth to this museum-hotel in La Paz."

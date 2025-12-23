@@ -11,7 +11,6 @@ location: Salón Principal / Habitaciones
 order: 19
 qrCode: https://lacasadeteresita.netlify.app/museum/juguetes-de-la-casa
 youtube: "https://youtu.be/DNZUKm0ApEM"
-spotify: "https://open.spotify.com/track/2stkLJ0JNcXkIRDNF3ld6c?si=0cf41d8b177e4c14"
 
 # Campos Meta SEO
 metaDescription: "Colección de juguetes históricos que acompañaron los momentos de alegría familiar en La Casa de Teresita, testimonio de la infancia, vida doméstica y recuerdos lúdicos que dan calidez a este museo-hotel en La Paz."

@@ -10,8 +10,7 @@ category: Document
 location: Main Hall
 order: 16
 qrCode: https://lacasadeteresita.netlify.app/museum/visit-to-paris
-youtube: "https://youtu.be/-hU_X6Vr1MY"
-spotify: "https://open.spotify.com/track/3cGMK5oIwTvy4IZNVtWSxc?si=3a4798c6f7b649cd"
+youtube: "https://youtu.be/rzeLynj1GYM?si=MgQI-SKJvDxzA2G5"
 
 # SEO Meta Fields
 metaDescription: "Historical photograph of Teresita in Paris with her husband Juan, her mother, sister and Bolivian friends at the famous Lido cabaret on the Champs-Élysées, testimony of her love for the French city she visited on multiple occasions."
