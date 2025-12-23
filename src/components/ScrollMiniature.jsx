@@ -28,6 +28,13 @@ const ScrollMiniature = ({ artwork, scrollPosition }) => {
   
   if (!isVisible || !artwork) return null;
 
+  // Déterminer l'image et l'alt (priorité: image > featuredImage.src)
+  const imageSrc = artwork.image || artwork.featuredImage?.src;
+  const imageAlt = artwork.title || artwork.featuredImage?.alt || 'Artwork';
+
+  // Si aucune image n'est disponible, ne rien afficher
+  if (!imageSrc) return null;
+
   // Tailles fixes selon le device
   const baseSize = isMobile ? 60 : 80;
   
@@ -61,8 +68,8 @@ const ScrollMiniature = ({ artwork, scrollPosition }) => {
           }}
         >
           <img
-            src={artwork.image}
-            alt={artwork.title}
+            src={imageSrc}
+            alt={imageAlt}
             className="w-full h-full object-cover"
             onError={handleImageError}
           />
