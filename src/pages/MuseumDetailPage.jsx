@@ -1,4 +1,4 @@
-// src/pages/MuseumDetailPage.jsx - STYLE MUSÉE AVEC MINIATURE
+// src/pages/MuseumDetailPage.jsx - STYLE MUSÉE AVEC MINIATURE ET BADGES QR
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, MapPin, Calendar, Info, Youtube, Music, Award, Sparkles } from 'lucide-react';
@@ -225,6 +225,20 @@ const MuseumDetailPage = () => {
             </span>
           </div>
         )}
+
+        {/* QR Exclusive Badge */}
+        {artwork.accessibility === 'qr-only' && (
+          <div className="absolute top-16 right-4 z-10">
+            <div className="bg-gradient-to-r from-[#C4A96A] to-[#A85C32] px-4 py-2 rounded-lg shadow-xl border-2 border-[#1a1a1a]/20 backdrop-blur-sm">
+              <div className="flex items-center gap-2">
+                <Sparkles className="h-4 w-4 text-[#1a1a1a] animate-pulse" />
+                <span className="text-xs font-bold text-[#1a1a1a] uppercase tracking-wider">
+                  {language === 'en' ? 'Museum Visitor Exclusive' : 'Exclusivo Visitantes del Museo'}
+                </span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Content Area */}
@@ -415,6 +429,21 @@ const MuseumDetailPage = () => {
                     : 'Parte de la colección permanente de La Casa de Teresita'}
                 </p>
               </div>
+
+              {/* QR Exclusive Notice */}
+              {artwork.accessibility === 'qr-only' && (
+                <div className="bg-gradient-to-br from-[#C4A96A] to-[#A85C32] rounded-lg p-5 border-2 border-[#1a1a1a]/20 shadow-xl">
+                  <div className="flex items-center justify-center gap-2 mb-3">
+                    <Sparkles className="h-6 w-6 text-[#1a1a1a]" />
+                    <Info className="h-6 w-6 text-[#1a1a1a]" />
+                  </div>
+                  <p className="text-sm text-[#1a1a1a] font-semibold leading-relaxed text-center">
+                    {language === 'en' 
+                      ? 'This artwork is exclusively accessible to hotel guests and museum visitors via QR code on-site'
+                      : 'Esta obra es accesible exclusivamente para huéspedes del hotel y visitantes del museo mediante código QR en el sitio'}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
