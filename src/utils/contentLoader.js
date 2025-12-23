@@ -1,4 +1,4 @@
-// src/utils/contentLoader.js - VERSION ULTRA-SÉCURISÉE
+// src/utils/contentLoader.js - VERSION COMPLÈTE AVEC BLOG
 import matter from 'gray-matter';
 
 // ==========================================
@@ -11,20 +11,17 @@ const CACHE = {
   manifests: { blog_en: null, blog_es: null, museum_en: null, museum_es: null },
   singlePosts: {},
   timestamps: {},
-  errors: {} // 🆕 Track errors
+  errors: {}
 };
 
 const CACHE_DURATION = 5 * 60 * 1000;
 const MANIFEST_CACHE_DURATION = 10 * 60 * 1000;
-const ERROR_RETRY_DELAY = 30 * 1000; // Retry après 30 secondes
+const ERROR_RETRY_DELAY = 30 * 1000;
 
 // ==========================================
 // 🛡️ ERROR HANDLING UTILITIES
 // ==========================================
 
-/**
- * Logger d'erreurs centralisé
- */
 function logError(context, error, data = {}) {
   const errorLog = {
     context,
@@ -34,24 +31,12 @@ function logError(context, error, data = {}) {
     ...data
   };
   
-  // Stocker l'erreur
   CACHE.errors[context] = errorLog;
-  
-  // Logger en console
   console.error(`❌ [${context}]`, error.message, data);
-  
-  // En production, vous pourriez envoyer à un service de monitoring
-  if (import.meta.env.PROD) {
-    // Exemple: Sentry, LogRocket, etc.
-    // sendToMonitoring(errorLog);
-  }
   
   return errorLog;
 }
 
-/**
- * Vérifier si on peut retry après une erreur
- */
 function canRetryAfterError(cacheKey) {
   const errorLog = CACHE.errors[cacheKey];
   if (!errorLog) return true;
@@ -60,14 +45,11 @@ function canRetryAfterError(cacheKey) {
   return timeSinceError > ERROR_RETRY_DELAY;
 }
 
-/**
- * Obtenir les erreurs récentes
- */
 export function getRecentErrors() {
   return Object.entries(CACHE.errors)
     .filter(([_, error]) => {
       const age = Date.now() - new Date(error.timestamp).getTime();
-      return age < 60 * 60 * 1000; // Dernière heure
+      return age < 60 * 60 * 1000;
     })
     .map(([context, error]) => ({ context, ...error }));
 }
@@ -76,9 +58,6 @@ export function getRecentErrors() {
 // 🔒 SAFE FETCH WRAPPER
 // ==========================================
 
-/**
- * Fetch avec gestion d'erreurs robuste
- */
 async function safeFetch(url, options = {}) {
   const context = `fetch_${url}`;
   
@@ -108,9 +87,6 @@ async function safeFetch(url, options = {}) {
   }
 }
 
-/**
- * Parse markdown avec validation
- */
 function safeParseMarkdown(content, filename) {
   try {
     if (!content || typeof content !== 'string') {
@@ -119,7 +95,6 @@ function safeParseMarkdown(content, filename) {
     
     const { data, content: body } = matter(content);
     
-    // Validation des champs critiques
     if (!data.title || typeof data.title !== 'string') {
       throw new Error('Missing or invalid title field');
     }
@@ -129,7 +104,6 @@ function safeParseMarkdown(content, filename) {
       data.published = true;
     }
     
-    // Validation de l'image
     if (data.featuredImage) {
       if (!data.featuredImage.src) {
         console.warn(`⚠️ Missing featuredImage.src in ${filename}`);
@@ -139,25 +113,21 @@ function safeParseMarkdown(content, filename) {
         data.featuredImage.alt = data.title;
       }
     } else if (data.image) {
-      // Conversion ancien format
       data.featuredImage = {
         src: data.image,
         alt: data.title
       };
     }
     
-    // Validation category
     if (!data.category) {
       console.warn(`⚠️ Missing category in ${filename}, defaulting to 'Others'`);
       data.category = 'Others';
     }
     
-    // Validation order
     if (data.order === undefined || data.order === null) {
       data.order = 'auto';
     }
     
-    // Validation accessibility
     if (!data.accessibility) {
       data.accessibility = 'public';
     }
@@ -170,16 +140,12 @@ function safeParseMarkdown(content, filename) {
 }
 
 // ==========================================
-// 📁 FETCH FUNCTIONS AVEC ERROR HANDLING
+// 📁 FETCH FUNCTIONS
 // ==========================================
 
-/**
- * Fetch markdown file avec retry logic
- */
 async function fetchMarkdownFile(path, retries = 2) {
   const cacheKey = `file_${path}`;
   
-  // Vérifier si on peut retry
   if (!canRetryAfterError(cacheKey)) {
     console.warn(`⏳ Skipping ${path} - retry delay not elapsed`);
     return null;
@@ -190,7 +156,6 @@ async function fetchMarkdownFile(path, retries = 2) {
       const response = await safeFetch(path, { timeout: 8000 });
       const content = await response.text();
       
-      // Valider que c'est bien du markdown
       if (!content.includes('---') && !content.includes('title:')) {
         throw new Error('Invalid markdown format');
       }
@@ -202,7 +167,6 @@ async function fetchMarkdownFile(path, retries = 2) {
         return null;
       }
       
-      // Wait before retry (exponential backoff)
       await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
     }
   }
@@ -210,13 +174,9 @@ async function fetchMarkdownFile(path, retries = 2) {
   return null;
 }
 
-/**
- * Fetch manifest avec validation
- */
 async function fetchManifest(type, language) {
   const cacheKey = `${type}_${language}`;
   
-  // Cache check
   const cached = CACHE.manifests[cacheKey];
   if (cached && CACHE.timestamps[cacheKey]) {
     const age = Date.now() - CACHE.timestamps[cacheKey];
@@ -231,7 +191,6 @@ async function fetchManifest(type, language) {
     const response = await safeFetch(manifestPath, { timeout: 5000 });
     const manifest = await response.json();
     
-    // Validation du manifest
     if (!manifest || !Array.isArray(manifest.files)) {
       throw new Error('Invalid manifest structure');
     }
@@ -240,7 +199,6 @@ async function fetchManifest(type, language) {
       console.warn(`⚠️ Empty manifest for ${type}/${language}`);
     }
     
-    // Validation des fichiers
     manifest.files = manifest.files.filter(file => {
       if (!file || !file.endsWith('.md')) {
         console.warn(`⚠️ Invalid file in manifest: ${file}`);
@@ -249,7 +207,6 @@ async function fetchManifest(type, language) {
       return true;
     });
     
-    // Sauvegarder dans le cache
     CACHE.manifests[cacheKey] = manifest;
     CACHE.timestamps[cacheKey] = Date.now();
     
@@ -257,7 +214,6 @@ async function fetchManifest(type, language) {
   } catch (error) {
     logError(`manifest_${cacheKey}`, error, { manifestPath });
     
-    // Retourner le cache périmé si disponible
     if (cached) {
       console.warn(`⚠️ Using stale manifest for ${type}/${language}`);
       return cached;
@@ -268,16 +224,181 @@ async function fetchManifest(type, language) {
 }
 
 // ==========================================
-// 🏛️ MUSEUM FUNCTIONS ULTRA-SÉCURISÉES
+// 📝 BLOG FUNCTIONS
 // ==========================================
 
-/**
- * Load museum artworks avec error boundary
- */
+export async function getBlogPosts(language = 'en') {
+  const cacheKey = `blog_${language}`;
+  
+  const cached = CACHE.blog[language];
+  if (cached && CACHE.timestamps[cacheKey]) {
+    const age = Date.now() - CACHE.timestamps[cacheKey];
+    if (age < CACHE_DURATION) {
+      console.log(`✅ Cache HIT: blog (${language})`);
+      return cached;
+    }
+  }
+  
+  console.log(`🔄 Loading blog posts (${language})...`);
+  
+  try {
+    const manifest = await fetchManifest('blog', language);
+    
+    if (!manifest || !manifest.files || manifest.files.length === 0) {
+      console.warn(`⚠️ No manifest files for blog/${language}`);
+      return cached || [];
+    }
+    
+    const postPromises = manifest.files.map(async (filename) => {
+      try {
+        const filePath = `/content/blog/${language}/${filename}`;
+        const content = await fetchMarkdownFile(filePath);
+        
+        if (!content) {
+          throw new Error('Empty content');
+        }
+        
+        const { data, content: body } = safeParseMarkdown(content, filename);
+        const slug = filename.replace('.md', '');
+        
+        return {
+          ...data,
+          body,
+          slug,
+          language,
+          filename,
+          _loadedAt: new Date().toISOString()
+        };
+      } catch (error) {
+        console.error(`⚠️ Failed to load ${filename}:`, error.message);
+        return null;
+      }
+    });
+    
+    const results = await Promise.allSettled(postPromises);
+    
+    const posts = results
+      .filter(r => r.status === 'fulfilled' && r.value !== null)
+      .map(r => r.value)
+      .filter(post => post.published !== false);
+    
+    const failures = results.filter(r => r.status === 'rejected' || r.value === null);
+    if (failures.length > 0) {
+      console.warn(`⚠️ Failed to load ${failures.length}/${manifest.files.length} posts`);
+    }
+    
+    if (posts.length === 0) {
+      console.error('❌ No posts loaded successfully');
+      return cached || [];
+    }
+    
+    const sortedPosts = posts.sort((a, b) => new Date(b.date) - new Date(a.date));
+    
+    CACHE.blog[language] = sortedPosts;
+    CACHE.timestamps[cacheKey] = Date.now();
+    
+    console.log(`✅ Loaded ${sortedPosts.length} blog posts (${language})`);
+    
+    return sortedPosts;
+  } catch (error) {
+    logError(cacheKey, error);
+    
+    if (cached) {
+      console.warn(`⚠️ Returning stale cache for blog/${language}`);
+      return cached;
+    }
+    
+    console.error(`❌ Failed to load blog posts (${language})`);
+    return [];
+  }
+}
+
+export async function getBlogPost(slug, language = 'en') {
+  const cacheKey = `blog_${language}_${slug}`;
+  
+  if (CACHE.singlePosts[cacheKey] && CACHE.timestamps[cacheKey]) {
+    const age = Date.now() - CACHE.timestamps[cacheKey];
+    if (age < CACHE_DURATION) {
+      return CACHE.singlePosts[cacheKey];
+    }
+  }
+  
+  try {
+    const allPosts = await getBlogPosts(language);
+    const post = allPosts.find(p => p.slug === slug);
+    
+    if (post) {
+      CACHE.singlePosts[cacheKey] = post;
+      CACHE.timestamps[cacheKey] = Date.now();
+      return post;
+    }
+  } catch (error) {
+    console.warn('Failed to get post from list, trying direct load');
+  }
+  
+  try {
+    const filePath = `/content/blog/${language}/${slug}.md`;
+    const content = await fetchMarkdownFile(filePath);
+    
+    if (!content) return null;
+    
+    const { data, content: body } = safeParseMarkdown(content, `${slug}.md`);
+    
+    const post = {
+      ...data,
+      body,
+      slug,
+      language,
+      filename: `${slug}.md`
+    };
+    
+    CACHE.singlePosts[cacheKey] = post;
+    CACHE.timestamps[cacheKey] = Date.now();
+    
+    return post;
+  } catch (error) {
+    logError(cacheKey, error, { slug, language });
+    return null;
+  }
+}
+
+export async function getAlternateBlogPost(slug, currentLanguage) {
+  const alternateLanguage = currentLanguage === 'en' ? 'es' : 'en';
+  return getBlogPost(slug, alternateLanguage);
+}
+
+export async function getBlogPostsByCategory(category = null, language = 'en') {
+  const allPosts = await getBlogPosts(language);
+  
+  if (!category || category === 'All') {
+    return allPosts;
+  }
+  
+  return allPosts.filter(post => post.category === category);
+}
+
+export function calculateReadingTime(text) {
+  if (!text) return 1;
+  const wordsPerMinute = 200;
+  const words = text.trim().split(/\s+/).length;
+  return Math.ceil(words / wordsPerMinute);
+}
+
+export async function getRelatedPosts(post, language = 'en', limit = 3) {
+  const allPosts = await getBlogPosts(language);
+  
+  return allPosts
+    .filter(p => p.slug !== post.slug && p.category === post.category)
+    .slice(0, limit);
+}
+
+// ==========================================
+// 🏛️ MUSEUM FUNCTIONS
+// ==========================================
+
 export async function getMuseumArtworks(language = 'en') {
   const cacheKey = `museum_${language}`;
   
-  // Cache check
   const cached = CACHE.museum[language];
   if (cached && CACHE.timestamps[cacheKey]) {
     const age = Date.now() - CACHE.timestamps[cacheKey];
@@ -294,10 +415,9 @@ export async function getMuseumArtworks(language = 'en') {
     
     if (!manifest || !manifest.files || manifest.files.length === 0) {
       console.warn(`⚠️ No manifest files for museum/${language}`);
-      return cached || []; // Return cache or empty array
+      return cached || [];
     }
     
-    // Charger en parallèle avec Promise.allSettled (ne fail pas si 1 fail)
     const artworkPromises = manifest.files.map(async (filename) => {
       try {
         const filePath = `/content/museum/${language}/${filename}`;
@@ -320,18 +440,16 @@ export async function getMuseumArtworks(language = 'en') {
         };
       } catch (error) {
         console.error(`⚠️ Failed to load ${filename}:`, error.message);
-        return null; // Ne pas faire crasher tout le chargement
+        return null;
       }
     });
     
     const results = await Promise.allSettled(artworkPromises);
     
-    // Extraire les succès
     const artworks = results
       .filter(r => r.status === 'fulfilled' && r.value !== null)
       .map(r => r.value);
     
-    // Logger les échecs
     const failures = results.filter(r => r.status === 'rejected' || r.value === null);
     if (failures.length > 0) {
       console.warn(`⚠️ Failed to load ${failures.length}/${manifest.files.length} artworks`);
@@ -342,10 +460,8 @@ export async function getMuseumArtworks(language = 'en') {
       return cached || [];
     }
     
-    // Tri avec gestion d'erreurs
     const sortedArtworks = sortArtworksByOrder(artworks);
     
-    // Sauvegarder dans le cache
     CACHE.museum[language] = sortedArtworks;
     CACHE.timestamps[cacheKey] = Date.now();
     
@@ -355,7 +471,6 @@ export async function getMuseumArtworks(language = 'en') {
   } catch (error) {
     logError(cacheKey, error);
     
-    // Fallback sur cache ou array vide
     if (cached) {
       console.warn(`⚠️ Returning stale cache for museum/${language}`);
       return cached;
@@ -366,13 +481,9 @@ export async function getMuseumArtworks(language = 'en') {
   }
 }
 
-/**
- * Load single artwork avec fallback
- */
 export async function getMuseumArtwork(slug, language = 'en') {
   const cacheKey = `museum_${language}_${slug}`;
   
-  // Cache check
   if (CACHE.singlePosts[cacheKey] && CACHE.timestamps[cacheKey]) {
     const age = Date.now() - CACHE.timestamps[cacheKey];
     if (age < CACHE_DURATION) {
@@ -380,7 +491,6 @@ export async function getMuseumArtwork(slug, language = 'en') {
     }
   }
   
-  // Essayer de trouver dans la liste complète
   try {
     const allArtworks = await getMuseumArtworks(language);
     const artwork = allArtworks.find(a => a.slug === slug);
@@ -394,7 +504,6 @@ export async function getMuseumArtwork(slug, language = 'en') {
     console.warn('Failed to get artwork from list, trying direct load');
   }
   
-  // Charger directement
   try {
     const filePath = `/content/museum/${language}/${slug}.md`;
     const content = await fetchMarkdownFile(filePath);
@@ -421,16 +530,12 @@ export async function getMuseumArtwork(slug, language = 'en') {
   }
 }
 
-/**
- * Tri sécurisé avec gestion d'erreurs
- */
 function sortArtworksByOrder(artworks) {
   try {
     return artworks.sort((a, b) => {
       const orderA = a.order;
       const orderB = b.order;
       
-      // Convertir en nombre
       const numA = orderA === 'auto' ? 9999 : (
         typeof orderA === 'number' ? orderA : parseInt(orderA) || 0
       );
@@ -442,25 +547,20 @@ function sortArtworksByOrder(artworks) {
     });
   } catch (error) {
     console.error('Error sorting artworks:', error);
-    return artworks; // Return unsorted in case of error
+    return artworks;
   }
 }
 
-/**
- * Get public artworks avec validation
- */
 export async function getPublicMuseumArtworks(language = 'en') {
   try {
     const allArtworks = await getMuseumArtworks(language);
     
     const publicArtworks = allArtworks.filter(artwork => {
-      // Validation de l'artwork
       if (!artwork || !artwork.slug) {
         console.warn('⚠️ Invalid artwork detected, skipping');
         return false;
       }
       
-      // Si pas publié, skip
       if (artwork.published === false) {
         return false;
       }
@@ -478,13 +578,20 @@ export async function getPublicMuseumArtworks(language = 'en') {
   }
 }
 
+export async function getArtworksByCategory(category = null, language = 'en') {
+  const allArtworks = await getPublicMuseumArtworks(language);
+  
+  if (!category || category === 'All') {
+    return allArtworks;
+  }
+  
+  return allArtworks.filter(artwork => artwork.category === category);
+}
+
 // ==========================================
 // 📊 HEALTH CHECK & DIAGNOSTICS
 // ==========================================
 
-/**
- * Vérifier la santé du système de contenu
- */
 export async function healthCheck() {
   const health = {
     timestamp: new Date().toISOString(),
@@ -494,7 +601,6 @@ export async function healthCheck() {
   };
   
   try {
-    // Check manifests
     for (const lang of ['en', 'es']) {
       for (const type of ['blog', 'museum']) {
         const key = `${type}_${lang}`;
@@ -507,7 +613,6 @@ export async function healthCheck() {
       }
     }
     
-    // Determine overall status
     const allOk = Object.values(health.checks).every(s => s === 'ok');
     const someOk = Object.values(health.checks).some(s => s === 'ok');
     
@@ -522,9 +627,6 @@ export async function healthCheck() {
   return health;
 }
 
-/**
- * Clear cache with confirmation
- */
 export function clearCache(type = null, language = null) {
   if (type && language) {
     const cacheKey = `${type}_${language}`;
@@ -551,7 +653,6 @@ export function clearCache(type = null, language = null) {
   }
 }
 
-// Exposer en dev
 if (import.meta.env.DEV) {
   window.__contentLoader = {
     clearCache,
@@ -560,13 +661,3 @@ if (import.meta.env.DEV) {
     CACHE
   };
 }
-
-// Export toutes les autres fonctions (blog, etc.)
-export {
-  getBlogPosts,
-  getBlogPost,
-  getAlternateBlogPost,
-  getArtworksByCategory,
-  calculateReadingTime,
-  getRelatedPosts
-};
