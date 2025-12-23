@@ -1,18 +1,37 @@
+backend:
+  name: git-gateway
+  branch: main
+
+# Configuration de la publication
+publish_mode: editorial_workflow
+media_folder: "public/images/museum"
+public_folder: "/images/museum"
+
+# Support i18n
+i18n:
+  structure: multiple_folders
+  locales: [en, es]
+  default_locale: en
+
 collections:
   - name: "museum"
     label: "Museum Artworks"
     folder: "public/content/museum"
     create: true
     slug: "{{slug}}"
-    media_folder: "/public/images/museum"
-    public_folder: "/images/museum"
+    editor:
+      preview: false
     i18n: true
+    
+    # 🆕 VALIDATION DES CHAMPS
     fields:
       - label: "Artwork Title"
         name: "title"
         widget: "string"
         i18n: duplicate
+        required: true
         hint: "The main title of the artwork (used as link between EN/ES versions - must be identical)"
+        pattern: ['^.{3,200}$', "Title must be between 3 and 200 characters"]
       
       - label: "Artist"
         name: "artist"
@@ -20,6 +39,7 @@ collections:
         i18n: duplicate
         required: false
         hint: "Name of the artist or creator"
+        default: "Casa de Teresita"
       
       - label: "Year"
         name: "year"
@@ -27,55 +47,59 @@ collections:
         i18n: duplicate
         required: false
         hint: "Year or period of creation (e.g., '1920' or '19th Century')"
+        default: "20th Century"
       
       - label: "Featured Image"
         name: "featuredImage"
         widget: "object"
-        hint: "Main image for the artwork"
+        required: true
+        hint: "Main image for the artwork (REQUIRED)"
         fields:
-          - {label: "Image", name: "src", widget: "image", i18n: duplicate}
-          - {label: "Alt Text", name: "alt", widget: "string", i18n: true, hint: "Describe the artwork for accessibility and SEO"}
+          - label: "Image"
+            name: "src"
+            widget: "image"
+            i18n: duplicate
+            required: true
+            media_library:
+              config:
+                max_file_size: 5120000  # 5MB max
+          - label: "Alt Text"
+            name: "alt"
+            widget: "string"
+            i18n: true
+            required: true
+            hint: "Describe the artwork for accessibility and SEO (REQUIRED)"
+            pattern: ['^.{10,200}$', "Alt text must be between 10 and 200 characters"]
+      
+      - label: "Category"
+        name: "category"
+        widget: "select"
+        required: true
+        i18n: duplicate
+        hint: "Select the artwork category (REQUIRED)"
+        options:
+          - { label: "Painting", value: "Painting" }
+          - { label: "Furniture", value: "Furniture" }
+          - { label: "Document", value: "Document" }
+          - { label: "Others", value: "Others" }
+        default: "Others"
       
       - label: "Excerpt"
         name: "excerpt"
         widget: "text"
         i18n: true
-        required: false
-        hint: "Short summary (150-160 characters) shown in preview cards and search results"
+        required: true
+        hint: "Short summary (50-200 characters) shown in preview cards and search results (REQUIRED)"
+        pattern: ['^.{50,200}$', "Excerpt must be between 50 and 200 characters"]
       
       - label: "Description"
         name: "body"
         widget: "markdown"
         i18n: true
-        hint: "Main content describing the artwork. Use ## for headings."
-      
-      - label: "QR Code URL"
-        name: "qrCode"
-        widget: "string"
-        i18n: duplicate
-        required: false
-        hint: "Full URL for QR code generation (e.g., https://lacasadeteresita.netlify.app/museum/artwork-name)"
-      
-      - label: "YouTube Video"
-        name: "youtube"
-        widget: "string"
-        i18n: duplicate
-        required: false
-        hint: "YouTube video URL (e.g., https://youtu.be/xxxxx or https://youtube.com/watch?v=xxxxx)"
-      
-      - label: "Spotify Audio"
-        name: "spotify"
-        widget: "string"
-        i18n: duplicate
-        required: false
-        hint: "Spotify track URL (e.g., https://open.spotify.com/track/xxxxx)"
-      
-      - label: "Category"
-        name: "category"
-        widget: "select"
-        options: ["Painting", "Furniture", "Document", "Others"]
-        i18n: duplicate
-        hint: "Select the artwork category"
+        required: true
+        hint: "Main content describing the artwork. Use ## for headings. (REQUIRED)"
+        minimal: false
+        buttons: ["bold", "italic", "link", "heading-two", "heading-three", "quote", "bulleted-list", "numbered-list"]
       
       - label: "Location in Museum"
         name: "location"
@@ -83,11 +107,13 @@ collections:
         i18n: true
         required: false
         hint: "Physical location in the museum (e.g., 'Main Hall', 'Guest Room 3')"
+        default: "Main Hall"
       
       - label: "Display Order"
         name: "order"
         widget: "select"
         default: "auto"
+        required: true
         i18n: duplicate
         hint: "Choose display position: 'auto' places at end, or select specific number (0-100)"
         options:
@@ -116,12 +142,37 @@ collections:
           - { label: "Public - Show in museum listing", value: "public" }
           - { label: "QR Code Only - Hidden from listing (guests only)", value: "qr-only" }
       
+      - label: "QR Code URL"
+        name: "qrCode"
+        widget: "string"
+        i18n: duplicate
+        required: false
+        hint: "Full URL for QR code generation (e.g., https://lacasadeteresita.netlify.app/museum/artwork-name)"
+        pattern: ['^(https?://)?.*$', "Must be a valid URL or leave empty"]
+      
+      - label: "YouTube Video"
+        name: "youtube"
+        widget: "string"
+        i18n: duplicate
+        required: false
+        hint: "YouTube video URL (e.g., https://youtu.be/xxxxx or https://youtube.com/watch?v=xxxxx)"
+        pattern: ['^(https?://)?(www\.)?(youtube\.com|youtu\.be)/.+$|^$', "Must be a valid YouTube URL or leave empty"]
+      
+      - label: "Spotify Audio"
+        name: "spotify"
+        widget: "string"
+        i18n: duplicate
+        required: false
+        hint: "Spotify track URL (e.g., https://open.spotify.com/track/xxxxx)"
+        pattern: ['^(https?://)?open\.spotify\.com/track/.+$|^$', "Must be a valid Spotify URL or leave empty"]
+      
       - label: "Meta Description"
         name: "metaDescription"
         widget: "text"
         i18n: true
         required: false
-        hint: "SEO description (150-160 characters). If empty, excerpt will be used. Important for search engines!"
+        hint: "SEO description (150-160 characters). If empty, excerpt will be used."
+        pattern: ['^.{0,160}$', "Meta description must be 160 characters or less"]
       
       - label: "Meta Keywords"
         name: "keywords"
@@ -129,11 +180,14 @@ collections:
         i18n: true
         required: false
         hint: "SEO keywords (5-10 recommended). Press Enter after each keyword."
+        max: 15
+        min: 0
       
       - label: "Published"
         name: "published"
         widget: "boolean"
         default: true
+        required: true
         i18n: duplicate
         hint: "Uncheck to save as draft (won't be visible on the website)"
       
@@ -141,5 +195,21 @@ collections:
         name: "featured"
         widget: "boolean"
         default: false
+        required: true
         i18n: duplicate
         hint: "Check to highlight this artwork in the featured slider on museum page"
+      
+      # 🆕 CHAMPS CACHÉS POUR DATES
+      - label: "Date Published"
+        name: "datePublished"
+        widget: "datetime"
+        required: false
+        hint: "Auto-generated on first publish"
+        i18n: duplicate
+      
+      - label: "Date Modified"
+        name: "dateModified"
+        widget: "datetime"
+        required: false
+        hint: "Auto-updated on save"
+        i18n: duplicate

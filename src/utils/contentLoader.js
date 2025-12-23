@@ -1,458 +1,407 @@
-// src/utils/contentLoader.js - VERSION AVEC CACHE OPTIMISÉ
+// src/utils/contentLoader.js - VERSION ULTRA-SÉCURISÉE
 import matter from 'gray-matter';
 
 // ==========================================
-// 🎯 SYSTÈME DE CACHE
+// 🎯 SYSTÈME DE CACHE AVEC ERROR TRACKING
 // ==========================================
 
 const CACHE = {
-  blog: {
-    en: null,
-    es: null
-  },
-  museum: {
-    en: null,
-    es: null
-  },
-  manifests: {
-    blog_en: null,
-    blog_es: null,
-    museum_en: null,
-    museum_es: null
-  },
-  singlePosts: {}, // { 'blog_en_slug': {...}, 'museum_es_slug': {...} }
-  timestamps: {}
+  blog: { en: null, es: null },
+  museum: { en: null, es: null },
+  manifests: { blog_en: null, blog_es: null, museum_en: null, museum_es: null },
+  singlePosts: {},
+  timestamps: {},
+  errors: {} // 🆕 Track errors
 };
 
-const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-const MANIFEST_CACHE_DURATION = 10 * 60 * 1000; // 10 minutes (manifests changent rarement)
+const CACHE_DURATION = 5 * 60 * 1000;
+const MANIFEST_CACHE_DURATION = 10 * 60 * 1000;
+const ERROR_RETRY_DELAY = 30 * 1000; // Retry après 30 secondes
+
+// ==========================================
+// 🛡️ ERROR HANDLING UTILITIES
+// ==========================================
 
 /**
- * Vérifier si le cache est valide
+ * Logger d'erreurs centralisé
  */
-function isCacheValid(cacheKey, customDuration = CACHE_DURATION) {
-  const timestamp = CACHE.timestamps[cacheKey];
-  if (!timestamp) return false;
-  
-  const now = Date.now();
-  const isValid = (now - timestamp) < customDuration;
-  
-  if (!isValid) {
-    console.log(`⏰ Cache expired for: ${cacheKey}`);
-  }
-  
-  return isValid;
-}
-
-/**
- * Récupérer depuis le cache
- */
-function getFromCache(type, language, slug = null) {
-  if (slug) {
-    // Cache pour un article spécifique
-    const cacheKey = `${type}_${language}_${slug}`;
-    if (CACHE.singlePosts[cacheKey] && isCacheValid(cacheKey)) {
-      console.log(`✅ Cache HIT: ${cacheKey}`);
-      return CACHE.singlePosts[cacheKey];
-    }
-  } else {
-    // Cache pour la liste complète
-    const cacheKey = `${type}_${language}`;
-    if (CACHE[type][language] && isCacheValid(cacheKey)) {
-      console.log(`✅ Cache HIT: ${type} (${language}) - ${CACHE[type][language].length} items`);
-      return CACHE[type][language];
-    }
-  }
-  
-  console.log(`❌ Cache MISS: ${type}_${language}${slug ? '_' + slug : ''}`);
-  return null;
-}
-
-/**
- * Sauvegarder dans le cache
- */
-function saveToCache(type, language, data, slug = null) {
-  const now = Date.now();
-  
-  if (slug) {
-    // Cache d'un article spécifique
-    const cacheKey = `${type}_${language}_${slug}`;
-    CACHE.singlePosts[cacheKey] = data;
-    CACHE.timestamps[cacheKey] = now;
-    console.log(`💾 Cached: ${cacheKey}`);
-  } else {
-    // Cache de la liste complète
-    const cacheKey = `${type}_${language}`;
-    CACHE[type][language] = data;
-    CACHE.timestamps[cacheKey] = now;
-    console.log(`💾 Cached: ${cacheKey} - ${data.length} items`);
-  }
-}
-
-/**
- * Récupérer manifest depuis le cache
- */
-function getManifestFromCache(type, language) {
-  const cacheKey = `${type}_${language}`;
-  
-  if (CACHE.manifests[cacheKey] && isCacheValid(cacheKey, MANIFEST_CACHE_DURATION)) {
-    console.log(`✅ Manifest Cache HIT: ${cacheKey}`);
-    return CACHE.manifests[cacheKey];
-  }
-  
-  return null;
-}
-
-/**
- * Sauvegarder manifest dans le cache
- */
-function saveManifestToCache(type, language, manifest) {
-  const cacheKey = `${type}_${language}`;
-  CACHE.manifests[cacheKey] = manifest;
-  CACHE.timestamps[cacheKey] = Date.now();
-  console.log(`💾 Manifest cached: ${cacheKey}`);
-}
-
-/**
- * Vider le cache (utile pour debug ou refresh)
- */
-export function clearCache(type = null, language = null) {
-  if (type && language) {
-    // Vider cache spécifique
-    const cacheKey = `${type}_${language}`;
-    CACHE[type][language] = null;
-    CACHE.manifests[cacheKey] = null;
-    delete CACHE.timestamps[cacheKey];
-    
-    // Vider aussi les posts individuels de ce type/langue
-    Object.keys(CACHE.singlePosts).forEach(key => {
-      if (key.startsWith(`${type}_${language}_`)) {
-        delete CACHE.singlePosts[key];
-        delete CACHE.timestamps[key];
-      }
-    });
-    
-    console.log(`🗑️ Cache cleared for: ${type} (${language})`);
-  } else {
-    // Vider tout le cache
-    CACHE.blog = { en: null, es: null };
-    CACHE.museum = { en: null, es: null };
-    CACHE.manifests = { blog_en: null, blog_es: null, museum_en: null, museum_es: null };
-    CACHE.singlePosts = {};
-    CACHE.timestamps = {};
-    console.log('🗑️ All cache cleared');
-  }
-}
-
-/**
- * Obtenir statistiques du cache
- */
-export function getCacheStats() {
-  const stats = {
-    blog: {
-      en: CACHE.blog.en ? `${CACHE.blog.en.length} posts` : 'empty',
-      es: CACHE.blog.es ? `${CACHE.blog.es.length} posts` : 'empty'
-    },
-    museum: {
-      en: CACHE.museum.en ? `${CACHE.museum.en.length} artworks` : 'empty',
-      es: CACHE.museum.es ? `${CACHE.museum.es.length} artworks` : 'empty'
-    },
-    singlePosts: Object.keys(CACHE.singlePosts).length,
-    timestamps: Object.keys(CACHE.timestamps).length
+function logError(context, error, data = {}) {
+  const errorLog = {
+    context,
+    message: error.message,
+    stack: error.stack,
+    timestamp: new Date().toISOString(),
+    ...data
   };
   
-  console.table(stats);
-  return stats;
+  // Stocker l'erreur
+  CACHE.errors[context] = errorLog;
+  
+  // Logger en console
+  console.error(`❌ [${context}]`, error.message, data);
+  
+  // En production, vous pourriez envoyer à un service de monitoring
+  if (import.meta.env.PROD) {
+    // Exemple: Sentry, LogRocket, etc.
+    // sendToMonitoring(errorLog);
+  }
+  
+  return errorLog;
+}
+
+/**
+ * Vérifier si on peut retry après une erreur
+ */
+function canRetryAfterError(cacheKey) {
+  const errorLog = CACHE.errors[cacheKey];
+  if (!errorLog) return true;
+  
+  const timeSinceError = Date.now() - new Date(errorLog.timestamp).getTime();
+  return timeSinceError > ERROR_RETRY_DELAY;
+}
+
+/**
+ * Obtenir les erreurs récentes
+ */
+export function getRecentErrors() {
+  return Object.entries(CACHE.errors)
+    .filter(([_, error]) => {
+      const age = Date.now() - new Date(error.timestamp).getTime();
+      return age < 60 * 60 * 1000; // Dernière heure
+    })
+    .map(([context, error]) => ({ context, ...error }));
 }
 
 // ==========================================
-// 📁 FETCH FUNCTIONS
+// 🔒 SAFE FETCH WRAPPER
 // ==========================================
 
 /**
- * Fetch a markdown file from public directory
+ * Fetch avec gestion d'erreurs robuste
  */
-async function fetchMarkdownFile(path) {
+async function safeFetch(url, options = {}) {
+  const context = `fetch_${url}`;
+  
   try {
-    const response = await fetch(path);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), options.timeout || 10000);
+    
+    const response = await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
     if (!response.ok) {
-      throw new Error(`Failed to fetch ${path}`);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
-    return await response.text();
+    
+    return response;
   } catch (error) {
-    console.error(`Error fetching ${path}:`, error);
-    return null;
+    if (error.name === 'AbortError') {
+      logError(context, new Error('Request timeout'), { url });
+    } else {
+      logError(context, error, { url });
+    }
+    throw error;
   }
 }
 
 /**
- * Fetch manifest with cache
+ * Parse markdown avec validation
  */
-async function fetchManifest(type, language) {
-  // Vérifier le cache d'abord
-  const cached = getManifestFromCache(type, language);
-  if (cached) return cached;
-  
-  // Charger depuis le serveur
-  const manifestPath = `/content/${type}/${language}/manifest.json`;
-  
+function safeParseMarkdown(content, filename) {
   try {
-    const manifestResponse = await fetch(manifestPath);
-    
-    if (!manifestResponse.ok) {
-      console.warn(`No ${type} manifest found for ${language}`);
-      return null;
+    if (!content || typeof content !== 'string') {
+      throw new Error('Invalid content: must be a non-empty string');
     }
-    
-    const manifest = await manifestResponse.json();
-    
-    // Sauvegarder dans le cache
-    saveManifestToCache(type, language, manifest);
-    
-    return manifest;
-  } catch (error) {
-    console.error(`Error loading ${type} manifest:`, error);
-    return null;
-  }
-}
-
-// ==========================================
-// 📝 BLOG FUNCTIONS
-// ==========================================
-
-/**
- * Load all blog posts for a specific language (AVEC CACHE)
- */
-export async function getBlogPosts(language = 'en') {
-  // 1. Vérifier le cache d'abord
-  const cached = getFromCache('blog', language);
-  if (cached) return cached;
-  
-  // 2. Charger depuis le serveur
-  console.log(`🔄 Loading blog posts (${language}) from server...`);
-  
-  try {
-    const manifest = await fetchManifest('blog', language);
-    
-    if (!manifest || !manifest.files || manifest.files.length === 0) {
-      console.warn('No blog posts found, returning empty array');
-      return [];
-    }
-    
-    const posts = [];
-    
-    // Charger tous les posts en parallèle (plus rapide)
-    const postPromises = manifest.files.map(async (filename) => {
-      const filePath = `/content/blog/${language}/${filename}`;
-      const content = await fetchMarkdownFile(filePath);
-      
-      if (content) {
-        const { data, content: body } = matter(content);
-        
-        // Only include published posts
-        if (data.published !== false) {
-          const slug = filename.replace('.md', '');
-          return { 
-            ...data, 
-            body, 
-            slug,
-            language,
-            filename 
-          };
-        }
-      }
-      
-      return null;
-    });
-    
-    const loadedPosts = (await Promise.all(postPromises)).filter(Boolean);
-    
-    // Trier par date (plus récent en premier)
-    const sortedPosts = loadedPosts.sort((a, b) => {
-      const dateA = new Date(a.date);
-      const dateB = new Date(b.date);
-      return dateB - dateA;
-    });
-    
-    // 3. Sauvegarder dans le cache
-    saveToCache('blog', language, sortedPosts);
-    
-    // 4. Aussi mettre en cache chaque post individuellement
-    sortedPosts.forEach(post => {
-      saveToCache('blog', language, post, post.slug);
-    });
-    
-    return sortedPosts;
-  } catch (error) {
-    console.error('Error loading blog posts:', error);
-    return [];
-  }
-}
-
-/**
- * Load a single blog post by slug (AVEC CACHE)
- */
-export async function getBlogPost(slug, language = 'en') {
-  // 1. Vérifier le cache d'abord
-  const cached = getFromCache('blog', language, slug);
-  if (cached) return cached;
-  
-  // 2. Essayer de trouver dans la liste complète (si elle est en cache)
-  const allPosts = getFromCache('blog', language);
-  if (allPosts) {
-    const post = allPosts.find(p => p.slug === slug);
-    if (post) {
-      // Mettre en cache individuellement pour la prochaine fois
-      saveToCache('blog', language, post, slug);
-      return post;
-    }
-  }
-  
-  // 3. Charger directement depuis le serveur
-  console.log(`🔄 Loading single blog post: ${slug} (${language})`);
-  
-  try {
-    const filePath = `/content/blog/${language}/${slug}.md`;
-    const content = await fetchMarkdownFile(filePath);
-    
-    if (!content) return null;
     
     const { data, content: body } = matter(content);
     
-    // Parse articleImages if they exist
-    let articleImages = null;
-    if (data.articleImages && Array.isArray(data.articleImages)) {
-      articleImages = {};
-      data.articleImages.forEach((img, index) => {
-        if (img && img.src) {
-          articleImages[`image${index + 1}`] = {
-            src: img.src,
-            alt: img.alt || '',
-            caption: img.caption || ''
-          };
-        }
-      });
+    // Validation des champs critiques
+    if (!data.title || typeof data.title !== 'string') {
+      throw new Error('Missing or invalid title field');
     }
     
-    const post = {
-      ...data,
-      body,
-      slug,
-      language,
-      articleImages,
-      filename: `${slug}.md`
-    };
+    if (data.published === undefined) {
+      console.warn(`⚠️ No 'published' field in ${filename}, defaulting to true`);
+      data.published = true;
+    }
+    
+    // Validation de l'image
+    if (data.featuredImage) {
+      if (!data.featuredImage.src) {
+        console.warn(`⚠️ Missing featuredImage.src in ${filename}`);
+        data.featuredImage = null;
+      } else if (!data.featuredImage.alt) {
+        console.warn(`⚠️ Missing featuredImage.alt in ${filename}, using title`);
+        data.featuredImage.alt = data.title;
+      }
+    } else if (data.image) {
+      // Conversion ancien format
+      data.featuredImage = {
+        src: data.image,
+        alt: data.title
+      };
+    }
+    
+    // Validation category
+    if (!data.category) {
+      console.warn(`⚠️ Missing category in ${filename}, defaulting to 'Others'`);
+      data.category = 'Others';
+    }
+    
+    // Validation order
+    if (data.order === undefined || data.order === null) {
+      data.order = 'auto';
+    }
+    
+    // Validation accessibility
+    if (!data.accessibility) {
+      data.accessibility = 'public';
+    }
+    
+    return { data, body };
+  } catch (error) {
+    logError(`parse_${filename}`, error);
+    throw new Error(`Failed to parse ${filename}: ${error.message}`);
+  }
+}
+
+// ==========================================
+// 📁 FETCH FUNCTIONS AVEC ERROR HANDLING
+// ==========================================
+
+/**
+ * Fetch markdown file avec retry logic
+ */
+async function fetchMarkdownFile(path, retries = 2) {
+  const cacheKey = `file_${path}`;
+  
+  // Vérifier si on peut retry
+  if (!canRetryAfterError(cacheKey)) {
+    console.warn(`⏳ Skipping ${path} - retry delay not elapsed`);
+    return null;
+  }
+  
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const response = await safeFetch(path, { timeout: 8000 });
+      const content = await response.text();
+      
+      // Valider que c'est bien du markdown
+      if (!content.includes('---') && !content.includes('title:')) {
+        throw new Error('Invalid markdown format');
+      }
+      
+      return content;
+    } catch (error) {
+      if (attempt === retries) {
+        logError(cacheKey, error, { path, attempts: attempt + 1 });
+        return null;
+      }
+      
+      // Wait before retry (exponential backoff)
+      await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+    }
+  }
+  
+  return null;
+}
+
+/**
+ * Fetch manifest avec validation
+ */
+async function fetchManifest(type, language) {
+  const cacheKey = `${type}_${language}`;
+  
+  // Cache check
+  const cached = CACHE.manifests[cacheKey];
+  if (cached && CACHE.timestamps[cacheKey]) {
+    const age = Date.now() - CACHE.timestamps[cacheKey];
+    if (age < MANIFEST_CACHE_DURATION) {
+      return cached;
+    }
+  }
+  
+  const manifestPath = `/content/${type}/${language}/manifest.json`;
+  
+  try {
+    const response = await safeFetch(manifestPath, { timeout: 5000 });
+    const manifest = await response.json();
+    
+    // Validation du manifest
+    if (!manifest || !Array.isArray(manifest.files)) {
+      throw new Error('Invalid manifest structure');
+    }
+    
+    if (manifest.files.length === 0) {
+      console.warn(`⚠️ Empty manifest for ${type}/${language}`);
+    }
+    
+    // Validation des fichiers
+    manifest.files = manifest.files.filter(file => {
+      if (!file || !file.endsWith('.md')) {
+        console.warn(`⚠️ Invalid file in manifest: ${file}`);
+        return false;
+      }
+      return true;
+    });
     
     // Sauvegarder dans le cache
-    saveToCache('blog', language, post, slug);
+    CACHE.manifests[cacheKey] = manifest;
+    CACHE.timestamps[cacheKey] = Date.now();
     
-    return post;
+    return manifest;
   } catch (error) {
-    console.error('Error loading blog post:', error);
+    logError(`manifest_${cacheKey}`, error, { manifestPath });
+    
+    // Retourner le cache périmé si disponible
+    if (cached) {
+      console.warn(`⚠️ Using stale manifest for ${type}/${language}`);
+      return cached;
+    }
+    
     return null;
   }
 }
 
-/**
- * Get alternate language version of a blog post
- */
-export async function getAlternateBlogPost(slug, currentLanguage) {
-  const alternateLanguage = currentLanguage === 'en' ? 'es' : 'en';
-  return await getBlogPost(slug, alternateLanguage);
-}
-
 // ==========================================
-// 🏛️ MUSEUM FUNCTIONS
+// 🏛️ MUSEUM FUNCTIONS ULTRA-SÉCURISÉES
 // ==========================================
 
 /**
- * Load all museum artworks for a specific language (AVEC CACHE)
+ * Load museum artworks avec error boundary
  */
 export async function getMuseumArtworks(language = 'en') {
-  // 1. Vérifier le cache d'abord
-  const cached = getFromCache('museum', language);
-  if (cached) return cached;
+  const cacheKey = `museum_${language}`;
   
-  // 2. Charger depuis le serveur
-  console.log(`🔄 Loading museum artworks (${language}) from server...`);
+  // Cache check
+  const cached = CACHE.museum[language];
+  if (cached && CACHE.timestamps[cacheKey]) {
+    const age = Date.now() - CACHE.timestamps[cacheKey];
+    if (age < CACHE_DURATION) {
+      console.log(`✅ Cache HIT: museum (${language})`);
+      return cached;
+    }
+  }
+  
+  console.log(`🔄 Loading museum artworks (${language})...`);
   
   try {
     const manifest = await fetchManifest('museum', language);
     
     if (!manifest || !manifest.files || manifest.files.length === 0) {
-      console.warn('No museum artworks found, returning empty array');
-      return [];
+      console.warn(`⚠️ No manifest files for museum/${language}`);
+      return cached || []; // Return cache or empty array
     }
     
-    // Charger tous les artworks en parallèle
+    // Charger en parallèle avec Promise.allSettled (ne fail pas si 1 fail)
     const artworkPromises = manifest.files.map(async (filename) => {
-      const filePath = `/content/museum/${language}/${filename}`;
-      const content = await fetchMarkdownFile(filePath);
-      
-      if (content) {
-        const { data, content: body } = matter(content);
+      try {
+        const filePath = `/content/museum/${language}/${filename}`;
+        const content = await fetchMarkdownFile(filePath);
+        
+        if (!content) {
+          throw new Error('Empty content');
+        }
+        
+        const { data, body } = safeParseMarkdown(content, filename);
         const slug = filename.replace('.md', '');
         
-        return { 
-          ...data, 
-          body, 
+        return {
+          ...data,
+          body,
           slug,
           language,
-          filename 
+          filename,
+          _loadedAt: new Date().toISOString()
         };
+      } catch (error) {
+        console.error(`⚠️ Failed to load ${filename}:`, error.message);
+        return null; // Ne pas faire crasher tout le chargement
       }
-      
-      return null;
     });
     
-    const loadedArtworks = (await Promise.all(artworkPromises)).filter(Boolean);
+    const results = await Promise.allSettled(artworkPromises);
     
-    // Trier par ordre d'affichage
-    const sortedArtworks = loadedArtworks.sort((a, b) => (a.order || 0) - (b.order || 0));
+    // Extraire les succès
+    const artworks = results
+      .filter(r => r.status === 'fulfilled' && r.value !== null)
+      .map(r => r.value);
     
-    // 3. Sauvegarder dans le cache
-    saveToCache('museum', language, sortedArtworks);
+    // Logger les échecs
+    const failures = results.filter(r => r.status === 'rejected' || r.value === null);
+    if (failures.length > 0) {
+      console.warn(`⚠️ Failed to load ${failures.length}/${manifest.files.length} artworks`);
+    }
     
-    // 4. Aussi mettre en cache chaque artwork individuellement
-    sortedArtworks.forEach(artwork => {
-      saveToCache('museum', language, artwork, artwork.slug);
-    });
+    if (artworks.length === 0) {
+      console.error('❌ No artworks loaded successfully');
+      return cached || [];
+    }
+    
+    // Tri avec gestion d'erreurs
+    const sortedArtworks = sortArtworksByOrder(artworks);
+    
+    // Sauvegarder dans le cache
+    CACHE.museum[language] = sortedArtworks;
+    CACHE.timestamps[cacheKey] = Date.now();
+    
+    console.log(`✅ Loaded ${sortedArtworks.length} artworks (${language})`);
     
     return sortedArtworks;
   } catch (error) {
-    console.error('Error loading artworks:', error);
+    logError(cacheKey, error);
+    
+    // Fallback sur cache ou array vide
+    if (cached) {
+      console.warn(`⚠️ Returning stale cache for museum/${language}`);
+      return cached;
+    }
+    
+    console.error(`❌ Failed to load museum artworks (${language})`);
     return [];
   }
 }
 
 /**
- * Load a single artwork by slug (AVEC CACHE)
+ * Load single artwork avec fallback
  */
 export async function getMuseumArtwork(slug, language = 'en') {
-  // 1. Vérifier le cache d'abord
-  const cached = getFromCache('museum', language, slug);
-  if (cached) return cached;
+  const cacheKey = `museum_${language}_${slug}`;
   
-  // 2. Essayer de trouver dans la liste complète (si elle est en cache)
-  const allArtworks = getFromCache('museum', language);
-  if (allArtworks) {
-    const artwork = allArtworks.find(a => a.slug === slug);
-    if (artwork) {
-      saveToCache('museum', language, artwork, slug);
-      return artwork;
+  // Cache check
+  if (CACHE.singlePosts[cacheKey] && CACHE.timestamps[cacheKey]) {
+    const age = Date.now() - CACHE.timestamps[cacheKey];
+    if (age < CACHE_DURATION) {
+      return CACHE.singlePosts[cacheKey];
     }
   }
   
-  // 3. Charger directement depuis le serveur
-  console.log(`🔄 Loading single artwork: ${slug} (${language})`);
+  // Essayer de trouver dans la liste complète
+  try {
+    const allArtworks = await getMuseumArtworks(language);
+    const artwork = allArtworks.find(a => a.slug === slug);
+    
+    if (artwork) {
+      CACHE.singlePosts[cacheKey] = artwork;
+      CACHE.timestamps[cacheKey] = Date.now();
+      return artwork;
+    }
+  } catch (error) {
+    console.warn('Failed to get artwork from list, trying direct load');
+  }
   
+  // Charger directement
   try {
     const filePath = `/content/museum/${language}/${slug}.md`;
     const content = await fetchMarkdownFile(filePath);
     
     if (!content) return null;
     
-    const { data, content: body } = matter(content);
+    const { data, body } = safeParseMarkdown(content, `${slug}.md`);
     
     const artwork = {
       ...data,
@@ -462,210 +411,162 @@ export async function getMuseumArtwork(slug, language = 'en') {
       filename: `${slug}.md`
     };
     
-    // Sauvegarder dans le cache
-    saveToCache('museum', language, artwork, slug);
+    CACHE.singlePosts[cacheKey] = artwork;
+    CACHE.timestamps[cacheKey] = Date.now();
     
     return artwork;
   } catch (error) {
-    console.error('Error loading artwork:', error);
+    logError(cacheKey, error, { slug, language });
     return null;
   }
 }
 
 /**
- * Get alternate language version of a museum artwork
- */
-export async function getAlternateMuseumArtwork(slug, currentLanguage) {
-  const alternateLanguage = currentLanguage === 'en' ? 'es' : 'en';
-  return await getMuseumArtwork(slug, alternateLanguage);
-}
-
-/**
- * 🆕 Load PUBLIC museum artworks only (excluant QR-only)
- */
-export async function getPublicMuseumArtworks(language = 'en') {
-  const allArtworks = await getMuseumArtworks(language);
-  
-  // Filtrer uniquement les artworks publics
-  const publicArtworks = allArtworks.filter(artwork => {
-    // Si pas de champ accessibility, considérer comme public par défaut
-    const accessibility = artwork.accessibility || 'public';
-    return accessibility === 'public';
-  });
-  
-  // Trier avec gestion de "auto"
-  const sortedArtworks = sortArtworksByOrder(publicArtworks);
-  
-  console.log(`📋 Public artworks (${language}): ${sortedArtworks.length}/${allArtworks.length}`);
-  
-  return sortedArtworks;
-}
-
-/**
- * 🔧 Fonction de tri qui gère "auto" et les valeurs numériques
+ * Tri sécurisé avec gestion d'erreurs
  */
 function sortArtworksByOrder(artworks) {
-  return artworks.sort((a, b) => {
-    // Récupérer les valeurs d'order
-    const orderA = a.order;
-    const orderB = b.order;
+  try {
+    return artworks.sort((a, b) => {
+      const orderA = a.order;
+      const orderB = b.order;
+      
+      // Convertir en nombre
+      const numA = orderA === 'auto' ? 9999 : (
+        typeof orderA === 'number' ? orderA : parseInt(orderA) || 0
+      );
+      const numB = orderB === 'auto' ? 9999 : (
+        typeof orderB === 'number' ? orderB : parseInt(orderB) || 0
+      );
+      
+      return numA - numB;
+    });
+  } catch (error) {
+    console.error('Error sorting artworks:', error);
+    return artworks; // Return unsorted in case of error
+  }
+}
+
+/**
+ * Get public artworks avec validation
+ */
+export async function getPublicMuseumArtworks(language = 'en') {
+  try {
+    const allArtworks = await getMuseumArtworks(language);
     
-    // Convertir "auto" en nombre très élevé (9999) pour le placer à la fin
-    const numA = orderA === 'auto' ? 9999 : (typeof orderA === 'number' ? orderA : parseInt(orderA) || 0);
-    const numB = orderB === 'auto' ? 9999 : (typeof orderB === 'number' ? orderB : parseInt(orderB) || 0);
+    const publicArtworks = allArtworks.filter(artwork => {
+      // Validation de l'artwork
+      if (!artwork || !artwork.slug) {
+        console.warn('⚠️ Invalid artwork detected, skipping');
+        return false;
+      }
+      
+      // Si pas publié, skip
+      if (artwork.published === false) {
+        return false;
+      }
+      
+      const accessibility = artwork.accessibility || 'public';
+      return accessibility === 'public';
+    });
     
-    return numA - numB;
-  });
+    console.log(`📋 Public artworks (${language}): ${publicArtworks.length}/${allArtworks.length}`);
+    
+    return publicArtworks;
+  } catch (error) {
+    logError(`public_museum_${language}`, error);
+    return [];
+  }
 }
 
-/**
- * 🆕 Load QR-only museum artworks (pour statistiques/admin)
- */
-export async function getQROnlyArtworks(language = 'en') {
-  const allArtworks = await getMuseumArtworks(language);
-  
-  const qrOnlyArtworks = allArtworks.filter(artwork => {
-    return artwork.accessibility === 'qr-only';
-  });
-  
-  console.log(`🔐 QR-only artworks (${language}): ${qrOnlyArtworks.length}`);
-  
-  return qrOnlyArtworks;
-}
+// ==========================================
+// 📊 HEALTH CHECK & DIAGNOSTICS
+// ==========================================
 
 /**
- * ℹ️ Vérifier si un artwork est accessible
+ * Vérifier la santé du système de contenu
  */
-export function isArtworkAccessible(artwork) {
-  if (!artwork) return false;
-  
-  // Vérifier si publié
-  if (artwork.published === false) return false;
-  
-  // Les artworks QR-only sont toujours accessibles via URL directe
-  return true;
-}
-
-/**
- * 📊 Obtenir les statistiques de visibilité
- */
-export async function getArtworkVisibilityStats(language = 'en') {
-  const allArtworks = await getMuseumArtworks(language);
-  
-  const stats = {
-    total: allArtworks.length,
-    public: allArtworks.filter(a => (a.accessibility || 'public') === 'public').length,
-    qrOnly: allArtworks.filter(a => a.accessibility === 'qr-only').length,
-    published: allArtworks.filter(a => a.published !== false).length,
-    draft: allArtworks.filter(a => a.published === false).length,
-    featured: allArtworks.filter(a => a.featured === true).length
+export async function healthCheck() {
+  const health = {
+    timestamp: new Date().toISOString(),
+    status: 'unknown',
+    checks: {},
+    errors: getRecentErrors()
   };
   
-  console.table(stats);
-  return stats;
-}
-
-// ==========================================
-// 🔍 FILTER FUNCTIONS
-// ==========================================
-
-/**
- * Get blog posts filtered by category (AVEC CACHE)
- */
-export async function getBlogPostsByCategory(category, language = 'en') {
-  const posts = await getBlogPosts(language);
-  if (!category || category === 'All') return posts;
-  return posts.filter(post => post.category === category);
-}
-
-/**
- * Get artworks filtered by category (AVEC CACHE)
- */
-export async function getArtworksByCategory(category, language = 'en', includeQROnly = false) {
-  // Utiliser getPublicMuseumArtworks au lieu de getMuseumArtworks
-  const artworks = includeQROnly 
-    ? await getMuseumArtworks(language)  // Tous
-    : await getPublicMuseumArtworks(language); // Publics uniquement
-  
-  if (!category || category === 'All') return artworks;
-  return artworks.filter(artwork => artwork.category === category);
-}
-
-// ==========================================
-// 📊 UTILITY FUNCTIONS
-// ==========================================
-
-/**
- * Calculate reading time for blog post
- */
-export function calculateReadingTime(content) {
-  const wordsPerMinute = 200;
-  const words = content.trim().split(/\s+/).length;
-  return Math.ceil(words / wordsPerMinute);
-}
-
-/**
- * Get related blog posts
- */
-export async function getRelatedPosts(currentPost, language = 'en', limit = 3) {
-  const allPosts = await getBlogPosts(language);
-  
-  // Filter out current post and get posts from same category
-  const related = allPosts
-    .filter(post => post.slug !== currentPost.slug && post.category === currentPost.category)
-    .slice(0, limit);
-  
-  // If not enough posts in same category, add random posts
-  if (related.length < limit) {
-    const remaining = allPosts
-      .filter(post => post.slug !== currentPost.slug && !related.includes(post))
-      .slice(0, limit - related.length);
-    related.push(...remaining);
-  }
-  
-  return related;
-}
-
-// ==========================================
-// 🚀 PRELOAD FUNCTIONS
-// ==========================================
-
-/**
- * Précharger les données critiques (à appeler au démarrage de l'app)
- */
-export async function preloadCriticalData() {
-  console.log('🚀 Preloading critical data...');
-  
   try {
-    // Charger en parallèle les données des deux langues
-    await Promise.all([
-      // Museum (prioritaire)
-      getMuseumArtworks('en'),
-      getMuseumArtworks('es'),
-      // Blog
-      getBlogPosts('en'),
-      getBlogPosts('es')
-    ]);
+    // Check manifests
+    for (const lang of ['en', 'es']) {
+      for (const type of ['blog', 'museum']) {
+        const key = `${type}_${lang}`;
+        try {
+          const manifest = await fetchManifest(type, lang);
+          health.checks[key] = manifest ? 'ok' : 'missing';
+        } catch (error) {
+          health.checks[key] = 'error';
+        }
+      }
+    }
     
-    console.log('✅ Critical data preloaded');
-    getCacheStats(); // Afficher les stats
+    // Determine overall status
+    const allOk = Object.values(health.checks).every(s => s === 'ok');
+    const someOk = Object.values(health.checks).some(s => s === 'ok');
+    
+    health.status = allOk ? 'healthy' : someOk ? 'degraded' : 'unhealthy';
+    
   } catch (error) {
-    console.error('⚠️ Error preloading data:', error);
+    health.status = 'error';
+    health.error = error.message;
+  }
+  
+  console.table(health.checks);
+  return health;
+}
+
+/**
+ * Clear cache with confirmation
+ */
+export function clearCache(type = null, language = null) {
+  if (type && language) {
+    const cacheKey = `${type}_${language}`;
+    CACHE[type][language] = null;
+    CACHE.manifests[cacheKey] = null;
+    delete CACHE.timestamps[cacheKey];
+    
+    Object.keys(CACHE.singlePosts).forEach(key => {
+      if (key.startsWith(`${type}_${language}_`)) {
+        delete CACHE.singlePosts[key];
+        delete CACHE.timestamps[key];
+      }
+    });
+    
+    console.log(`🗑️ Cache cleared for: ${type} (${language})`);
+  } else {
+    CACHE.blog = { en: null, es: null };
+    CACHE.museum = { en: null, es: null };
+    CACHE.manifests = {};
+    CACHE.singlePosts = {};
+    CACHE.timestamps = {};
+    CACHE.errors = {};
+    console.log('🗑️ All cache cleared');
   }
 }
 
-// ==========================================
-// 🧪 DEBUG HELPERS
-// ==========================================
-
-// Exposer les fonctions debug en développement
+// Exposer en dev
 if (import.meta.env.DEV) {
   window.__contentLoader = {
     clearCache,
-    getCacheStats,
-    preloadCriticalData,
-    CACHE // Pour inspection
+    healthCheck,
+    getRecentErrors,
+    CACHE
   };
-  
-  console.log('🔧 Debug helpers available: window.__contentLoader');
 }
+
+// Export toutes les autres fonctions (blog, etc.)
+export {
+  getBlogPosts,
+  getBlogPost,
+  getAlternateBlogPost,
+  getArtworksByCategory,
+  calculateReadingTime,
+  getRelatedPosts
+};
