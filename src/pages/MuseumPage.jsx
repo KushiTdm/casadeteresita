@@ -1,9 +1,9 @@
-// src/pages/MuseumPage.jsx - VERSION AVEC URLs CORRECTES
+// src/pages/MuseumPage.jsx - VERSION COMPLÈTE AVEC SLIDER
 import { useState, useEffect } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
-import { Building2, Filter, MessageCircle, Award, Sparkles, MapPin, Calendar, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Building2, Filter, MessageCircle, Award, Sparkles, Calendar, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
-import { getArtworksByCategory } from '../utils/contentLoader';
+import { getPublicMuseumArtworks, getArtworkVisibilityStats } from '../utils/contentLoader';
 import SEOHelmet from '../components/SEOHelmet';
 
 const MuseumPage = () => {
@@ -14,6 +14,8 @@ const MuseumPage = () => {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showFilters, setShowFilters] = useState(false);
+  const [showStats, setShowStats] = useState(false); // Pour debug
+  const [stats, setStats] = useState(null);
   
   const categories = [
     'All', 
@@ -55,11 +57,24 @@ const MuseumPage = () => {
   const loadArtworks = async () => {
     setLoading(true);
     try {
-      const loadedArtworks = await getArtworksByCategory(
-        selectedCategory === 'All' ? null : selectedCategory, 
-        language
-      );
-      setArtworks(loadedArtworks);
+      console.log('🔍 Loading PUBLIC artworks for:', language, 'category:', selectedCategory);
+      
+      // ✅ Utiliser getPublicMuseumArtworks pour les articles accessibles au public
+      const loadedArtworks = await getPublicMuseumArtworks(language);
+      
+      // Filtrer par catégorie si nécessaire
+      const filteredArtworks = selectedCategory === 'All' 
+        ? loadedArtworks
+        : loadedArtworks.filter(artwork => artwork.category === selectedCategory);
+      
+      console.log('✅ Public artworks loaded:', filteredArtworks.length);
+      setArtworks(filteredArtworks);
+      
+      // Charger les stats en mode dev
+      if (import.meta.env.DEV) {
+        const visibilityStats = await getArtworkVisibilityStats(language);
+        setStats(visibilityStats);
+      }
     } catch (error) {
       console.error('Error loading artworks:', error);
       setArtworks([]);
@@ -80,7 +95,6 @@ const MuseumPage = () => {
   };
 
   const featuredArtworks = artworks.filter(art => art.featured);
-  const regularArtworks = artworks.filter(art => !art.featured);
   
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#1a1a1a] via-[#2D5A4A] to-[#1a1a1a]">
@@ -98,7 +112,7 @@ const MuseumPage = () => {
       
       <div className="pt-20 md:pt-20">
         
-        {/* Header Banner - COMPACT */}
+        {/* Header Banner */}
         <div className="bg-gradient-to-r from-[#C4A96A] via-[#A85C32] to-[#C4A96A] py-2 shadow-lg sticky top-0 z-10">
           <div className="max-w-7xl mx-auto px-3 sm:px-4 flex items-center justify-center gap-2 py-1">
             <Award className="h-4 w-4 text-[#1a1a1a] animate-pulse" />
@@ -108,8 +122,50 @@ const MuseumPage = () => {
             <Sparkles className="h-4 w-4 text-[#1a1a1a] animate-pulse" />
           </div>
         </div>
+
+        {/* 🔧 DEV ONLY: Stats Debug */}
+        {import.meta.env.DEV && stats && (
+          <div className="max-w-7xl mx-auto px-4 py-4">
+            <button
+              onClick={() => setShowStats(!showStats)}
+              className="bg-blue-900/50 text-blue-200 px-4 py-2 rounded-lg text-sm font-mono"
+            >
+              {showStats ? '🔽 Hide Stats' : '🔼 Show Visibility Stats (Dev)'}
+            </button>
+            
+            {showStats && (
+              <div className="mt-2 bg-gray-900 border border-blue-500/30 rounded-lg p-4 font-mono text-xs text-blue-200">
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  <div>
+                    <div className="text-blue-400 font-bold">Total:</div>
+                    <div className="text-xl">{stats.total}</div>
+                  </div>
+                  <div>
+                    <div className="text-green-400 font-bold">Public:</div>
+                    <div className="text-xl">{stats.public}</div>
+                  </div>
+                  <div>
+                    <div className="text-yellow-400 font-bold">QR-only:</div>
+                    <div className="text-xl">{stats.qrOnly}</div>
+                  </div>
+                  <div>
+                    <div className="text-purple-400 font-bold">Featured:</div>
+                    <div className="text-xl">{stats.featured}</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-400 font-bold">Draft:</div>
+                    <div className="text-xl">{stats.draft}</div>
+                  </div>
+                </div>
+                <div className="mt-3 pt-3 border-t border-blue-500/30 text-blue-300">
+                  ℹ️ Showing <strong>{artworks.length}</strong> public artworks on this page
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         
-        {/* Hero Section - COMPACT */}
+        {/* Hero Section */}
         <section className="py-8 md:py-12">
           <div className="max-w-7xl mx-auto px-4 text-center">
             <div className="inline-block p-3 bg-[#C4A96A]/10 backdrop-blur-sm rounded-full mb-4 border-2 border-[#C4A96A]/30">
@@ -126,22 +182,18 @@ const MuseumPage = () => {
           </div>
         </section>
 
-        {/* Intro Section - COMPACT */}
+        {/* Intro Section */}
         <section className="max-w-5xl mx-auto px-4 py-6 md:py-8">
           <div className="relative bg-gradient-to-br from-[#2D5A4A] to-[#1a1a1a] p-6 rounded-xl shadow-2xl border-4 border-[#C4A96A]">
             <div className="space-y-4 text-center">
               <p className="text-sm md:text-base text-gray-200 leading-relaxed">
                 {t.museum.intro1}
               </p>
-
               <div className="w-16 h-1 bg-gradient-to-r from-transparent via-[#C4A96A] to-transparent mx-auto"></div>
-
               <p className="text-sm md:text-base text-gray-200 leading-relaxed">
                 {t.museum.intro2}
               </p>
-
               <div className="w-16 h-1 bg-gradient-to-r from-transparent via-[#C4A96A] to-transparent mx-auto"></div>
-
               <p className="text-sm md:text-base text-gray-200 leading-relaxed">
                 {t.museum.intro3}
               </p>
@@ -149,9 +201,7 @@ const MuseumPage = () => {
           </div>
         </section>
 
-
-
-        {/* SLIDER avec URLs correctes */}
+        {/* Featured Slider - Seulement s'il y a des œuvres featured */}
         {!loading && featuredArtworks.length > 0 && (
           <ImprovedMuseumSlider 
             articles={featuredArtworks}
@@ -160,7 +210,7 @@ const MuseumPage = () => {
           />
         )}
         
-        {/* COLLECTION COMPLÈTE */}
+        {/* Complete Collection */}
         {!loading && artworks.length > 0 && (
           <section className="max-w-7xl mx-auto px-3 sm:px-4 pb-12 md:pb-20">
             <div className="mb-8 md:mb-12">
@@ -225,7 +275,7 @@ const MuseumPage = () => {
                 </div>
               </div>
 
-              {/* GRID avec URLs correctes */}
+              {/* Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {artworks.map((artwork) => (
                   <ArtworkMuseumCard 
@@ -298,7 +348,7 @@ const MuseumPage = () => {
   );
 };
 
-// ✅ SLIDER avec URLs correctes
+// Composant Slider amélioré
 const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -393,7 +443,7 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
                   )}
                 </div>
 
-                {/* ✅ FIX: Ajout du préfixe langue */}
+                {/* ✅ URL avec préfixe langue */}
                 <Link 
                   to={`/${language}/museum/${currentArticle.slug}`}
                   className="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-[#C4A96A] to-[#A85C32] text-[#1a1a1a] px-4 py-2 rounded-lg font-bold text-sm mb-2"
@@ -437,7 +487,7 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
               </div>
 
               <div className="flex items-center gap-4 mt-auto">
-                {/* ✅ FIX: Ajout du préfixe langue */}
+                {/* ✅ URL avec préfixe langue */}
                 <Link 
                   to={`/${language}/museum/${currentArticle.slug}`}
                   className="inline-flex items-center gap-2 bg-gradient-to-r from-[#C4A96A] to-[#A85C32] text-[#1a1a1a] px-6 py-3 rounded-lg font-bold"
@@ -495,7 +545,7 @@ const ImprovedMuseumSlider = ({ articles, language, categoryColors }) => {
   );
 };
 
-// ✅ CARD avec URL correcte
+// Composant Card pour les œuvres
 const ArtworkMuseumCard = ({ artwork, language, categoryColors, featured = false }) => {
   const [imageError, setImageError] = useState(false);
 
@@ -506,7 +556,7 @@ const ArtworkMuseumCard = ({ artwork, language, categoryColors, featured = false
   const categoryGradient = categoryColors[artwork.category] || 'from-gray-900 to-gray-700';
 
   return (
-    // ✅ FIX: Ajout du préfixe langue dans le Link
+    // ✅ URL avec préfixe langue
     <Link 
       to={`/${language}/museum/${artwork.slug}`}
       className="group block h-full"
@@ -522,7 +572,6 @@ const ArtworkMuseumCard = ({ artwork, language, categoryColors, featured = false
           </div>
         )}
 
-        {/* Image - HAUTEUR FIXE */}
         <div className="relative aspect-[4/3] bg-black overflow-hidden border-b-2 border-[#C4A96A]">
           {!imageError ? (
             <img 
@@ -547,7 +596,6 @@ const ArtworkMuseumCard = ({ artwork, language, categoryColors, featured = false
           </div>
         </div>
         
-        {/* Content - HAUTEUR FIXE */}
         <div className="flex-1 flex flex-col bg-gradient-to-br from-[#2D5A4A] to-[#1a1a1a] p-4">
           <h3 
             className="text-lg font-bold text-[#C4A96A] mb-2 line-clamp-2 min-h-[3.5rem] group-hover:text-[#A85C32] transition-colors"
@@ -556,7 +604,6 @@ const ArtworkMuseumCard = ({ artwork, language, categoryColors, featured = false
             {artwork.title}
           </h3>
           
-          {/* Info - HAUTEUR FIXE */}
           <div className="space-y-1 text-xs text-gray-300 min-h-[3rem]">
             {artwork.artist && (
               <div className="flex items-center gap-2">

@@ -10,6 +10,7 @@ featuredImage:
 
 category: Document
 location: Main Hall
+accessibility: public
 order: 2
 qrCode: https://lacasadeteresita.netlify.app/museum/donacion-umsa
 
