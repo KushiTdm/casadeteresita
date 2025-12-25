@@ -3,6 +3,12 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
+import * as analytics from './utils/analytics';
+
+analytics.initGA();
+
+
+
 
 // ✅ ENREGISTRER LE SERVICE WORKER
 if ('serviceWorker' in navigator && import.meta.env.PROD) {

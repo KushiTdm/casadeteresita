@@ -11,8 +11,11 @@ import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import MuseumPage from './pages/MuseumPage';
 import MuseumDetailPage from './pages/MuseumDetailPage';
+import { usePageTracking } from './hooks/useAnalytics';
+import { CookieConsent } from './components/CookieConsent';
 
 function App() {
+  usePageTracking();
   return (
     <HelmetProvider>
       <Router>
@@ -25,7 +28,7 @@ function App() {
                 <Routes>
                   {/* Home */}
                   <Route path="/" element={<HomePage />} />
-                  
+                  <CookieConsent />
                   {/* Rooms */}
                   <Route path="/rooms/:roomSlug" element={<RoomDetailPage />} />
                   
