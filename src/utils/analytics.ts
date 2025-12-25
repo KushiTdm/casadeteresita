@@ -1,4 +1,4 @@
-// src/utils/analytics.ts
+// src/utils/analytics.ts - VERSION CORRIGÉE
 // ==========================================
 // 🔧 Configuration & Types
 // ==========================================
@@ -16,8 +16,9 @@ interface PageViewParams {
   language?: string;
 }
 
+// ✅ FIX: Type flexible pour supporter les arrays (e-commerce events)
 interface EventParams {
-  [key: string]: string | number | boolean | undefined;
+  [key: string]: string | number | boolean | undefined | any[] | object;
 }
 
 // Configuration
@@ -289,7 +290,7 @@ export function trackBookingConversion(
   totalPrice: number,
   nights: number
 ): void {
-  // Purchase event for GA4
+  // ✅ Purchase event for GA4 avec items array
   trackEvent('purchase', {
     transaction_id: `booking_${Date.now()}`,
     value: totalPrice,
@@ -437,4 +438,3 @@ export default {
   getGAConfig,
   setGAEnabled,
 };
-
