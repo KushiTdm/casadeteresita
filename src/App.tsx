@@ -1,4 +1,4 @@
-// src/App.tsx - VERSION CORRIGÉE
+// src/App.tsx 
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { HelmetProvider } from 'react-helmet-async';
 import { LanguageProvider } from './context/LanguageContext';
@@ -13,63 +13,48 @@ import BlogPostPage from './pages/BlogPostPage';
 import MuseumPage from './pages/MuseumPage';
 import MuseumDetailPage from './pages/MuseumDetailPage';
 import DashboardPage from './pages/DashboardPage';
-import { usePageTracking } from './hooks/useAnalytics';
 import { CookieConsent } from './components/CookieConsent';
 
-// ✅ Composant wrapper pour les hooks qui nécessitent Router
-function AppContent() {
-  usePageTracking(); // ✅ Maintenant à l'intérieur du Router!
-  
-  return (
-    <>
-      <div className="min-h-screen">
-        <Header />
-        <main>
-          <Routes>
-            {/* Home */}
-            <Route path="/" element={<HomePage />} />
-            
-            {/* Rooms */}
-            <Route path="/rooms/:roomSlug" element={<RoomDetailPage />} />
-            
-            {/* Blog avec préfixes langue */}
-            <Route path="/en/blog" element={<BlogPage />} />
-            <Route path="/es/blog" element={<BlogPage />} />
-            <Route path="/en/blog/:slug" element={<BlogPostPage />} />
-            <Route path="/es/blog/:slug" element={<BlogPostPage />} />
-            
-            {/* Museum avec préfixes langue */}
-            <Route path="/en/museum" element={<MuseumPage />} />
-            <Route path="/es/museum" element={<MuseumPage />} />
-            <Route path="/en/museum/:slug" element={<MuseumDetailPage />} />
-            <Route path="/es/museum/:slug" element={<MuseumDetailPage />} />
-            
-            {/* Redirections depuis anciennes URLs */}
-            <Route path="/blog" element={<Navigate to="/en/blog" replace />} />
-            <Route path="/blog/:slug" element={<Navigate to="/en/blog/:slug" replace />} />
-            <Route path="/museum" element={<Navigate to="/en/museum" replace />} />
-            <Route path="/museum/:slug" element={<Navigate to="/en/museum/:slug" replace />} />
-
-            {/* Dashboard */}
-            <Route path="/dashboard" element={<DashboardPage />} />
-          </Routes>
-        </main>
-        <Footer />
-        <WhatsAppButton />
-      </div>
-      <CookieConsent />
-    </>
-  );
-}
-
-// ✅ App principal - structure propre
 function App() {
+  
   return (
     <HelmetProvider>
       <Router>
         <LanguageProvider>
           <DataProvider>
-            <AppContent />
+            <div className="min-h-screen">
+              <Header />
+              <main>
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/rooms/:roomSlug" element={<RoomDetailPage />} />
+                  
+                  {/* Blog routes */}
+                  <Route path="/en/blog" element={<BlogPage />} />
+                  <Route path="/es/blog" element={<BlogPage />} />
+                  <Route path="/en/blog/:slug" element={<BlogPostPage />} />
+                  <Route path="/es/blog/:slug" element={<BlogPostPage />} />
+                  
+                  {/* Museum routes */}
+                  <Route path="/en/museum" element={<MuseumPage />} />
+                  <Route path="/es/museum" element={<MuseumPage />} />
+                  <Route path="/en/museum/:slug" element={<MuseumDetailPage />} />
+                  <Route path="/es/museum/:slug" element={<MuseumDetailPage />} />
+                  
+                  {/* Redirections */}
+                  <Route path="/blog" element={<Navigate to="/en/blog" replace />} />
+                  <Route path="/blog/:slug" element={<Navigate to="/en/blog/:slug" replace />} />
+                  <Route path="/museum" element={<Navigate to="/en/museum" replace />} />
+                  <Route path="/museum/:slug" element={<Navigate to="/en/museum/:slug" replace />} />
+
+                  {/* Dashboard */}
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                </Routes>
+              </main>
+              <Footer />
+              <WhatsAppButton />
+            </div>
+            <CookieConsent />
           </DataProvider>
         </LanguageProvider>
       </Router>

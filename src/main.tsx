@@ -1,28 +1,10 @@
-// src/main.tsx
+// src/main.tsx - VERSION NETTOYÉE
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
-import * as analytics from './utils/analytics';
 
-// ✅ IMPORTANT: Initialiser GA AVANT le rendu
-console.log('🚀 Initializing Google Analytics...');
-console.log('📊 GA Measurement ID:', import.meta.env.VITE_GA_MEASUREMENT_ID);
-console.log('🌍 Environment:', import.meta.env.MODE);
-console.log('🏭 Production:', import.meta.env.PROD);
-
-analytics.initGA();
-
-// Test immédiat
-setTimeout(() => {
-  console.log('🧪 Testing GA with test event...');
-  analytics.trackEvent('app_loaded', {
-    environment: import.meta.env.MODE,
-    timestamp: new Date().toISOString()
-  });
-}, 1000);
-
-// ✅ Service Worker
+// ✅ Service Worker 
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
