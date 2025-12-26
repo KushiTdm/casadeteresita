@@ -12,6 +12,7 @@ import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
 import MuseumPage from './pages/MuseumPage';
 import MuseumDetailPage from './pages/MuseumDetailPage';
+import DashboardPage from './pages/DashboardPage';
 import { usePageTracking } from './hooks/useAnalytics';
 import { CookieConsent } from './components/CookieConsent';
 
@@ -48,6 +49,9 @@ function AppContent() {
             <Route path="/blog/:slug" element={<Navigate to="/en/blog/:slug" replace />} />
             <Route path="/museum" element={<Navigate to="/en/museum" replace />} />
             <Route path="/museum/:slug" element={<Navigate to="/en/museum/:slug" replace />} />
+
+            {/* Dashboard */}
+            <Route path="/dashboard" element={<DashboardPage />} />
           </Routes>
         </main>
         <Footer />
