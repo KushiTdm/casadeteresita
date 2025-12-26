@@ -5,6 +5,27 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ML2H0Q0R0N"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      // ✅ Configuration pour SPA React
+      gtag('config', 'G-ML2H0Q0R0N', {
+        // IMPORTANT: On laisse le tracking auto des pages pour la première visite
+        'send_page_view': true,
+        // Cookies
+        'cookie_flags': 'SameSite=None;Secure',
+        'anonymize_ip': true,
+        // Debug en développement
+        'debug_mode': window.location.hostname === 'localhost'
+      });
+
+      // ✅ Log de confirmation
+      console.log('📊 GA4 initialized:', 'G-ML2H0Q0R0N');
+    </script>
+
     <!-- SEO Meta Tags -->
     <title>La Casa de Teresita | Historic Boutique Hotel La Paz Bolivia</title>
     <meta name="description" content="Stay in a historic 1916 mansion in La Paz. Boutique museum hotel with gardens, piano collections and authentic rooms. Rated 9.6/10. Direct booking." />

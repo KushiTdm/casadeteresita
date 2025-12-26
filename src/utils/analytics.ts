@@ -1,7 +1,4 @@
-// src/utils/analytics.ts - VERSION CORRIGÉE POUR NETLIFY
-// ==========================================
-// 🔧 Configuration & Types
-// ==========================================
+// src/utils/analytics.ts - ENHANCED VERSION WITH ALL TRACKING
 
 interface AnalyticsConfig {
   measurementId: string;
@@ -20,10 +17,9 @@ interface EventParams {
   [key: string]: string | number | boolean | undefined | any[] | object;
 }
 
-// ✅ Configuration avec fallback
 const GA_CONFIG: AnalyticsConfig = {
   measurementId: import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-ML2H0Q0R0N',
-  enabled: true, // ✅ Toujours activé en production
+  enabled: true,
   debug: import.meta.env.DEV,
 };
 
@@ -32,7 +28,6 @@ const GA_CONFIG: AnalyticsConfig = {
 // ==========================================
 
 export function initGA(): void {
-  // ✅ Vérifier le consentement des cookies
   const consent = localStorage.getItem('cookie_consent');
   if (consent !== 'accepted') {
     console.log('📊 GA: Waiting for cookie consent');
@@ -45,20 +40,17 @@ export function initGA(): void {
     return;
   }
 
-  // ✅ Éviter la double initialisation
   if (window.gtag) {
     console.log('⚠️ GA: Already initialized');
     return;
   }
 
   try {
-    // Load gtag.js
     const script = document.createElement('script');
     script.async = true;
     script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_CONFIG.measurementId}`;
     document.head.appendChild(script);
 
-    // Initialize dataLayer
     window.dataLayer = window.dataLayer || [];
     window.gtag = function() {
       window.dataLayer.push(arguments);
@@ -66,9 +58,9 @@ export function initGA(): void {
     
     window.gtag('js', new Date());
     window.gtag('config', GA_CONFIG.measurementId, {
-      send_page_view: false, // On gère les page views manuellement
+      send_page_view: false,
       cookie_flags: 'SameSite=None;Secure',
-      anonymize_ip: true, // ✅ Conformité RGPD
+      anonymize_ip: true,
     });
 
     GA_CONFIG.enabled = true;
@@ -126,19 +118,74 @@ export function trackEvent(eventName: string, params: EventParams = {}): void {
 }
 
 // ==========================================
-// 🏨 Hotel-Specific Events
+// 🏨 HOTEL-SPECIFIC EVENTS - ENHANCED
 // ==========================================
 
-export function trackRoomView(roomId: string, roomName: string, price: number): void {
+/**
+ * Track room view (when user clicks or views room detail page)
+ */
+export function trackRoomView(roomId: string, roomName: string, price: number, source: string = 'unknown'): void {
   trackEvent('view_item', {
     item_id: roomId,
     item_name: roomName,
     item_category: 'Room',
     price: price,
     currency: 'USD',
+    source: source, // 'homepage', 'rooms_section', 'detail_page', etc.
   });
 }
 
+/**
+ * Track room click (when user clicks "See details" or similar)
+ */
+export function trackRoomClick(roomId: string, roomName: string, price: number, location: string): void {
+  trackEvent('select_item', {
+    item_id: roomId,
+    item_name: roomName,
+    item_category: 'Room',
+    price: price,
+    currency: 'USD',
+    click_location: location, // 'carousel', 'grid', 'featured', etc.
+  });
+}
+
+/**
+ * Track WhatsApp booking - ENHANCED
+ */
+export function trackWhatsAppClick(
+  source: string,
+  roomId?: string,
+  roomName?: string,
+  totalPrice?: number,
+  nights?: number,
+  hasDateRange?: boolean
+): void {
+  trackEvent('whatsapp_click', {
+    source: source, // 'room_detail', 'homepage', 'footer', 'floating_button', etc.
+    room_id: roomId || 'none',
+    room_name: roomName || 'general_inquiry',
+    value: totalPrice || 0,
+    nights: nights || 0,
+    has_date_range: hasDateRange || false,
+    currency: 'USD',
+  });
+  
+  // Also track as conversion event
+  if (roomId && totalPrice) {
+    trackEvent('begin_checkout', {
+      method: 'WhatsApp',
+      room_id: roomId,
+      room_name: roomName,
+      value: totalPrice,
+      nights: nights || 1,
+      currency: 'USD',
+    });
+  }
+}
+
+/**
+ * Track date selection
+ */
 export function trackDateSelection(
   checkIn: Date,
   checkOut: Date,
@@ -153,6 +200,9 @@ export function trackDateSelection(
   });
 }
 
+/**
+ * Track price check
+ */
 export function trackPriceCheck(
   roomId: string,
   totalPrice: number,
@@ -168,33 +218,30 @@ export function trackPriceCheck(
   });
 }
 
-export function trackWhatsAppBooking(
-  roomId: string,
-  roomName: string,
-  totalPrice?: number,
-  nights?: number
+// ==========================================
+// 📰 BLOG TRACKING - ENHANCED
+// ==========================================
+
+/**
+ * Track blog post click (from blog list page)
+ */
+export function trackBlogClick(
+  slug: string,
+  title: string,
+  category: string,
+  location: string
 ): void {
-  trackEvent('begin_checkout', {
-    method: 'WhatsApp',
-    room_id: roomId,
-    room_name: roomName,
-    value: totalPrice || 0,
-    nights: nights || 1,
-    currency: 'USD',
+  trackEvent('blog_click', {
+    content_id: slug,
+    content_name: title,
+    content_category: category,
+    click_location: location, // 'featured', 'grid', 'related', 'category_filter', etc.
   });
 }
 
-export function trackContact(method: 'whatsapp' | 'email' | 'phone', source: string): void {
-  trackEvent('contact', {
-    method: method,
-    source: source,
-  });
-}
-
-// ==========================================
-// 📰 Content Engagement
-// ==========================================
-
+/**
+ * Track blog post view (when viewing full article)
+ */
 export function trackBlogView(
   slug: string,
   title: string,
@@ -209,6 +256,9 @@ export function trackBlogView(
   });
 }
 
+/**
+ * Track blog share
+ */
 export function trackBlogShare(slug: string, title: string, method: string): void {
   trackEvent('share', {
     content_type: 'blog_post',
@@ -218,6 +268,30 @@ export function trackBlogShare(slug: string, title: string, method: string): voi
   });
 }
 
+// ==========================================
+// 🏛️ MUSEUM TRACKING - ENHANCED
+// ==========================================
+
+/**
+ * Track museum artwork click (from museum list page)
+ */
+export function trackArtworkClick(
+  slug: string,
+  title: string,
+  category: string,
+  location: string
+): void {
+  trackEvent('artwork_click', {
+    content_id: slug,
+    content_name: title,
+    content_category: category,
+    click_location: location, // 'featured', 'grid', 'category_filter', etc.
+  });
+}
+
+/**
+ * Track museum artwork view (when viewing full detail page)
+ */
 export function trackArtworkView(slug: string, title: string, category: string): void {
   trackEvent('view_museum_item', {
     content_id: slug,
@@ -226,9 +300,27 @@ export function trackArtworkView(slug: string, title: string, category: string):
   });
 }
 
+/**
+ * Track museum tour request
+ */
 export function trackMuseumTourRequest(): void {
   trackEvent('request_tour', {
     tour_type: 'museum',
+  });
+}
+
+/**
+ * Track media interaction in museum (YouTube, Spotify)
+ */
+export function trackMediaInteraction(
+  artworkSlug: string,
+  mediaType: 'youtube' | 'spotify',
+  action: 'view' | 'play'
+): void {
+  trackEvent('media_interaction', {
+    artwork_id: artworkSlug,
+    media_type: mediaType,
+    action: action,
   });
 }
 
@@ -243,16 +335,24 @@ export function trackSearch(searchTerm: string, resultCount: number): void {
   });
 }
 
-export function trackFilter(filterType: string, filterValue: string): void {
+export function trackFilter(filterType: string, filterValue: string, contentType: string): void {
   trackEvent('filter', {
     filter_type: filterType,
     filter_value: filterValue,
+    content_type: contentType, // 'blog', 'museum', 'rooms'
   });
 }
 
 // ==========================================
-// 📱 Social Engagement
+// 📱 Contact & Social
 // ==========================================
+
+export function trackContact(method: 'whatsapp' | 'email' | 'phone', source: string): void {
+  trackEvent('contact', {
+    method: method,
+    source: source,
+  });
+}
 
 export function trackSocialClick(platform: string, location: string): void {
   trackEvent('social_click', {
@@ -262,26 +362,13 @@ export function trackSocialClick(platform: string, location: string): void {
 }
 
 // ==========================================
-// 🎯 Conversion Tracking
+// 🎯 Navigation Tracking
 // ==========================================
 
-export function trackBookingConversion(
-  roomId: string,
-  roomName: string,
-  totalPrice: number,
-  nights: number
-): void {
-  trackEvent('purchase', {
-    transaction_id: `booking_${Date.now()}`,
-    value: totalPrice,
-    currency: 'USD',
-    items: [{
-      item_id: roomId,
-      item_name: roomName,
-      item_category: 'Room',
-      quantity: nights,
-      price: totalPrice / nights,
-    }],
+export function trackNavigation(destination: string, source: string): void {
+  trackEvent('navigation', {
+    destination: destination,
+    source: source,
   });
 }
 
@@ -292,69 +379,8 @@ export function trackScrollDepth(depth: number): void {
 }
 
 // ==========================================
-// 🔧 Advanced Features
+// 🔧 Control Functions
 // ==========================================
-
-export function setUserProperty(propertyName: string, value: string): void {
-  if (!GA_CONFIG.enabled || !window.gtag) return;
-  
-  window.gtag('set', 'user_properties', {
-    [propertyName]: value,
-  });
-}
-
-export function trackTiming(
-  name: string,
-  value: number,
-  category?: string,
-  label?: string
-): void {
-  trackEvent('timing_complete', {
-    name: name,
-    value: value,
-    event_category: category,
-    event_label: label,
-  });
-}
-
-export function trackError(error: Error, context?: string): void {
-  trackEvent('exception', {
-    description: error.message,
-    fatal: false,
-    context: context,
-  });
-}
-
-// ==========================================
-// 🎨 E-commerce Enhanced
-// ==========================================
-
-export function trackItemListView(items: Array<{
-  id: string;
-  name: string;
-  price: number;
-  category?: string;
-}>): void {
-  trackEvent('view_item_list', {
-    item_list_id: 'rooms',
-    item_list_name: 'Available Rooms',
-    items: items.map((item, index) => ({
-      item_id: item.id,
-      item_name: item.name,
-      item_category: item.category || 'Room',
-      price: item.price,
-      index: index,
-    })),
-  });
-}
-
-// ==========================================
-// 📊 Debug & Control
-// ==========================================
-
-export function getGAConfig(): AnalyticsConfig {
-  return { ...GA_CONFIG };
-}
 
 export function setGAEnabled(enabled: boolean): void {
   GA_CONFIG.enabled = enabled;
@@ -367,6 +393,10 @@ export function setGAEnabled(enabled: boolean): void {
 
 export function isGALoaded(): boolean {
   return !!window.gtag && GA_CONFIG.enabled;
+}
+
+export function getGAConfig(): AnalyticsConfig {
+  return { ...GA_CONFIG };
 }
 
 // ==========================================
@@ -385,24 +415,24 @@ export default {
   trackPageView,
   trackEvent,
   trackRoomView,
+  trackRoomClick,
+  trackWhatsAppClick,
   trackDateSelection,
   trackPriceCheck,
-  trackWhatsAppBooking,
-  trackContact,
+  trackBlogClick,
   trackBlogView,
   trackBlogShare,
+  trackArtworkClick,
   trackArtworkView,
   trackMuseumTourRequest,
+  trackMediaInteraction,
   trackSearch,
   trackFilter,
+  trackContact,
   trackSocialClick,
-  trackBookingConversion,
+  trackNavigation,
   trackScrollDepth,
-  setUserProperty,
-  trackTiming,
-  trackError,
-  trackItemListView,
-  getGAConfig,
   setGAEnabled,
   isGALoaded,
+  getGAConfig,
 };
