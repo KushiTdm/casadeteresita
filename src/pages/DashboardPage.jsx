@@ -132,7 +132,7 @@ const LoginPage = ({ onLogin }) => {
 };
 
 // ==============================================
-// 📊 GOOGLE ANALYTICS 4 API
+// 📊 GOOGLE ANALYTICS 4 API WITH DEBUG
 // ==============================================
 
 const useGoogleAnalytics = (dateRange = 'last7Days') => {
@@ -140,6 +140,7 @@ const useGoogleAnalytics = (dateRange = 'last7Days') => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [dataSource, setDataSource] = useState('api');
+  const [debugInfo, setDebugInfo] = useState(null);
 
   useEffect(() => {
     fetchAnalyticsData();
@@ -148,36 +149,83 @@ const useGoogleAnalytics = (dateRange = 'last7Days') => {
   const fetchAnalyticsData = async () => {
     setLoading(true);
     setError(null);
+    setDebugInfo(null);
+
+    const debug = {
+      timestamp: new Date().toISOString(),
+      dateRange: dateRange,
+      endpoint: '/.netlify/functions/fetchGA4Analytics',
+      steps: []
+    };
 
     try {
+      debug.steps.push('🔄 Starting fetch request...');
       console.log('🔄 Fetching analytics from GA4 API...');
       
+      // Check if we're in production
+      debug.steps.push(`Environment: ${import.meta.env.PROD ? 'Production' : 'Development'}`);
+      debug.steps.push(`Base URL: ${window.location.origin}`);
+      
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => {
+        debug.steps.push('⏰ Request timeout after 10s');
+        controller.abort();
+      }, 10000);
+      
+      debug.steps.push('📡 Sending POST request...');
       const response = await fetch('/.netlify/functions/fetchGA4Analytics', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ dateRange })
+        body: JSON.stringify({ dateRange }),
+        signal: controller.signal
       });
 
+      clearTimeout(timeoutId);
+      debug.steps.push(`✅ Response received: ${response.status} ${response.statusText}`);
+
       if (response.ok) {
+        debug.steps.push('📦 Parsing JSON response...');
         const apiData = await response.json();
+        debug.steps.push(`✅ Data parsed successfully (${Object.keys(apiData).length} keys)`);
+        
         console.log('✅ Analytics loaded from GA4 API');
         setData(apiData);
         setDataSource('api');
+        setDebugInfo(debug);
       } else {
-        throw new Error('GA4 API unavailable');
+        debug.steps.push(`❌ Response not OK: ${response.status}`);
+        const errorText = await response.text();
+        debug.steps.push(`Error body: ${errorText.substring(0, 200)}`);
+        
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
     } catch (apiError) {
-      console.error('GA4 API Error:', apiError);
-      setError('Unable to load analytics. Please check configuration.');
+      debug.steps.push(`❌ Error caught: ${apiError.name}`);
+      debug.steps.push(`Error message: ${apiError.message}`);
+      
+      if (apiError.name === 'AbortError') {
+        debug.steps.push('⚠️ Request was aborted (timeout)');
+        console.error('⏰ Request timeout');
+        setError('Request timeout after 10 seconds. The function may be taking too long to respond.');
+      } else if (apiError.message.includes('Failed to fetch')) {
+        debug.steps.push('⚠️ Network error or CORS issue');
+        console.error('🌐 Network error:', apiError);
+        setError('Network error: Unable to reach the analytics function. Check your network connection and Netlify function deployment.');
+      } else {
+        console.error('❌ GA4 API Error:', apiError);
+        setError(`Error: ${apiError.message}`);
+      }
+      
       setDataSource('unavailable');
+      setDebugInfo(debug);
     } finally {
       setLoading(false);
     }
   };
 
-  return { data, loading, error, refetch: fetchAnalyticsData, dataSource };
+  return { data, loading, error, refetch: fetchAnalyticsData, dataSource, debugInfo };
 };
 
 // ==============================================
@@ -222,26 +270,137 @@ const Dashboard = () => {
   const { user, logout } = useNetlifyIdentity();
   const [dateRange, setDateRange] = useState('last7Days');
   const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const { data, loading, error, refetch, dataSource } = useGoogleAnalytics(dateRange);
+  const [showDebugPanel, setShowDebugPanel] = useState(false);
+  const { data, loading, error, refetch, dataSource, debugInfo } = useGoogleAnalytics(dateRange);
 
   const handleLogout = () => {
     logout();
+  };
+
+  const copyDebugInfo = () => {
+    if (debugInfo) {
+      const text = JSON.stringify(debugInfo, null, 2);
+      navigator.clipboard.writeText(text);
+      alert('Debug info copied to clipboard!');
+    }
+  };
+
+  // Show data source indicator
+  const getDataSourceBadge = () => {
+    if (dataSource === 'api') {
+      return (
+        <span className="text-xs bg-green-500/30 px-2 py-1 rounded">
+          ✓ Live Data
+        </span>
+      );
+    } else if (dataSource === 'unavailable') {
+      return (
+        <span className="text-xs bg-red-500/30 px-2 py-1 rounded cursor-pointer" onClick={() => setShowDebugPanel(!showDebugPanel)}>
+          ⚠ Error - Click for Debug
+        </span>
+      );
+    }
+    return null;
   };
 
   if (error && !data) {
     return (
       <div className="min-h-screen bg-gray-50 p-4">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-red-50 border-2 border-red-200 rounded-xl p-6 sm:p-8 text-center">
-            <AlertCircle className="h-12 w-12 sm:h-16 sm:w-16 text-red-500 mx-auto mb-4" />
-            <h2 className="text-xl sm:text-2xl font-bold text-red-900 mb-2">Analytics Error</h2>
-            <p className="text-sm sm:text-base text-red-700 mb-4">{error}</p>
-            <button 
-              onClick={refetch}
-              className="bg-red-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors text-sm sm:text-base"
-            >
-              Retry
-            </button>
+          <div className="bg-red-50 border-2 border-red-200 rounded-xl p-6 sm:p-8">
+            <div className="text-center mb-6">
+              <AlertCircle className="h-12 w-12 sm:h-16 sm:w-16 text-red-500 mx-auto mb-4" />
+              <h2 className="text-xl sm:text-2xl font-bold text-red-900 mb-2">Analytics Error</h2>
+              <p className="text-sm sm:text-base text-red-700 mb-4">{error}</p>
+              <button 
+                onClick={refetch}
+                className="bg-red-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors text-sm sm:text-base mr-2"
+              >
+                Retry
+              </button>
+              <button 
+                onClick={() => setShowDebugPanel(!showDebugPanel)}
+                className="bg-gray-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors text-sm sm:text-base"
+              >
+                {showDebugPanel ? 'Hide Debug Info' : 'Show Debug Info'}
+              </button>
+            </div>
+
+            {/* Debug Panel */}
+            {showDebugPanel && debugInfo && (
+              <div className="mt-6 bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-xs overflow-x-auto">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-white font-bold text-sm">🔍 Debug Information</h3>
+                  <button 
+                    onClick={copyDebugInfo}
+                    className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-xs"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  <div><span className="text-yellow-400">Timestamp:</span> {debugInfo.timestamp}</div>
+                  <div><span className="text-yellow-400">Date Range:</span> {debugInfo.dateRange}</div>
+                  <div><span className="text-yellow-400">Endpoint:</span> {debugInfo.endpoint}</div>
+                  <div className="mt-4 border-t border-gray-700 pt-4">
+                    <div className="text-white font-bold mb-2">Execution Steps:</div>
+                    {debugInfo.steps.map((step, index) => (
+                      <div key={index} className="ml-4 py-1">
+                        {index + 1}. {step}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Common Issues */}
+            <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+              <h3 className="font-bold text-yellow-900 mb-3 text-sm sm:text-base">🔧 Common Issues & Solutions:</h3>
+              <ul className="space-y-2 text-xs sm:text-sm text-yellow-800">
+                <li className="flex items-start gap-2">
+                  <span className="font-bold flex-shrink-0">1.</span>
+                  <span><strong>Function not deployed:</strong> Check Netlify Functions tab to ensure fetchGA4Analytics is deployed</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-bold flex-shrink-0">2.</span>
+                  <span><strong>Missing environment variables:</strong> Verify GA4_PROPERTY_ID and GA4_SERVICE_ACCOUNT_KEY in Netlify</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-bold flex-shrink-0">3.</span>
+                  <span><strong>Service account permissions:</strong> Ensure service account has "Viewer" access to GA4 property</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-bold flex-shrink-0">4.</span>
+                  <span><strong>CORS issues:</strong> Functions should handle CORS automatically, but check function logs</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="font-bold flex-shrink-0">5.</span>
+                  <span><strong>Timeout:</strong> Function may be taking too long (10s) - check Netlify function logs</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Debug Commands */}
+            <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h3 className="font-bold text-blue-900 mb-3 text-sm sm:text-base">💡 Debug Commands:</h3>
+              <div className="space-y-2 text-xs sm:text-sm text-blue-800">
+                <div className="bg-blue-100 p-3 rounded font-mono overflow-x-auto">
+                  # Check if function is deployed<br/>
+                  netlify functions:list
+                </div>
+                <div className="bg-blue-100 p-3 rounded font-mono overflow-x-auto">
+                  # Test function locally<br/>
+                  curl -X POST {window.location.origin}/.netlify/functions/fetchGA4Analytics \<br/>
+                  &nbsp;&nbsp;-H "Content-Type: application/json" \<br/>
+                  &nbsp;&nbsp;-d '{`{"dateRange":"last7Days"}`}'
+                </div>
+                <div className="bg-blue-100 p-3 rounded font-mono overflow-x-auto">
+                  # Check Netlify function logs<br/>
+                  netlify functions:invoke fetchGA4Analytics --no-identity
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -263,11 +422,7 @@ const Dashboard = () => {
                 <h1 className="text-xl sm:text-2xl font-bold">Analytics Dashboard</h1>
                 <p className="text-white/80 text-xs sm:text-sm">
                   Welcome, {user?.user_metadata?.full_name || user?.email}
-                  {dataSource === 'api' && (
-                    <span className="ml-2 text-xs bg-green-500/30 px-2 py-1 rounded">
-                      ✓ Live Data
-                    </span>
-                  )}
+                  {getDataSourceBadge()}
                 </p>
               </div>
               <div className="block sm:hidden">
@@ -355,6 +510,52 @@ const Dashboard = () => {
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
+        {/* Debug Panel Toggle (when data exists but there was an error) */}
+        {error && data && debugInfo && (
+          <div className="mb-6 bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <h3 className="text-sm font-semibold text-yellow-900 mb-1">Warning</h3>
+                <p className="text-xs text-yellow-800">{error}</p>
+              </div>
+              <button 
+                onClick={() => setShowDebugPanel(!showDebugPanel)}
+                className="text-xs bg-yellow-200 hover:bg-yellow-300 text-yellow-900 px-3 py-1 rounded font-semibold transition-colors"
+              >
+                {showDebugPanel ? 'Hide Debug' : 'Debug'}
+              </button>
+            </div>
+            
+            {showDebugPanel && (
+              <div className="mt-4 bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-xs overflow-x-auto">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-white font-bold text-sm">🔍 Debug Information</h3>
+                  <button 
+                    onClick={copyDebugInfo}
+                    className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-xs"
+                  >
+                    Copy
+                  </button>
+                </div>
+                <div className="space-y-2">
+                  <div><span className="text-yellow-400">Timestamp:</span> {debugInfo.timestamp}</div>
+                  <div><span className="text-yellow-400">Date Range:</span> {debugInfo.dateRange}</div>
+                  <div><span className="text-yellow-400">Endpoint:</span> {debugInfo.endpoint}</div>
+                  <div className="mt-4 border-t border-gray-700 pt-4">
+                    <div className="text-white font-bold mb-2">Execution Steps:</div>
+                    {debugInfo.steps.map((step, index) => (
+                      <div key={index} className="ml-4 py-1">
+                        {index + 1}. {step}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
         {loading ? (
           <div className="text-center py-12 sm:py-20">
             <div className="inline-block p-4 sm:p-6 bg-white rounded-full mb-4 sm:mb-6 shadow-lg">

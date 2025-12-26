@@ -1,4 +1,4 @@
-// src/utils/analytics.ts - VERSION CORRIGÉE
+// src/utils/analytics.ts - VERSION CORRIGÉE POUR NETLIFY
 // ==========================================
 // 🔧 Configuration & Types
 // ==========================================
@@ -16,15 +16,14 @@ interface PageViewParams {
   language?: string;
 }
 
-// ✅ FIX: Type flexible pour supporter les arrays (e-commerce events)
 interface EventParams {
   [key: string]: string | number | boolean | undefined | any[] | object;
 }
 
-// Configuration
+// ✅ Configuration avec fallback
 const GA_CONFIG: AnalyticsConfig = {
-  measurementId: import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-XXXXXXXXXX',
-  enabled: import.meta.env.PROD, // Désactivé en dev par défaut
+  measurementId: import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-ML2H0Q0R0N',
+  enabled: true, // ✅ Toujours activé en production
   debug: import.meta.env.DEV,
 };
 
@@ -32,56 +31,75 @@ const GA_CONFIG: AnalyticsConfig = {
 // 🚀 Initialization
 // ==========================================
 
-/**
- * Initialize Google Analytics
- * Appeler cette fonction au démarrage de l'app
- */
 export function initGA(): void {
-  if (!GA_CONFIG.enabled || !GA_CONFIG.measurementId) {
-    console.log('📊 GA: Disabled in development');
+  // ✅ Vérifier le consentement des cookies
+  const consent = localStorage.getItem('cookie_consent');
+  if (consent !== 'accepted') {
+    console.log('📊 GA: Waiting for cookie consent');
+    GA_CONFIG.enabled = false;
     return;
   }
 
-  // Load gtag.js
-  const script = document.createElement('script');
-  script.async = true;
-  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_CONFIG.measurementId}`;
-  document.head.appendChild(script);
+  if (!GA_CONFIG.measurementId || GA_CONFIG.measurementId === 'G-XXXXXXXXXX') {
+    console.error('❌ GA: Invalid measurement ID');
+    return;
+  }
 
-  // Initialize dataLayer
-  window.dataLayer = window.dataLayer || [];
-  window.gtag = function() {
-    window.dataLayer.push(arguments);
-  };
-  
-  window.gtag('js', new Date());
-  window.gtag('config', GA_CONFIG.measurementId, {
-    send_page_view: false, // On gère les page views manuellement
-    cookie_flags: 'SameSite=None;Secure',
-  });
+  // ✅ Éviter la double initialisation
+  if (window.gtag) {
+    console.log('⚠️ GA: Already initialized');
+    return;
+  }
 
-  console.log('✅ GA Initialized:', GA_CONFIG.measurementId);
+  try {
+    // Load gtag.js
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_CONFIG.measurementId}`;
+    document.head.appendChild(script);
+
+    // Initialize dataLayer
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function() {
+      window.dataLayer.push(arguments);
+    };
+    
+    window.gtag('js', new Date());
+    window.gtag('config', GA_CONFIG.measurementId, {
+      send_page_view: false, // On gère les page views manuellement
+      cookie_flags: 'SameSite=None;Secure',
+      anonymize_ip: true, // ✅ Conformité RGPD
+    });
+
+    GA_CONFIG.enabled = true;
+    console.log('✅ GA Initialized:', GA_CONFIG.measurementId);
+  } catch (error) {
+    console.error('❌ GA Initialization failed:', error);
+    GA_CONFIG.enabled = false;
+  }
 }
 
 // ==========================================
 // 📄 Page Tracking
 // ==========================================
 
-/**
- * Track page views
- */
 export function trackPageView(params: Partial<PageViewParams> = {}): void {
-  if (!GA_CONFIG.enabled) return;
+  if (!GA_CONFIG.enabled || !window.gtag) {
+    if (GA_CONFIG.debug) {
+      console.log('📊 GA disabled or not loaded');
+    }
+    return;
+  }
 
   const pageParams: PageViewParams = {
     page_title: document.title,
     page_location: window.location.href,
     page_path: window.location.pathname,
-    language: document.documentElement.lang,
+    language: document.documentElement.lang || 'en',
     ...params,
   };
 
-  window.gtag?.('event', 'page_view', pageParams);
+  window.gtag('event', 'page_view', pageParams);
 
   if (GA_CONFIG.debug) {
     console.log('📊 GA Page View:', pageParams);
@@ -92,13 +110,15 @@ export function trackPageView(params: Partial<PageViewParams> = {}): void {
 // 🎯 Event Tracking
 // ==========================================
 
-/**
- * Track generic event
- */
 export function trackEvent(eventName: string, params: EventParams = {}): void {
-  if (!GA_CONFIG.enabled) return;
+  if (!GA_CONFIG.enabled || !window.gtag) {
+    if (GA_CONFIG.debug) {
+      console.log(`📊 GA Event (disabled): ${eventName}`, params);
+    }
+    return;
+  }
 
-  window.gtag?.('event', eventName, params);
+  window.gtag('event', eventName, params);
 
   if (GA_CONFIG.debug) {
     console.log(`📊 GA Event: ${eventName}`, params);
@@ -109,9 +129,6 @@ export function trackEvent(eventName: string, params: EventParams = {}): void {
 // 🏨 Hotel-Specific Events
 // ==========================================
 
-/**
- * Track room view
- */
 export function trackRoomView(roomId: string, roomName: string, price: number): void {
   trackEvent('view_item', {
     item_id: roomId,
@@ -122,9 +139,6 @@ export function trackRoomView(roomId: string, roomName: string, price: number): 
   });
 }
 
-/**
- * Track date selection
- */
 export function trackDateSelection(
   checkIn: Date,
   checkOut: Date,
@@ -132,16 +146,13 @@ export function trackDateSelection(
   roomId?: string
 ): void {
   trackEvent('select_dates', {
-    check_in: checkIn.toISOString(),
-    check_out: checkOut.toISOString(),
+    check_in: checkIn.toISOString().split('T')[0],
+    check_out: checkOut.toISOString().split('T')[0],
     nights: nights,
-    room_id: roomId,
+    room_id: roomId || 'unknown',
   });
 }
 
-/**
- * Track price check
- */
 export function trackPriceCheck(
   roomId: string,
   totalPrice: number,
@@ -157,9 +168,6 @@ export function trackPriceCheck(
   });
 }
 
-/**
- * Track WhatsApp booking initiation
- */
 export function trackWhatsAppBooking(
   roomId: string,
   roomName: string,
@@ -170,15 +178,12 @@ export function trackWhatsAppBooking(
     method: 'WhatsApp',
     room_id: roomId,
     room_name: roomName,
-    value: totalPrice,
-    nights: nights,
+    value: totalPrice || 0,
+    nights: nights || 1,
     currency: 'USD',
   });
 }
 
-/**
- * Track contact attempts
- */
 export function trackContact(method: 'whatsapp' | 'email' | 'phone', source: string): void {
   trackEvent('contact', {
     method: method,
@@ -190,9 +195,6 @@ export function trackContact(method: 'whatsapp' | 'email' | 'phone', source: str
 // 📰 Content Engagement
 // ==========================================
 
-/**
- * Track blog post view
- */
 export function trackBlogView(
   slug: string,
   title: string,
@@ -207,9 +209,6 @@ export function trackBlogView(
   });
 }
 
-/**
- * Track blog share
- */
 export function trackBlogShare(slug: string, title: string, method: string): void {
   trackEvent('share', {
     content_type: 'blog_post',
@@ -219,9 +218,6 @@ export function trackBlogShare(slug: string, title: string, method: string): voi
   });
 }
 
-/**
- * Track museum artwork view
- */
 export function trackArtworkView(slug: string, title: string, category: string): void {
   trackEvent('view_museum_item', {
     content_id: slug,
@@ -230,9 +226,6 @@ export function trackArtworkView(slug: string, title: string, category: string):
   });
 }
 
-/**
- * Track museum tour request
- */
 export function trackMuseumTourRequest(): void {
   trackEvent('request_tour', {
     tour_type: 'museum',
@@ -243,9 +236,6 @@ export function trackMuseumTourRequest(): void {
 // 🔍 Search & Filter
 // ==========================================
 
-/**
- * Track search
- */
 export function trackSearch(searchTerm: string, resultCount: number): void {
   trackEvent('search', {
     search_term: searchTerm,
@@ -253,9 +243,6 @@ export function trackSearch(searchTerm: string, resultCount: number): void {
   });
 }
 
-/**
- * Track filter usage
- */
 export function trackFilter(filterType: string, filterValue: string): void {
   trackEvent('filter', {
     filter_type: filterType,
@@ -267,9 +254,6 @@ export function trackFilter(filterType: string, filterValue: string): void {
 // 📱 Social Engagement
 // ==========================================
 
-/**
- * Track social link click
- */
 export function trackSocialClick(platform: string, location: string): void {
   trackEvent('social_click', {
     platform: platform,
@@ -281,16 +265,12 @@ export function trackSocialClick(platform: string, location: string): void {
 // 🎯 Conversion Tracking
 // ==========================================
 
-/**
- * Track booking conversion (à utiliser quand confirmé)
- */
 export function trackBookingConversion(
   roomId: string,
   roomName: string,
   totalPrice: number,
   nights: number
 ): void {
-  // ✅ Purchase event for GA4 avec items array
   trackEvent('purchase', {
     transaction_id: `booking_${Date.now()}`,
     value: totalPrice,
@@ -305,9 +285,6 @@ export function trackBookingConversion(
   });
 }
 
-/**
- * Track scroll depth
- */
 export function trackScrollDepth(depth: number): void {
   trackEvent('scroll', {
     percent_scrolled: depth,
@@ -318,20 +295,14 @@ export function trackScrollDepth(depth: number): void {
 // 🔧 Advanced Features
 // ==========================================
 
-/**
- * Set user properties
- */
 export function setUserProperty(propertyName: string, value: string): void {
-  if (!GA_CONFIG.enabled) return;
+  if (!GA_CONFIG.enabled || !window.gtag) return;
   
-  window.gtag?.('set', 'user_properties', {
+  window.gtag('set', 'user_properties', {
     [propertyName]: value,
   });
 }
 
-/**
- * Track timing
- */
 export function trackTiming(
   name: string,
   value: number,
@@ -346,9 +317,6 @@ export function trackTiming(
   });
 }
 
-/**
- * Track error
- */
 export function trackError(error: Error, context?: string): void {
   trackEvent('exception', {
     description: error.message,
@@ -358,12 +326,9 @@ export function trackError(error: Error, context?: string): void {
 }
 
 // ==========================================
-// 🎨 E-commerce Enhanced (Optional)
+// 🎨 E-commerce Enhanced
 // ==========================================
 
-/**
- * Track item list view
- */
 export function trackItemListView(items: Array<{
   id: string;
   name: string;
@@ -384,22 +349,24 @@ export function trackItemListView(items: Array<{
 }
 
 // ==========================================
-// 📊 Debug Helpers
+// 📊 Debug & Control
 // ==========================================
 
-/**
- * Get current GA config
- */
 export function getGAConfig(): AnalyticsConfig {
   return { ...GA_CONFIG };
 }
 
-/**
- * Enable/disable GA
- */
 export function setGAEnabled(enabled: boolean): void {
   GA_CONFIG.enabled = enabled;
   console.log(`📊 GA ${enabled ? 'enabled' : 'disabled'}`);
+  
+  if (enabled && !window.gtag) {
+    initGA();
+  }
+}
+
+export function isGALoaded(): boolean {
+  return !!window.gtag && GA_CONFIG.enabled;
 }
 
 // ==========================================
@@ -437,4 +404,5 @@ export default {
   trackItemListView,
   getGAConfig,
   setGAEnabled,
+  isGALoaded,
 };

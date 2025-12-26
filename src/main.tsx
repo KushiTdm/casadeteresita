@@ -5,26 +5,38 @@ import App from './App.tsx';
 import './index.css';
 import * as analytics from './utils/analytics';
 
+// ✅ IMPORTANT: Initialiser GA AVANT le rendu
+console.log('🚀 Initializing Google Analytics...');
+console.log('📊 GA Measurement ID:', import.meta.env.VITE_GA_MEASUREMENT_ID);
+console.log('🌍 Environment:', import.meta.env.MODE);
+console.log('🏭 Production:', import.meta.env.PROD);
+
 analytics.initGA();
 
+// Test immédiat
+setTimeout(() => {
+  console.log('🧪 Testing GA with test event...');
+  analytics.trackEvent('app_loaded', {
+    environment: import.meta.env.MODE,
+    timestamp: new Date().toISOString()
+  });
+}, 1000);
 
-
-
-// ✅ ENREGISTRER LE SERVICE WORKER
+// ✅ Service Worker
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {
     navigator.serviceWorker
       .register('/sw.js')
       .then((registration) => {
-        console.log('✅ Service Worker enregistré:', registration.scope);
+        console.log('✅ Service Worker registered:', registration.scope);
       })
       .catch((error) => {
-        console.error('❌ Erreur Service Worker:', error);
+        console.error('❌ Service Worker error:', error);
       });
   });
 }
 
-// ✅ MONITORING DE PERFORMANCE (optionnel)
+// ✅ Performance monitoring
 if (import.meta.env.PROD && 'performance' in window) {
   window.addEventListener('load', () => {
     const perfData = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
@@ -36,7 +48,6 @@ if (import.meta.env.PROD && 'performance' in window) {
   });
 }
 
-// ✅ Structure simplifiée - tous les providers sont dans App.tsx
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />

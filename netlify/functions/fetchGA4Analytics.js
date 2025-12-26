@@ -1,54 +1,93 @@
-// netlify/functions/fetchGA4Analytics.js
-// ⚠️ Nécessite la configuration d'un Service Account Google
-
+// netlify/functions/fetchGA4Analytics.js - VERSION CORRIGÉE
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 
-// Variables d'environnement Netlify
-const PROPERTY_ID = process.env.GA4_PROPERTY_ID; // Ex: 123456789
-const SERVICE_ACCOUNT_KEY = process.env.GA4_SERVICE_ACCOUNT_KEY; // JSON stringifié
+// ✅ Variables d'environnement Netlify (sans VITE_)
+const PROPERTY_ID = process.env.GA4_PROPERTY_ID;
+const SERVICE_ACCOUNT_KEY = process.env.GA4_SERVICE_ACCOUNT_KEY;
 
 exports.handler = async (event) => {
   const headers = {
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Content-Type': 'application/json'
   };
 
+  // ✅ Gérer les requêtes OPTIONS (CORS preflight)
   if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
+    return { 
+      statusCode: 200, 
+      headers, 
+      body: '' 
+    };
+  }
+
+  // ✅ Vérification des variables d'environnement
+  if (!PROPERTY_ID || !SERVICE_ACCOUNT_KEY) {
+    console.error('❌ Missing environment variables');
+    return {
+      statusCode: 500,
+      headers,
+      body: JSON.stringify({ 
+        error: 'Configuration error',
+        message: 'GA4_PROPERTY_ID or GA4_SERVICE_ACCOUNT_KEY not set',
+        debug: {
+          hasPropertyId: !!PROPERTY_ID,
+          hasServiceKey: !!SERVICE_ACCOUNT_KEY
+        }
+      })
+    };
   }
 
   try {
-    // Parse les credentials
+    console.log('🔄 Parsing service account credentials...');
     const credentials = JSON.parse(SERVICE_ACCOUNT_KEY);
 
-    // Initialiser le client GA4
+    console.log('🔄 Initializing GA4 client...');
     const analyticsDataClient = new BetaAnalyticsDataClient({
       credentials
     });
 
-    const { dateRange = 'last7Days' } = JSON.parse(event.body || '{}');
+    // ✅ Parser le body de la requête
+    let dateRange = 'last7Days';
+    try {
+      if (event.body) {
+        const body = JSON.parse(event.body);
+        dateRange = body.dateRange || 'last7Days';
+      }
+    } catch (e) {
+      console.warn('⚠️ Failed to parse body, using default dateRange');
+    }
 
-    // Calculer les dates
+    // ✅ Calculer les dates
     const today = new Date();
     const startDate = new Date();
     
-    if (dateRange === 'last7Days') {
-      startDate.setDate(today.getDate() - 7);
-    } else if (dateRange === 'last30Days') {
-      startDate.setDate(today.getDate() - 30);
-    } else if (dateRange === 'last90Days') {
-      startDate.setDate(today.getDate() - 90);
+    switch(dateRange) {
+      case 'last7Days':
+        startDate.setDate(today.getDate() - 7);
+        break;
+      case 'last30Days':
+        startDate.setDate(today.getDate() - 30);
+        break;
+      case 'last90Days':
+        startDate.setDate(today.getDate() - 90);
+        break;
+      default:
+        startDate.setDate(today.getDate() - 7);
     }
 
     const startDateStr = startDate.toISOString().split('T')[0];
     const todayStr = today.toISOString().split('T')[0];
+
+    console.log(`📊 Fetching analytics from ${startDateStr} to ${todayStr}`);
 
     // ==========================================
     // 📊 REQUÊTES GA4 REPORTING API
     // ==========================================
 
     // 1. Métriques générales
+    console.log('🔄 Fetching overview metrics...');
     const [overviewResponse] = await analyticsDataClient.runReport({
       property: `properties/${PROPERTY_ID}`,
       dateRanges: [{ startDate: startDateStr, endDate: todayStr }],
@@ -62,6 +101,7 @@ exports.handler = async (event) => {
     });
 
     // 2. Timeline (par jour)
+    console.log('🔄 Fetching timeline data...');
     const [timelineResponse] = await analyticsDataClient.runReport({
       property: `properties/${PROPERTY_ID}`,
       dateRanges: [{ startDate: startDateStr, endDate: todayStr }],
@@ -74,6 +114,7 @@ exports.handler = async (event) => {
     });
 
     // 3. Top Pages
+    console.log('🔄 Fetching top pages...');
     const [pagesResponse] = await analyticsDataClient.runReport({
       property: `properties/${PROPERTY_ID}`,
       dateRanges: [{ startDate: startDateStr, endDate: todayStr }],
@@ -88,6 +129,7 @@ exports.handler = async (event) => {
     });
 
     // 4. Événements de conversion
+    console.log('🔄 Fetching conversion events...');
     const [conversionsResponse] = await analyticsDataClient.runReport({
       property: `properties/${PROPERTY_ID}`,
       dateRanges: [{ startDate: startDateStr, endDate: todayStr }],
@@ -110,6 +152,7 @@ exports.handler = async (event) => {
     });
 
     // 5. Blog Posts
+    console.log('🔄 Fetching blog analytics...');
     const [blogResponse] = await analyticsDataClient.runReport({
       property: `properties/${PROPERTY_ID}`,
       dateRanges: [{ startDate: startDateStr, endDate: todayStr }],
@@ -132,6 +175,7 @@ exports.handler = async (event) => {
     });
 
     // 6. Museum
+    console.log('🔄 Fetching museum analytics...');
     const [museumResponse] = await analyticsDataClient.runReport({
       property: `properties/${PROPERTY_ID}`,
       dateRanges: [{ startDate: startDateStr, endDate: todayStr }],
@@ -153,19 +197,6 @@ exports.handler = async (event) => {
       limit: 10
     });
 
-    // 7. Démographie
-    const [demographicsResponse] = await analyticsDataClient.runReport({
-      property: `properties/${PROPERTY_ID}`,
-      dateRanges: [{ startDate: startDateStr, endDate: todayStr }],
-      dimensions: [
-        { name: 'country' },
-        { name: 'deviceCategory' }
-      ],
-      metrics: [{ name: 'sessions' }],
-      orderBys: [{ metric: { metricName: 'sessions' }, desc: true }],
-      limit: 10
-    });
-
     // ==========================================
     // 🔄 FORMATER LES DONNÉES
     // ==========================================
@@ -177,7 +208,7 @@ exports.handler = async (event) => {
         pageViews: parseInt(overviewResponse.rows?.[0]?.metricValues?.[2]?.value || 0),
         avgSessionDuration: parseFloat(overviewResponse.rows?.[0]?.metricValues?.[3]?.value || 0),
         bounceRate: parseFloat(overviewResponse.rows?.[0]?.metricValues?.[4]?.value || 0) * 100,
-        conversionRate: 0 // À calculer
+        conversionRate: 0
       },
       timeline: timelineResponse.rows?.map(row => ({
         date: row.dimensionValues[0].value,
@@ -207,14 +238,10 @@ exports.handler = async (event) => {
         title: row.dimensionValues[0].value.split('/').pop() || 'Unknown',
         slug: row.dimensionValues[0].value,
         views: parseInt(row.metricValues[0].value)
-      })) || [],
-      demographics: {
-        countries: [],
-        devices: []
-      }
+      })) || []
     };
 
-    // Parser les conversions
+    // ✅ Parser les conversions
     conversionsResponse.rows?.forEach(row => {
       const eventName = row.dimensionValues[0].value;
       const count = parseInt(row.metricValues[0].value);
@@ -226,12 +253,15 @@ exports.handler = async (event) => {
       if (eventName === 'contact') analytics.conversions.whatsappClicks = count;
     });
 
-    // Calculer le taux de conversion
+    // ✅ Calculer le taux de conversion
     if (analytics.overview.pageViews > 0) {
-      analytics.overview.conversionRate = (
-        (analytics.conversions.whatsappClicks / analytics.overview.pageViews) * 100
-      ).toFixed(2);
+      analytics.overview.conversionRate = parseFloat(
+        ((analytics.conversions.whatsappClicks / analytics.overview.pageViews) * 100).toFixed(2)
+      );
     }
+
+    console.log('✅ Analytics data fetched successfully');
+    console.log(`📊 Total visits: ${analytics.overview.totalVisits}`);
 
     return {
       statusCode: 200,
@@ -240,13 +270,14 @@ exports.handler = async (event) => {
     };
 
   } catch (error) {
-    console.error('GA4 API Error:', error);
+    console.error('❌ GA4 API Error:', error);
     return {
       statusCode: 500,
       headers,
       body: JSON.stringify({ 
         error: 'Failed to fetch analytics',
-        message: error.message 
+        message: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
       })
     };
   }
