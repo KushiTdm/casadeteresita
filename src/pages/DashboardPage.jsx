@@ -1,130 +1,303 @@
-// src/pages/DashboardPage.jsx - VERSION RESPONSIVE
-
-import { useState, useEffect } from 'react';
-import { 
-  Home, LogOut, TrendingUp, Users, Eye, Clock, 
-  Calendar, DollarSign, Globe, Smartphone, MapPin,
-  BookOpen, Building2, MessageCircle, Star, ChevronDown,
-  ChevronUp, Filter, Download, RefreshCw, AlertCircle,
-  Menu, X as XIcon
+import React, { useState, useEffect } from 'react';
+import ContentPerformance from '../components/ContentPerformance';
+import {
+  TrendingUp, TrendingDown, Users, Eye, Clock, Target,
+  ArrowUp, ArrowDown, Minus, BarChart3, PieChart, 
+  Smartphone, Globe, MapPin, RefreshCw, Calendar,
+  ExternalLink, BookOpen, Building2, Home
 } from 'lucide-react';
+import {
+  LineChart, Line, AreaChart, Area, BarChart, Bar,
+  PieChart as RechartsPie, Pie, Cell,
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+  ResponsiveContainer
+} from 'recharts';
 
 // ==============================================
-// 🔐 NETLIFY IDENTITY INTEGRATION
+// 🎨 THEME & COLORS
 // ==============================================
 
-function useNetlifyIdentity() {
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+const COLORS = {
+  primary: '#2D5A4A',
+  secondary: '#A85C32',
+  accent: '#C4A96A',
+  success: '#10b981',
+  warning: '#f59e0b',
+  danger: '#ef4444',
+  blue: '#3b82f6',
+  purple: '#8b5cf6',
+  pink: '#ec4899'
+};
 
-  useEffect(() => {
-    const checkIdentity = () => {
-      if (window.netlifyIdentity) {
-        const currentUser = window.netlifyIdentity.currentUser();
-        setUser(currentUser);
-        setLoading(false);
+const CHART_COLORS = [
+  COLORS.primary,
+  COLORS.secondary,
+  COLORS.accent,
+  COLORS.blue,
+  COLORS.purple,
+  COLORS.pink
+];
 
-        window.netlifyIdentity.on('login', (user) => {
-          console.log('✅ User logged in:', user.email);
-          setUser(user);
-          setLoading(false);
-        });
+// ==============================================
+// 🔧 UTILITY FUNCTIONS
+// ==============================================
 
-        window.netlifyIdentity.on('logout', () => {
-          console.log('👋 User logged out');
-          setUser(null);
-        });
+function formatNumber(num) {
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'K';
+  return num?.toLocaleString() || '0';
+}
 
-        window.netlifyIdentity.on('error', (err) => {
-          console.error('❌ Netlify Identity error:', err);
-        });
-      } else {
-        setTimeout(checkIdentity, 100);
-      }
-    };
+function formatDuration(seconds) {
+  const minutes = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${minutes}:${secs.toString().padStart(2, '0')}`;
+}
 
-    checkIdentity();
-
-    return () => {
-      if (window.netlifyIdentity) {
-        window.netlifyIdentity.off('login');
-        window.netlifyIdentity.off('logout');
-        window.netlifyIdentity.off('error');
-      }
-    };
-  }, []);
-
-  const login = () => {
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.open('login');
-    }
-  };
-
-  const logout = () => {
-    if (window.netlifyIdentity) {
-      window.netlifyIdentity.logout();
-    }
-  };
-
-  return { user, loading, login, logout };
+function formatPercentage(value) {
+  return `${value?.toFixed(1) || 0}%`;
 }
 
 // ==============================================
-// 🔒 LOGIN PAGE RESPONSIVE
+// 📊 KPI CARD WITH TREND
 // ==============================================
 
-const LoginPage = ({ onLogin }) => {
-  const { login } = useNetlifyIdentity();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleLogin = () => {
-    setIsLoading(true);
-    login();
+const KPICard = ({ 
+  title, 
+  value, 
+  trend, 
+  icon: Icon, 
+  color = 'blue',
+  subtitle,
+  loading = false 
+}) => {
+  const colorClasses = {
+    blue: 'from-blue-500 to-blue-600',
+    green: 'from-green-500 to-green-600',
+    purple: 'from-purple-500 to-purple-600',
+    orange: 'from-orange-500 to-orange-600',
+    red: 'from-red-500 to-red-600',
+    teal: 'from-teal-500 to-teal-600'
   };
 
+  const getTrendIcon = () => {
+    if (trend > 0) return <ArrowUp className="h-4 w-4" />;
+    if (trend < 0) return <ArrowDown className="h-4 w-4" />;
+    return <Minus className="h-4 w-4" />;
+  };
+
+  const getTrendColor = () => {
+    if (trend > 0) return 'text-green-600 bg-green-100';
+    if (trend < 0) return 'text-red-600 bg-red-100';
+    return 'text-gray-600 bg-gray-100';
+  };
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-xl shadow-lg p-6 animate-pulse">
+        <div className="flex items-start justify-between mb-4">
+          <div className="h-12 w-12 bg-gray-200 rounded-lg"></div>
+          <div className="h-6 w-16 bg-gray-200 rounded"></div>
+        </div>
+        <div className="h-8 w-24 bg-gray-200 rounded mb-2"></div>
+        <div className="h-4 w-32 bg-gray-200 rounded"></div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#2D5A4A] to-[#1a1a1a] flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 sm:p-8">
-        <div className="text-center mb-6 sm:mb-8">
-          <div className="inline-block p-3 sm:p-4 bg-[#C4A96A]/10 rounded-full mb-4">
-            <Home className="h-10 w-10 sm:h-12 sm:w-12 text-[#C4A96A]" />
-          </div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#2D5A4A] mb-2">
-            Dashboard Login
-          </h1>
-          <p className="text-sm sm:text-base text-gray-600">
-            La Casa de Teresita - Admin Access
-          </p>
+    <div className="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 border border-gray-100">
+      <div className="flex items-start justify-between mb-4">
+        <div className={`p-3 rounded-xl bg-gradient-to-br ${colorClasses[color]} shadow-lg`}>
+          <Icon className="h-6 w-6 text-white" />
         </div>
-
-        <div className="space-y-4">
-          <button
-            onClick={handleLogin}
-            disabled={isLoading}
-            className="w-full bg-[#2D5A4A] text-white py-3 sm:py-4 rounded-lg font-semibold hover:bg-[#1F3D32] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm sm:text-base"
-          >
-            {isLoading ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-                <span>Loading...</span>
-              </>
-            ) : (
-              <span>Login with Netlify Identity</span>
-            )}
-          </button>
-
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 text-xs sm:text-sm text-blue-800">
-            <p className="font-semibold mb-2">ℹ️ Access Information:</p>
-            <ul className="space-y-1 text-xs">
-              <li>• Click the button above to open the login modal</li>
-              <li>• Use your Netlify Identity credentials</li>
-              <li>• First-time users: You'll receive an invite email</li>
-            </ul>
+        {trend !== undefined && trend !== null && (
+          <div className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold ${getTrendColor()}`}>
+            {getTrendIcon()}
+            <span>{Math.abs(trend).toFixed(1)}%</span>
           </div>
-        </div>
+        )}
+      </div>
+      
+      <h3 className="text-sm font-medium text-gray-600 mb-1">
+        {title}
+      </h3>
+      
+      <p className="text-3xl font-bold text-gray-900 mb-1">
+        {value}
+      </p>
+      
+      {subtitle && (
+        <p className="text-xs text-gray-500">
+          {subtitle}
+        </p>
+      )}
+    </div>
+  );
+};
 
-        <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t text-center text-xs sm:text-sm text-gray-500">
-          Protected by Netlify Identity
+// ==============================================
+// 📈 TIMELINE CHART
+// ==============================================
+
+const TimelineChart = ({ data, loading = false }) => {
+  const [activeMetric, setActiveMetric] = useState('sessions');
+
+  const metrics = [
+    { key: 'sessions', label: 'Sessions', color: COLORS.primary },
+    { key: 'users', label: 'Users', color: COLORS.secondary },
+    { key: 'pageViews', label: 'Page Views', color: COLORS.accent }
+  ];
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 w-48 bg-gray-200 rounded"></div>
+          <div className="h-64 bg-gray-100 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-6">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+          <BarChart3 className="h-6 w-6 text-blue-600" />
+          Traffic Timeline
+        </h3>
+        
+        <div className="flex gap-2">
+          {metrics.map(metric => (
+            <button
+              key={metric.key}
+              onClick={() => setActiveMetric(metric.key)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                activeMetric === metric.key
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {metric.label}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <ResponsiveContainer width="100%" height={300}>
+        <AreaChart data={data}>
+          <defs>
+            <linearGradient id="colorMetric" x1="0" y1="0" x2="0" y2="1">
+              <stop 
+                offset="5%" 
+                stopColor={metrics.find(m => m.key === activeMetric)?.color} 
+                stopOpacity={0.3}
+              />
+              <stop 
+                offset="95%" 
+                stopColor={metrics.find(m => m.key === activeMetric)?.color} 
+                stopOpacity={0}
+              />
+            </linearGradient>
+          </defs>
+          <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+          <XAxis 
+            dataKey="date" 
+            stroke="#9ca3af"
+            tick={{ fontSize: 12 }}
+          />
+          <YAxis 
+            stroke="#9ca3af"
+            tick={{ fontSize: 12 }}
+          />
+          <Tooltip 
+            contentStyle={{
+              backgroundColor: '#fff',
+              border: '1px solid #e5e7eb',
+              borderRadius: '8px',
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+            }}
+          />
+          <Area
+            type="monotone"
+            dataKey={activeMetric}
+            stroke={metrics.find(m => m.key === activeMetric)?.color}
+            strokeWidth={2}
+            fill="url(#colorMetric)"
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  );
+};
+
+// ==============================================
+// 🥧 DEVICE BREAKDOWN PIE CHART
+// ==============================================
+
+const DeviceBreakdown = ({ data, loading = false }) => {
+  if (loading) {
+    return (
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 w-48 bg-gray-200 rounded"></div>
+          <div className="h-64 bg-gray-100 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  const chartData = data?.map((device, index) => ({
+    name: device.device,
+    value: device.sessions,
+    color: CHART_COLORS[index % CHART_COLORS.length]
+  })) || [];
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-6">
+      <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+        <Smartphone className="h-6 w-6 text-purple-600" />
+        Device Breakdown
+      </h3>
+
+      <div className="flex items-center justify-between">
+        <ResponsiveContainer width="50%" height={200}>
+          <RechartsPie>
+            <Pie
+              data={chartData}
+              cx="50%"
+              cy="50%"
+              innerRadius={50}
+              outerRadius={80}
+              paddingAngle={5}
+              dataKey="value"
+            >
+              {chartData.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Pie>
+            <Tooltip />
+          </RechartsPie>
+        </ResponsiveContainer>
+
+        <div className="flex-1 space-y-3">
+          {chartData.map((device, index) => (
+            <div key={index} className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div 
+                  className="w-3 h-3 rounded-full"
+                  style={{ backgroundColor: device.color }}
+                ></div>
+                <span className="text-sm font-medium text-gray-700">
+                  {device.name}
+                </span>
+              </div>
+              <span className="text-sm font-bold text-gray-900">
+                {formatNumber(device.value)}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
@@ -132,579 +305,337 @@ const LoginPage = ({ onLogin }) => {
 };
 
 // ==============================================
-// 📊 GOOGLE ANALYTICS 4 API WITH DEBUG
+// 📄 TOP PAGES TABLE
 // ==============================================
 
-const useGoogleAnalytics = (dateRange = 'last7Days') => {
+const TopPagesTable = ({ data, loading = false }) => {
+  if (loading) {
+    return (
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 w-48 bg-gray-200 rounded"></div>
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="h-12 bg-gray-100 rounded"></div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-6">
+      <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+        <Eye className="h-6 w-6 text-green-600" />
+        Top Pages
+      </h3>
+
+      <div className="overflow-x-auto">
+        <table className="w-full">
+          <thead>
+            <tr className="border-b border-gray-200">
+              <th className="text-left py-3 px-4 text-xs font-semibold text-gray-600 uppercase">
+                Page
+              </th>
+              <th className="text-center py-3 px-4 text-xs font-semibold text-gray-600 uppercase">
+                Views
+              </th>
+              <th className="text-center py-3 px-4 text-xs font-semibold text-gray-600 uppercase">
+                Avg Time
+              </th>
+              <th className="text-center py-3 px-4 text-xs font-semibold text-gray-600 uppercase">
+                Bounce Rate
+              </th>
+              <th className="text-center py-3 px-4 text-xs font-semibold text-gray-600 uppercase">
+                Engagement
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {data?.slice(0, 10).map((page, index) => (
+              <tr 
+                key={index} 
+                className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
+              >
+                <td className="py-3 px-4">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-gray-900 truncate max-w-xs">
+                      {page.path}
+                    </span>
+                  </div>
+                </td>
+                <td className="py-3 px-4 text-center">
+                  <span className="text-sm font-bold text-blue-600">
+                    {formatNumber(page.views)}
+                  </span>
+                </td>
+                <td className="py-3 px-4 text-center">
+                  <span className="text-sm text-gray-700">
+                    {formatDuration(page.avgDuration)}
+                  </span>
+                </td>
+                <td className="py-3 px-4 text-center">
+                  <span className={`text-sm font-medium ${
+                    page.bounceRate > 70 ? 'text-red-600' : 
+                    page.bounceRate > 50 ? 'text-yellow-600' : 
+                    'text-green-600'
+                  }`}>
+                    {formatPercentage(page.bounceRate)}
+                  </span>
+                </td>
+                <td className="py-3 px-4 text-center">
+                  <span className="text-sm font-medium text-purple-600">
+                    {formatPercentage(page.engagementRate)}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+// ==============================================
+// 🎯 CONVERSION FUNNEL
+// ==============================================
+
+const ConversionFunnel = ({ conversions, totalVisits, loading = false }) => {
+  if (loading) {
+    return (
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="animate-pulse space-y-4">
+          <div className="h-6 w-48 bg-gray-200 rounded"></div>
+          <div className="h-64 bg-gray-100 rounded"></div>
+        </div>
+      </div>
+    );
+  }
+
+  const funnelSteps = [
+    { 
+      label: 'Website Visits', 
+      value: totalVisits, 
+      color: 'bg-blue-500',
+      icon: Globe
+    },
+    { 
+      label: 'Room Views', 
+      value: conversions?.roomViews || 0,
+      color: 'bg-purple-500',
+      icon: Home
+    },
+    { 
+      label: 'Date Selected', 
+      value: conversions?.dateSelections || 0,
+      color: 'bg-pink-500',
+      icon: Calendar
+    },
+    { 
+      label: 'Price Checked', 
+      value: conversions?.priceChecks || 0,
+      color: 'bg-orange-500',
+      icon: Target
+    },
+    { 
+      label: 'WhatsApp Click', 
+      value: conversions?.whatsappClicks || 0,
+      color: 'bg-green-500',
+      icon: ExternalLink
+    }
+  ];
+
+  const maxValue = funnelSteps[0].value;
+
+  return (
+    <div className="bg-white rounded-xl shadow-lg p-6">
+      <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+        <Target className="h-6 w-6 text-orange-600" />
+        Conversion Funnel
+      </h3>
+
+      <div className="space-y-4">
+        {funnelSteps.map((step, index) => {
+          const percentage = maxValue > 0 ? (step.value / maxValue) * 100 : 0;
+          const dropoff = index > 0 
+            ? ((funnelSteps[index - 1].value - step.value) / funnelSteps[index - 1].value) * 100 
+            : 0;
+          const StepIcon = step.icon;
+
+          return (
+            <div key={index} className="relative">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <StepIcon className="h-5 w-5 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-700">
+                    {step.label}
+                  </span>
+                </div>
+                <div className="flex items-center gap-4">
+                  {index > 0 && dropoff > 0 && (
+                    <span className="text-xs text-red-600 font-medium">
+                      -{dropoff.toFixed(1)}% dropoff
+                    </span>
+                  )}
+                  <span className="text-sm font-bold text-gray-900">
+                    {formatNumber(step.value)}
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    ({percentage.toFixed(1)}%)
+                  </span>
+                </div>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                <div
+                  className={`h-full ${step.color} transition-all duration-500 rounded-full`}
+                  style={{ width: `${percentage}%` }}
+                ></div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+        <p className="text-sm text-gray-700">
+          <span className="font-bold text-blue-700">
+            Overall Conversion Rate:
+          </span>{' '}
+          {totalVisits > 0 
+            ? ((conversions?.whatsappClicks / totalVisits) * 100).toFixed(2)
+            : 0}%
+        </p>
+      </div>
+    </div>
+  );
+};
+
+// ==============================================
+// 🏨 MAIN DASHBOARD COMPONENT
+// ==============================================
+
+const AdvancedDashboard = () => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [dataSource, setDataSource] = useState('api');
-  const [debugInfo, setDebugInfo] = useState(null);
+  const [dateRange, setDateRange] = useState('last7Days');
 
   useEffect(() => {
-    fetchAnalyticsData();
+    fetchAnalytics();
   }, [dateRange]);
 
-  const fetchAnalyticsData = async () => {
+  const fetchAnalytics = async () => {
     setLoading(true);
-    setError(null);
-    setDebugInfo(null);
-
-    const debug = {
-      timestamp: new Date().toISOString(),
-      dateRange: dateRange,
-      endpoint: '/.netlify/functions/fetchGA4Analytics',
-      steps: []
-    };
-
     try {
-      debug.steps.push('🔄 Starting fetch request...');
-      console.log('🔄 Fetching analytics from GA4 API...');
-      
-      // Check if we're in production
-      debug.steps.push(`Environment: ${import.meta.env.PROD ? 'Production' : 'Development'}`);
-      debug.steps.push(`Base URL: ${window.location.origin}`);
-      
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => {
-        debug.steps.push('⏰ Request timeout after 10s');
-        controller.abort();
-      }, 10000);
-      
-      debug.steps.push('📡 Sending POST request...');
-      const response = await fetch('/.netlify/functions/fetchGA4Analytics', {
+      const response = await fetch('/.netlify/functions/fetchGA4AnalyticsEnhanced', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ dateRange }),
-        signal: controller.signal
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dateRange })
       });
 
-      clearTimeout(timeoutId);
-      debug.steps.push(`✅ Response received: ${response.status} ${response.statusText}`);
-
       if (response.ok) {
-        debug.steps.push('📦 Parsing JSON response...');
-        const apiData = await response.json();
-        debug.steps.push(`✅ Data parsed successfully (${Object.keys(apiData).length} keys)`);
-        
-        console.log('✅ Analytics loaded from GA4 API');
-        setData(apiData);
-        setDataSource('api');
-        setDebugInfo(debug);
-      } else {
-        debug.steps.push(`❌ Response not OK: ${response.status}`);
-        const errorText = await response.text();
-        debug.steps.push(`Error body: ${errorText.substring(0, 200)}`);
-        
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        const analytics = await response.json();
+        setData(analytics);
       }
-    } catch (apiError) {
-      debug.steps.push(`❌ Error caught: ${apiError.name}`);
-      debug.steps.push(`Error message: ${apiError.message}`);
-      
-      if (apiError.name === 'AbortError') {
-        debug.steps.push('⚠️ Request was aborted (timeout)');
-        console.error('⏰ Request timeout');
-        setError('Request timeout after 10 seconds. The function may be taking too long to respond.');
-      } else if (apiError.message.includes('Failed to fetch')) {
-        debug.steps.push('⚠️ Network error or CORS issue');
-        console.error('🌐 Network error:', apiError);
-        setError('Network error: Unable to reach the analytics function. Check your network connection and Netlify function deployment.');
-      } else {
-        console.error('❌ GA4 API Error:', apiError);
-        setError(`Error: ${apiError.message}`);
-      }
-      
-      setDataSource('unavailable');
-      setDebugInfo(debug);
+    } catch (error) {
+      console.error('Error fetching analytics:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  return { data, loading, error, refetch: fetchAnalyticsData, dataSource, debugInfo };
-};
-
-// ==============================================
-// 📈 METRIC CARD RESPONSIVE
-// ==============================================
-
-const MetricCard = ({ icon: Icon, title, value, subtitle, trend, color = "blue" }) => {
-  const colorClasses = {
-    blue: "from-blue-500 to-blue-600",
-    green: "from-green-500 to-green-600",
-    purple: "from-purple-500 to-purple-600",
-    orange: "from-orange-500 to-orange-600",
-    red: "from-red-500 to-red-600"
-  };
-
   return (
-    <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 hover:shadow-xl transition-shadow">
-      <div className="flex items-start justify-between mb-3 sm:mb-4">
-        <div className={`p-2 sm:p-3 rounded-lg bg-gradient-to-br ${colorClasses[color]}`}>
-          <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
-        </div>
-        {trend && (
-          <div className={`px-2 py-1 rounded text-xs font-semibold ${
-            trend > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-          }`}>
-            {trend > 0 ? '↑' : '↓'} {Math.abs(trend)}%
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-4xl font-bold text-gray-900">
+              Analytics Dashboard
+            </h1>
+            <p className="text-gray-600 mt-2">
+              La Casa de Teresita - Professional Analytics
+            </p>
           </div>
-        )}
-      </div>
-      <h3 className="text-xs sm:text-sm text-gray-600 font-medium mb-1">{title}</h3>
-      <p className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1">{value}</p>
-      {subtitle && <p className="text-xs text-gray-500">{subtitle}</p>}
-    </div>
-  );
-};
-
-// ==============================================
-// 📊 MAIN DASHBOARD RESPONSIVE
-// ==============================================
-
-const Dashboard = () => {
-  const { user, logout } = useNetlifyIdentity();
-  const [dateRange, setDateRange] = useState('last7Days');
-  const [showMobileMenu, setShowMobileMenu] = useState(false);
-  const [showDebugPanel, setShowDebugPanel] = useState(false);
-  const { data, loading, error, refetch, dataSource, debugInfo } = useGoogleAnalytics(dateRange);
-
-  const handleLogout = () => {
-    logout();
-  };
-
-  const copyDebugInfo = () => {
-    if (debugInfo) {
-      const text = JSON.stringify(debugInfo, null, 2);
-      navigator.clipboard.writeText(text);
-      alert('Debug info copied to clipboard!');
-    }
-  };
-
-  // Show data source indicator
-  const getDataSourceBadge = () => {
-    if (dataSource === 'api') {
-      return (
-        <span className="text-xs bg-green-500/30 px-2 py-1 rounded">
-          ✓ Live Data
-        </span>
-      );
-    } else if (dataSource === 'unavailable') {
-      return (
-        <span className="text-xs bg-red-500/30 px-2 py-1 rounded cursor-pointer" onClick={() => setShowDebugPanel(!showDebugPanel)}>
-          ⚠ Error - Click for Debug
-        </span>
-      );
-    }
-    return null;
-  };
-
-  if (error && !data) {
-    return (
-      <div className="min-h-screen bg-gray-50 p-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-red-50 border-2 border-red-200 rounded-xl p-6 sm:p-8">
-            <div className="text-center mb-6">
-              <AlertCircle className="h-12 w-12 sm:h-16 sm:w-16 text-red-500 mx-auto mb-4" />
-              <h2 className="text-xl sm:text-2xl font-bold text-red-900 mb-2">Analytics Error</h2>
-              <p className="text-sm sm:text-base text-red-700 mb-4">{error}</p>
-              <button 
-                onClick={refetch}
-                className="bg-red-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors text-sm sm:text-base mr-2"
-              >
-                Retry
-              </button>
-              <button 
-                onClick={() => setShowDebugPanel(!showDebugPanel)}
-                className="bg-gray-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-semibold hover:bg-gray-700 transition-colors text-sm sm:text-base"
-              >
-                {showDebugPanel ? 'Hide Debug Info' : 'Show Debug Info'}
-              </button>
-            </div>
-
-            {/* Debug Panel */}
-            {showDebugPanel && debugInfo && (
-              <div className="mt-6 bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-xs overflow-x-auto">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-white font-bold text-sm">🔍 Debug Information</h3>
-                  <button 
-                    onClick={copyDebugInfo}
-                    className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-xs"
-                  >
-                    Copy
-                  </button>
-                </div>
-                <div className="space-y-2">
-                  <div><span className="text-yellow-400">Timestamp:</span> {debugInfo.timestamp}</div>
-                  <div><span className="text-yellow-400">Date Range:</span> {debugInfo.dateRange}</div>
-                  <div><span className="text-yellow-400">Endpoint:</span> {debugInfo.endpoint}</div>
-                  <div className="mt-4 border-t border-gray-700 pt-4">
-                    <div className="text-white font-bold mb-2">Execution Steps:</div>
-                    {debugInfo.steps.map((step, index) => (
-                      <div key={index} className="ml-4 py-1">
-                        {index + 1}. {step}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Common Issues */}
-            <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <h3 className="font-bold text-yellow-900 mb-3 text-sm sm:text-base">🔧 Common Issues & Solutions:</h3>
-              <ul className="space-y-2 text-xs sm:text-sm text-yellow-800">
-                <li className="flex items-start gap-2">
-                  <span className="font-bold flex-shrink-0">1.</span>
-                  <span><strong>Function not deployed:</strong> Check Netlify Functions tab to ensure fetchGA4Analytics is deployed</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="font-bold flex-shrink-0">2.</span>
-                  <span><strong>Missing environment variables:</strong> Verify GA4_PROPERTY_ID and GA4_SERVICE_ACCOUNT_KEY in Netlify</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="font-bold flex-shrink-0">3.</span>
-                  <span><strong>Service account permissions:</strong> Ensure service account has "Viewer" access to GA4 property</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="font-bold flex-shrink-0">4.</span>
-                  <span><strong>CORS issues:</strong> Functions should handle CORS automatically, but check function logs</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="font-bold flex-shrink-0">5.</span>
-                  <span><strong>Timeout:</strong> Function may be taking too long (10s) - check Netlify function logs</span>
-                </li>
-              </ul>
-            </div>
-
-            {/* Debug Commands */}
-            <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <h3 className="font-bold text-blue-900 mb-3 text-sm sm:text-base">💡 Debug Commands:</h3>
-              <div className="space-y-2 text-xs sm:text-sm text-blue-800">
-                <div className="bg-blue-100 p-3 rounded font-mono overflow-x-auto">
-                  # Check if function is deployed<br/>
-                  netlify functions:list
-                </div>
-                <div className="bg-blue-100 p-3 rounded font-mono overflow-x-auto">
-                  # Test function locally<br/>
-                  curl -X POST {window.location.origin}/.netlify/functions/fetchGA4Analytics \<br/>
-                  &nbsp;&nbsp;-H "Content-Type: application/json" \<br/>
-                  &nbsp;&nbsp;-d '{`{"dateRange":"last7Days"}`}'
-                </div>
-                <div className="bg-blue-100 p-3 rounded font-mono overflow-x-auto">
-                  # Check Netlify function logs<br/>
-                  netlify functions:invoke fetchGA4Analytics --no-identity
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header - Responsive */}
-      <div className="bg-gradient-to-r from-[#2D5A4A] to-[#A85C32] text-white shadow-xl">
-        <div className="max-w-7xl mx-auto px-4 py-4 sm:py-6">
-          <div className="flex items-center justify-between">
-            {/* Logo & Title */}
-            <div className="flex items-center gap-2 sm:gap-4">
-              <div className="bg-white/20 p-2 sm:p-3 rounded-lg backdrop-blur-sm">
-                <Home className="h-6 w-6 sm:h-8 sm:w-8" />
-              </div>
-              <div className="hidden sm:block">
-                <h1 className="text-xl sm:text-2xl font-bold">Analytics Dashboard</h1>
-                <p className="text-white/80 text-xs sm:text-sm">
-                  Welcome, {user?.user_metadata?.full_name || user?.email}
-                  {getDataSourceBadge()}
-                </p>
-              </div>
-              <div className="block sm:hidden">
-                <h1 className="text-lg font-bold">Dashboard</h1>
-              </div>
-            </div>
-
-            {/* Actions - Desktop */}
-            <div className="hidden md:flex items-center gap-2 sm:gap-3">
-              <select
-                value={dateRange}
-                onChange={(e) => setDateRange(e.target.value)}
-                className="bg-white/20 backdrop-blur-sm text-white px-3 sm:px-4 py-2 rounded-lg border-2 border-white/30 font-semibold cursor-pointer hover:bg-white/30 transition-colors text-sm"
-              >
-                <option value="last7Days" className="text-gray-900">Last 7 Days</option>
-                <option value="last30Days" className="text-gray-900">Last 30 Days</option>
-                <option value="last90Days" className="text-gray-900">Last 90 Days</option>
-              </select>
-              <button
-                onClick={refetch}
-                className="bg-white/20 backdrop-blur-sm p-2 sm:p-3 rounded-lg hover:bg-white/30 transition-colors"
-                title="Refresh data"
-              >
-                <RefreshCw className="h-4 w-4 sm:h-5 sm:w-5" />
-              </button>
-              <button
-                onClick={handleLogout}
-                className="bg-white/20 backdrop-blur-sm p-2 sm:p-3 rounded-lg hover:bg-white/30 transition-colors"
-                title="Logout"
-              >
-                <LogOut className="h-4 w-4 sm:h-5 sm:w-5" />
-              </button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <button
-              onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="md:hidden bg-white/20 backdrop-blur-sm p-2 rounded-lg"
+          
+          <div className="flex items-center gap-4">
+            <select
+              value={dateRange}
+              onChange={(e) => setDateRange(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              {showMobileMenu ? <XIcon className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+              <option value="today">Today</option>
+              <option value="yesterday">Yesterday</option>
+              <option value="last7Days">Last 7 Days</option>
+              <option value="last30Days">Last 30 Days</option>
+              <option value="last90Days">Last 90 Days</option>
+            </select>
+            
+            <button
+              onClick={fetchAnalytics}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <RefreshCw className="h-4 w-4" />
+              Refresh
             </button>
           </div>
-
-          {/* Mobile Menu */}
-          {showMobileMenu && (
-            <div className="md:hidden mt-4 pt-4 border-t border-white/20 space-y-3">
-              <select
-                value={dateRange}
-                onChange={(e) => {
-                  setDateRange(e.target.value);
-                  setShowMobileMenu(false);
-                }}
-                className="w-full bg-white/20 backdrop-blur-sm text-white px-4 py-3 rounded-lg border-2 border-white/30 font-semibold text-sm"
-              >
-                <option value="last7Days" className="text-gray-900">Last 7 Days</option>
-                <option value="last30Days" className="text-gray-900">Last 30 Days</option>
-                <option value="last90Days" className="text-gray-900">Last 90 Days</option>
-              </select>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => {
-                    refetch();
-                    setShowMobileMenu(false);
-                  }}
-                  className="flex-1 bg-white/20 backdrop-blur-sm px-4 py-3 rounded-lg hover:bg-white/30 transition-colors flex items-center justify-center gap-2 text-sm font-semibold"
-                >
-                  <RefreshCw className="h-4 w-4" />
-                  Refresh
-                </button>
-                <button
-                  onClick={() => {
-                    handleLogout();
-                    setShowMobileMenu(false);
-                  }}
-                  className="flex-1 bg-white/20 backdrop-blur-sm px-4 py-3 rounded-lg hover:bg-white/30 transition-colors flex items-center justify-center gap-2 text-sm font-semibold"
-                >
-                  <LogOut className="h-4 w-4" />
-                  Logout
-                </button>
-              </div>
-            </div>
-          )}
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-6 sm:py-8">
-        {/* Debug Panel Toggle (when data exists but there was an error) */}
-        {error && data && debugInfo && (
-          <div className="mb-6 bg-yellow-50 border-2 border-yellow-200 rounded-xl p-4">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-              <div className="flex-1">
-                <h3 className="text-sm font-semibold text-yellow-900 mb-1">Warning</h3>
-                <p className="text-xs text-yellow-800">{error}</p>
-              </div>
-              <button 
-                onClick={() => setShowDebugPanel(!showDebugPanel)}
-                className="text-xs bg-yellow-200 hover:bg-yellow-300 text-yellow-900 px-3 py-1 rounded font-semibold transition-colors"
-              >
-                {showDebugPanel ? 'Hide Debug' : 'Debug'}
-              </button>
-            </div>
-            
-            {showDebugPanel && (
-              <div className="mt-4 bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-xs overflow-x-auto">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-white font-bold text-sm">🔍 Debug Information</h3>
-                  <button 
-                    onClick={copyDebugInfo}
-                    className="bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded text-xs"
-                  >
-                    Copy
-                  </button>
-                </div>
-                <div className="space-y-2">
-                  <div><span className="text-yellow-400">Timestamp:</span> {debugInfo.timestamp}</div>
-                  <div><span className="text-yellow-400">Date Range:</span> {debugInfo.dateRange}</div>
-                  <div><span className="text-yellow-400">Endpoint:</span> {debugInfo.endpoint}</div>
-                  <div className="mt-4 border-t border-gray-700 pt-4">
-                    <div className="text-white font-bold mb-2">Execution Steps:</div>
-                    {debugInfo.steps.map((step, index) => (
-                      <div key={index} className="ml-4 py-1">
-                        {index + 1}. {step}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
+        {/* KPI Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <KPICard
+            title="Total Visits"
+            value={formatNumber(data?.overview?.totalVisits)}
+            trend={data?.overview?.trends?.totalVisits}
+            icon={Users}
+            color="blue"
+            subtitle="Sessions"
+            loading={loading}
+          />
+          <KPICard
+            title="Unique Visitors"
+            value={formatNumber(data?.overview?.uniqueVisitors)}
+            trend={data?.overview?.trends?.uniqueVisitors}
+            icon={Eye}
+            color="purple"
+            subtitle="Users"
+            loading={loading}
+          />
+          <KPICard
+            title="Avg Session Duration"
+            value={formatDuration(data?.overview?.avgSessionDuration)}
+            icon={Clock}
+            color="orange"
+            subtitle="Time on site"
+            loading={loading}
+          />
+          <KPICard
+            title="Conversion Rate"
+            value={formatPercentage(data?.overview?.conversionRate)}
+            icon={Target}
+            color="green"
+            subtitle="To WhatsApp"
+            loading={loading}
+          />
+        </div>
 
-        {loading ? (
-          <div className="text-center py-12 sm:py-20">
-            <div className="inline-block p-4 sm:p-6 bg-white rounded-full mb-4 sm:mb-6 shadow-lg">
-              <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-4 border-[#C4A96A] border-t-transparent"></div>
-            </div>
-            <p className="text-lg sm:text-xl text-gray-600">Loading analytics...</p>
-          </div>
-        ) : data ? (
-          <div className="space-y-6 sm:space-y-8">
-            {/* Overview Metrics - Responsive Grid */}
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
-              <MetricCard
-                icon={Users}
-                title="Total Visits"
-                value={data.overview?.totalVisits?.toLocaleString() || '0'}
-                subtitle="Sessions"
-                color="blue"
-              />
-              <MetricCard
-                icon={Eye}
-                title="Unique Visitors"
-                value={data.overview?.uniqueVisitors?.toLocaleString() || '0'}
-                subtitle="Users"
-                color="green"
-              />
-              <MetricCard
-                icon={TrendingUp}
-                title="Page Views"
-                value={data.overview?.pageViews?.toLocaleString() || '0'}
-                subtitle="Total views"
-                color="purple"
-              />
-              <MetricCard
-                icon={MessageCircle}
-                title="WhatsApp Clicks"
-                value={data.conversions?.whatsappClicks?.toLocaleString() || '0'}
-                subtitle={`${data.overview?.conversionRate || 0}% conversion`}
-                color="orange"
-              />
-            </div>
+        {/* Timeline Chart */}
+        <TimelineChart data={data?.timeline} loading={loading} />
 
-            {/* Top Pages */}
-            <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-              <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-[#A85C32]" />
-                <span className="text-sm sm:text-xl">Top Pages</span>
-              </h2>
-              <div className="space-y-2 sm:space-y-3 overflow-x-auto">
-                {data.pages?.slice(0, 10).map((page, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 sm:p-3 bg-gray-50 rounded-lg">
-                    <div className="flex-1 min-w-0">
-                      <div className="font-medium text-gray-900 text-xs sm:text-base truncate">{page.path}</div>
-                      <div className="text-xs sm:text-sm text-gray-500">
-                        {page.avgTime}s avg • {page.bounceRate}% bounce
-                      </div>
-                    </div>
-                    <div className="text-right ml-2 flex-shrink-0">
-                      <div className="font-bold text-[#A85C32] text-sm sm:text-base">{page.views}</div>
-                      <div className="text-xs text-gray-500">views</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+        {/* Device & Conversion */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <DeviceBreakdown data={data?.devices} loading={loading} />
+          <ConversionFunnel 
+            conversions={data?.conversions}
+            totalVisits={data?.overview?.totalVisits}
+            loading={loading}
+          />
+        </div>
 
-            {/* Blog Performance - Responsive Grid */}
-            {data.blog && data.blog.length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <BookOpen className="h-5 w-5 sm:h-6 sm:w-6 text-[#A85C32]" />
-                  <span className="text-sm sm:text-xl">Blog Performance</span>
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                  {data.blog.slice(0, 6).map((post, index) => (
-                    <div key={index} className="p-3 sm:p-4 bg-gray-50 rounded-lg">
-                      <div className="font-medium text-gray-900 mb-2 line-clamp-1 text-xs sm:text-base">
-                        {post.title}
-                      </div>
-                      <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="text-gray-600">{post.views} views</span>
-                        <span className="text-gray-600">{post.avgTime}s avg</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Museum Performance - Responsive Grid */}
-            {data.museum && data.museum.length > 0 && (
-              <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <Building2 className="h-5 w-5 sm:h-6 sm:w-6 text-[#A85C32]" />
-                  <span className="text-sm sm:text-xl">Museum Collection Views</span>
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-                  {data.museum.slice(0, 6).map((artwork, index) => (
-                    <div key={index} className="p-3 sm:p-4 bg-gray-50 rounded-lg">
-                      <div className="font-medium text-gray-900 mb-2 line-clamp-1 text-xs sm:text-base">
-                        {artwork.title}
-                      </div>
-                      <div className="flex items-center justify-between text-xs sm:text-sm">
-                        <span className="text-gray-600">{artwork.views} views</span>
-                        <span className="px-2 py-1 bg-[#C4A96A]/20 text-[#A85C32] rounded text-xs font-semibold">
-                          {artwork.category}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="text-center py-12 sm:py-20">
-            <AlertCircle className="h-12 w-12 sm:h-16 sm:w-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-lg sm:text-xl text-gray-600">No data available</p>
-          </div>
-        )}
+        {/* Top Pages */}
+        <TopPagesTable data={data?.topPages} loading={loading} />
       </div>
     </div>
   );
 };
 
-// ==============================================
-// 🚀 MAIN APP EXPORT
-// ==============================================
-
-const DashboardPage = () => {
-  const { user, loading } = useNetlifyIdentity();
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-[#2D5A4A] to-[#1a1a1a] flex items-center justify-center p-4">
-        <div className="text-center">
-          <div className="inline-block p-4 sm:p-6 bg-white/10 backdrop-blur-sm rounded-full mb-4 sm:mb-6">
-            <div className="animate-spin rounded-full h-12 w-12 sm:h-16 sm:w-16 border-4 border-[#C4A96A] border-t-transparent"></div>
-          </div>
-          <p className="text-lg sm:text-xl text-white">Loading...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!user) {
-    return <LoginPage />;
-  }
-
-  return <Dashboard />;
-};
-
-export default DashboardPage;
+export default AdvancedDashboard;
