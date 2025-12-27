@@ -11,6 +11,7 @@ import { useData } from '../context/DataContext';
 import DateRangePicker from '../components/DateRangePicker';
 import PriceBreakdown from '../components/PriceBreakdown';
 import { getAvailability } from '../services/dataManager';
+import * as analytics from '../utils/analytics';
 
 const RoomDetailPage = () => {
   const { roomSlug } = useParams();

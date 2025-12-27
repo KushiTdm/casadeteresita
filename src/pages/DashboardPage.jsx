@@ -92,16 +92,21 @@ const KPICard = ({ title, value, trend, icon: Icon, color = 'blue', subtitle, lo
 };
 
 // ==========================================
-// 🔀 USER FLOW DIAGRAM - RESPONSIVE
+// 👥 USER ANALYTICS - RESPONSIVE
 // ==========================================
 
-const UserFlowDiagram = ({ data, loading }) => {
+const UserAnalytics = ({ data, loading }) => {
   if (loading) {
     return (
-      <div className="bg-white rounded-xl shadow-lg p-4 md:p-6">
-        <div className="animate-pulse space-y-4">
-          <div className="h-6 w-48 bg-gray-200 rounded"></div>
-          <div className="h-64 md:h-96 bg-gray-100 rounded"></div>
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="bg-white rounded-xl shadow-lg p-4 md:p-6 animate-pulse">
+              <div className="h-12 w-12 bg-gray-200 rounded-lg mb-4"></div>
+              <div className="h-4 w-20 bg-gray-200 rounded mb-2"></div>
+              <div className="h-8 w-24 bg-gray-200 rounded"></div>
+            </div>
+          ))}
         </div>
       </div>
     );
@@ -109,98 +114,149 @@ const UserFlowDiagram = ({ data, loading }) => {
 
   if (!data) {
     return (
-      <div className="bg-white rounded-xl shadow-lg p-4 md:p-6">
-        <div className="text-center py-12 text-gray-500">
-          No data available
-        </div>
+      <div className="bg-white rounded-xl shadow-lg p-6">
+        <div className="text-center py-12 text-gray-500">No data available</div>
       </div>
     );
   }
 
-  const totalVisits = data.totalVisits || 0;
-  const roomViews = data.conversions?.roomViews || 0;
-  const dateSelections = data.conversions?.dateSelections || 0;
-  const priceChecks = data.conversions?.priceChecks || 0;
-  const whatsappClicks = data.conversions?.whatsappClicks || 0;
+  const devices = data.devices || [];
+  const geographic = data.geographic || [];
+  const trafficSources = data.trafficSources || [];
+  const overview = data.overview || {};
 
-  const funnelData = [
-    { name: 'Visits', value: totalVisits, fill: COLORS.blue },
-    { name: 'Room Views', value: roomViews, fill: COLORS.purple },
-    { name: 'Date Selection', value: dateSelections, fill: COLORS.pink },
-    { name: 'Price Check', value: priceChecks, fill: '#f59e0b' },
-    { name: 'WhatsApp', value: whatsappClicks, fill: COLORS.success }
-  ];
+  const totalDeviceSessions = devices.reduce((sum, d) => sum + (d.sessions || 0), 0);
+  const deviceData = devices.map(d => ({
+    ...d,
+    percentage: totalDeviceSessions > 0 ? ((d.sessions / totalDeviceSessions) * 100).toFixed(1) : 0
+  }));
 
-  const maxValue = totalVisits || 1;
+  const topCountries = geographic.slice(0, 10);
+
+  const deviceIcons = {
+    mobile: '📱',
+    desktop: '💻',
+    tablet: '📲'
+  };
 
   return (
-    <div className="bg-white rounded-xl shadow-lg p-4 md:p-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-        <h3 className="text-lg md:text-xl font-bold text-gray-900 flex items-center gap-2">
-          <Eye className="h-5 w-5 md:h-6 md:w-6 text-blue-600" />
-          <span className="text-base md:text-xl">User Journey Flow</span>
+    <div className="space-y-6">
+      <div className="bg-white rounded-xl shadow-lg p-4 md:p-6">
+        <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+          <span className="text-2xl">📱</span>
+          Device Breakdown
         </h3>
-        <div className="text-xs md:text-sm text-gray-600">
-          Conversion: {((whatsappClicks / totalVisits) * 100).toFixed(1)}%
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {deviceData.map((device, index) => (
+            <div key={index} className="bg-gray-50 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">{deviceIcons[device.device.toLowerCase()] || '📱'}</span>
+                  <span className="font-semibold text-gray-900 capitalize">{device.device}</span>
+                </div>
+                <span className="text-lg font-bold text-blue-600">{device.percentage}%</span>
+              </div>
+              <div className="text-sm text-gray-600 space-y-1">
+                <div>Sessions: <span className="font-semibold">{formatNumber(device.sessions)}</span></div>
+                <div>Users: <span className="font-semibold">{formatNumber(device.users)}</span></div>
+                <div>Bounce: <span className={`font-semibold ${device.bounceRate > 70 ? 'text-red-600' : 'text-green-600'}`}>{device.bounceRate}%</span></div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="w-full bg-gray-200 rounded-full h-8 overflow-hidden flex">
+          {deviceData.map((device, index) => (
+            <div
+              key={index}
+              className="h-8 flex items-center justify-center text-white text-xs font-bold transition-all duration-500"
+              style={{
+                width: `${device.percentage}%`,
+                backgroundColor: index === 0 ? COLORS.blue : index === 1 ? COLORS.purple : COLORS.pink
+              }}
+            >
+              {device.percentage > 10 && `${device.percentage}%`}
+            </div>
+          ))}
         </div>
       </div>
 
-      <div className="space-y-4 md:space-y-6 mb-6 md:mb-8">
-        {funnelData.map((step, index) => {
-          const percentage = (step.value / maxValue) * 100;
-          const nextStep = funnelData[index + 1];
-          const dropoff = nextStep ? ((step.value - nextStep.value) / step.value) * 100 : 0;
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-lg p-4 md:p-6">
+          <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <span className="text-2xl">🌍</span>
+            Top Countries
+          </h3>
 
-          return (
-            <div key={index}>
-              <div className="flex items-center gap-2 md:gap-4 mb-2">
-                <div className="flex-1">
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-1">
-                    <span className="text-xs md:text-sm font-semibold text-gray-900">{step.name}</span>
-                    <span className="text-xs md:text-sm font-bold" style={{ color: step.fill }}>
-                      {formatNumber(step.value)}
-                    </span>
+          <div className="space-y-3">
+            {topCountries.map((location, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-500 rounded-lg flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                    {index + 1}
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-6 md:h-8 overflow-hidden">
-                    <div
-                      className="h-6 md:h-8 rounded-full transition-all duration-500 flex items-center justify-center text-white font-bold text-xs md:text-sm"
-                      style={{ width: `${percentage}%`, backgroundColor: step.fill }}
-                    >
-                      {percentage > 15 && `${percentage.toFixed(0)}%`}
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-semibold text-gray-900 truncate">
+                      {location.country}
                     </div>
+                    {location.city !== '(not set)' && (
+                      <div className="text-xs text-gray-500 truncate">{location.city}</div>
+                    )}
                   </div>
+                </div>
+                <div className="text-right flex-shrink-0 ml-2">
+                  <div className="text-sm font-bold text-blue-600">{formatNumber(location.users)}</div>
+                  <div className="text-xs text-gray-500">{formatNumber(location.sessions)} sessions</div>
                 </div>
               </div>
-              
-              {nextStep && dropoff > 0 && (
-                <div className="flex items-center justify-center py-2">
-                  <div className="flex items-center gap-2 text-xs text-red-600 font-medium">
-                    <ArrowDown className="h-3 w-3" />
-                    {dropoff.toFixed(1)}% drop-off
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-white rounded-xl shadow-lg p-4 md:p-6">
+          <h3 className="text-lg md:text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+            <span className="text-2xl">🚀</span>
+            Traffic Sources
+          </h3>
+
+          <div className="space-y-3">
+            {trafficSources.slice(0, 8).map((source, index) => (
+              <div key={index} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-semibold text-gray-900 truncate">
+                    {source.source}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {source.medium}
                   </div>
                 </div>
-              )}
-            </div>
-          );
-        })}
+                <div className="text-right flex-shrink-0 ml-2">
+                  <div className="text-sm font-bold text-purple-600">{formatNumber(source.sessions)}</div>
+                  <div className="text-xs text-gray-500">{formatNumber(source.users)} users</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4">
-        <div className="text-center p-2 md:p-3 bg-blue-50 rounded-lg">
-          <div className="text-lg md:text-2xl font-bold text-blue-600">{formatNumber(totalVisits)}</div>
-          <div className="text-xs text-gray-600">Total Visits</div>
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl p-4 text-white">
+          <div className="text-sm opacity-90 mb-1">Avg Session</div>
+          <div className="text-2xl font-bold">{Math.round(overview.avgSessionDuration || 0)}s</div>
         </div>
-        <div className="text-center p-2 md:p-3 bg-purple-50 rounded-lg">
-          <div className="text-lg md:text-2xl font-bold text-purple-600">{formatNumber(roomViews)}</div>
-          <div className="text-xs text-gray-600">Room Views</div>
+        <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl p-4 text-white">
+          <div className="text-sm opacity-90 mb-1">Bounce Rate</div>
+          <div className="text-2xl font-bold">{Math.round(overview.bounceRate || 0)}%</div>
         </div>
-        <div className="text-center p-2 md:p-3 bg-orange-50 rounded-lg">
-          <div className="text-lg md:text-2xl font-bold text-orange-600">{formatNumber(dateSelections)}</div>
-          <div className="text-xs text-gray-600">Date Selections</div>
+        <div className="bg-gradient-to-br from-green-500 to-green-600 rounded-xl p-4 text-white">
+          <div className="text-sm opacity-90 mb-1">Engagement</div>
+          <div className="text-2xl font-bold">{Math.round(overview.engagementRate || 0)}%</div>
         </div>
-        <div className="text-center p-2 md:p-3 bg-green-50 rounded-lg">
-          <div className="text-lg md:text-2xl font-bold text-green-600">{formatNumber(whatsappClicks)}</div>
-          <div className="text-xs text-gray-600">WhatsApp Clicks</div>
+        <div className="bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl p-4 text-white">
+          <div className="text-sm opacity-90 mb-1">New Users</div>
+          <div className="text-2xl font-bold">{formatNumber(overview.newUsers || 0)}</div>
         </div>
       </div>
     </div>
@@ -378,7 +434,6 @@ const ContentPerformance = ({ data, loading }) => {
             </h3>
           </div>
 
-          {/* Overview Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
             <div className="text-center p-3 md:p-4 bg-blue-50 rounded-lg">
               <div className="text-xl md:text-2xl font-bold text-blue-600">
@@ -406,7 +461,6 @@ const ContentPerformance = ({ data, loading }) => {
             </div>
           </div>
 
-          {/* Top Posts */}
           <div className="space-y-3">
             <h4 className="font-bold text-sm md:text-base text-gray-900">Top Posts</h4>
             {blogData.topPerformers?.slice(0, 5).map((post, index) => (
@@ -437,7 +491,6 @@ const ContentPerformance = ({ data, loading }) => {
             </h3>
           </div>
 
-          {/* Overview Stats */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
             <div className="text-center p-3 md:p-4 bg-purple-50 rounded-lg">
               <div className="text-xl md:text-2xl font-bold text-purple-600">
@@ -465,7 +518,6 @@ const ContentPerformance = ({ data, loading }) => {
             </div>
           </div>
 
-          {/* Top Artworks */}
           <div className="space-y-3">
             <h4 className="font-bold text-sm md:text-base text-gray-900">Most Viewed Artworks</h4>
             {museumData.topArtworks?.slice(0, 5).map((artwork, index) => (
@@ -499,7 +551,7 @@ const CompleteDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [contentLoading, setContentLoading] = useState(false);
   const [dateRange, setDateRange] = useState('last7Days');
-  const [activeTab, setActiveTab] = useState('overview');
+  const [activeTab, setActiveTab] = useState('users');
 
   useEffect(() => {
     fetchData();
@@ -627,7 +679,7 @@ const CompleteDashboard = () => {
 
         {/* Tabs */}
         <div className="flex gap-2 border-b border-gray-200 overflow-x-auto">
-          {['overview', 'rooms', 'content'].map((tab) => (
+          {['users', 'rooms', 'content'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -643,10 +695,8 @@ const CompleteDashboard = () => {
         </div>
 
         {/* Content based on active tab */}
-        {activeTab === 'overview' && (
-          <div className="space-y-6">
-            <UserFlowDiagram data={data?.overview} loading={loading} />
-          </div>
+        {activeTab === 'users' && (
+          <UserAnalytics data={data} loading={loading} />
         )}
 
         {activeTab === 'rooms' && (
