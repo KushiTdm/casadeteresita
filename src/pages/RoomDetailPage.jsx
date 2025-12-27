@@ -85,9 +85,16 @@ const RoomDetailPage = () => {
     const { calculateTotalPrice } = await import('../services/dataManager');
     
     let message = '';
+    let totalPrice = room.price;
+    let nights = 1;
+    let hasDateRange = false;
     
     if (dateRange && dateRange.checkIn && dateRange.checkOut) {
       const priceData = await calculateTotalPrice(room.id, dateRange.checkIn, dateRange.checkOut);
+      totalPrice = priceData.totalPrice;
+      nights = priceData.nights;
+      hasDateRange = true;
+      
       const checkInStr = dateRange.checkIn.toLocaleDateString(language === 'en' ? 'en-US' : 'es-ES', { 
         year: 'numeric', month: 'long', day: 'numeric' 
       });
@@ -111,6 +118,16 @@ const RoomDetailPage = () => {
         ? `Hello! I'm interested in booking the ${roomName} room.\n\nPrice: $${room.price}/night`
         : `¡Hola! Estoy interesado en reservar la habitación ${roomName}.\n\nPrecio: $${room.price}/noche`;
     }
+    
+    // ✅ TRACK AVANT D'OUVRIR WHATSAPP
+    analytics.trackWhatsAppClick(
+      'room_detail_page',  // source
+      room.id,             // roomId
+      roomName,            // roomName
+      totalPrice,          // totalPrice
+      nights,              // nights
+      hasDateRange         // hasDateRange
+    );
     
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
     window.open(url, '_blank');

@@ -1,9 +1,10 @@
-// src/components/RoomsPreview.jsx
+// src/components/RoomsPreview.jsx - VERSION AVEC TRACKING COMPLET
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
+import * as analytics from '../utils/analytics';
 
 const RoomsPreview = () => {
   const { language, t } = useLanguage();
@@ -23,6 +24,28 @@ const RoomsPreview = () => {
   const visibleCards = 3;
   const maxIndex = sortedRooms.length;
 
+  // ✅ TRACKING: Vue automatique des chambres dans le carousel
+  useEffect(() => {
+    if (sortedRooms.length > 0 && !isLoading) {
+      const currentRoom = sortedRooms[currentIndex];
+      if (currentRoom) {
+        // Track la vue de la chambre dans le carousel
+        analytics.trackRoomView(
+          currentRoom.id,
+          currentRoom.name[language],
+          currentRoom.price,
+          'homepage_carousel'
+        );
+        
+        console.log('🏨 Room viewed in carousel:', {
+          room: currentRoom.name[language],
+          index: currentIndex,
+          price: currentRoom.price
+        });
+      }
+    }
+  }, [currentIndex, sortedRooms, language, isLoading]);
+
   // Auto-play carousel
   useEffect(() => {
     if (isAutoPlaying) {
@@ -40,15 +63,34 @@ const RoomsPreview = () => {
 
   const nextSlide = () => {
     setCurrentIndex(prev => (prev + 1) % maxIndex);
+    // ✅ TRACKING: Navigation manuelle
+    analytics.trackEvent('carousel_navigation', {
+      direction: 'next',
+      location: 'rooms_carousel',
+      from_index: currentIndex
+    });
   };
 
   const prevSlide = () => {
     setCurrentIndex(prev => (prev - 1 + maxIndex) % maxIndex);
+    // ✅ TRACKING: Navigation manuelle
+    analytics.trackEvent('carousel_navigation', {
+      direction: 'previous',
+      location: 'rooms_carousel',
+      from_index: currentIndex
+    });
   };
 
   const goToSlide = (index) => {
     setCurrentIndex(index);
     setIsAutoPlaying(false);
+    
+    // ✅ TRACKING: Navigation par dot
+    analytics.trackEvent('carousel_dot_click', {
+      location: 'rooms_carousel',
+      from_index: currentIndex,
+      to_index: index
+    });
     
     // Restart auto-play after 8 seconds of inactivity
     setTimeout(() => {
@@ -62,6 +104,42 @@ const RoomsPreview = () => {
 
   const handleMouseLeave = () => {
     setIsAutoPlaying(true);
+  };
+
+  // ✅ TRACKING: Clic sur image de chambre
+  const handleRoomImageClick = (room, displayIndex) => {
+    const originalIndex = (currentIndex + displayIndex) % sortedRooms.length;
+    
+    analytics.trackRoomClick(
+      room.id,
+      room.name[language],
+      room.price,
+      'carousel_image'
+    );
+    
+    console.log('🖼️ Room image clicked:', {
+      room: room.name[language],
+      position: displayIndex,
+      price: room.price
+    });
+  };
+
+  // ✅ TRACKING: Clic sur bouton "See Details"
+  const handleSeeDetailsClick = (room, displayIndex) => {
+    const originalIndex = (currentIndex + displayIndex) % sortedRooms.length;
+    
+    analytics.trackRoomClick(
+      room.id,
+      room.name[language],
+      room.price,
+      'carousel_details_button'
+    );
+    
+    console.log('🔍 See details clicked:', {
+      room: room.name[language],
+      position: displayIndex,
+      price: room.price
+    });
   };
 
   // Calculate the starting index for the infinite carousel
@@ -116,15 +194,21 @@ const RoomsPreview = () => {
                         </div>
                       )}
 
-                      {/* Image */}
-                      <div className="relative h-64 overflow-hidden">
-                        <img
-                          src={room.images[0]}
-                          alt={room.name[language]}
-                          className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
-                          loading="lazy"
-                        />
-                      </div>
+                      {/* Image - ✅ AVEC TRACKING */}
+                      <Link
+                        to={`/rooms/${room.slug}`}
+                        onClick={() => handleRoomImageClick(room, displayIndex)}
+                        className="block"
+                      >
+                        <div className="relative h-64 overflow-hidden">
+                          <img
+                            src={room.images[0]}
+                            alt={room.name[language]}
+                            className="w-full h-full object-cover hover:scale-110 transition-transform duration-500"
+                            loading="lazy"
+                          />
+                        </div>
+                      </Link>
 
                       {/* Content */}
                       <div className="p-6">
@@ -164,9 +248,10 @@ const RoomsPreview = () => {
                           ))}
                         </ul>
 
-                        {/* CTA Button */}
+                        {/* CTA Button - ✅ AVEC TRACKING */}
                         <Link
                           to={`/rooms/${room.slug}`}
+                          onClick={() => handleSeeDetailsClick(room, displayIndex)}
                           className="block w-full bg-[#2D5A4A] text-white text-center py-3 rounded-lg font-semibold hover:bg-[#1F3D32] transition-colors"
                         >
                           {t.roomsPreview.seeDetails}
@@ -179,7 +264,7 @@ const RoomsPreview = () => {
             </div>
           </div>
 
-          {/* Navigation Arrows - Always visible since we have infinite scroll */}
+          {/* Navigation Arrows - ✅ AVEC TRACKING */}
           <>
             <button
               onClick={prevSlide}
@@ -197,7 +282,7 @@ const RoomsPreview = () => {
             </button>
           </>
 
-          {/* Dots Indicator */}
+          {/* Dots Indicator - ✅ AVEC TRACKING */}
           <div className="flex justify-center gap-2 mt-8">
             {sortedRooms.map((_, index) => (
               <button

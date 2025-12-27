@@ -3,27 +3,21 @@ import { Link } from 'react-router-dom';
 import { Calendar, MessageCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
+import * as analytics from '../utils/analytics';
 
 const FinalCta = () => {
   const { t } = useLanguage();
   const { config } = useData();
   const phoneNumber = config?.whatsappNumber || "59170675985";
   
-  // Parse booking rating properly - handle "9.6/10" format or plain number
   const parseBookingRating = (ratingStr) => {
-    if (!ratingStr) return 9.6; // Default fallback
-    
-    // If it's already a number
+    if (!ratingStr) return 9.6;
     if (typeof ratingStr === 'number') return ratingStr;
-    
-    // If it's a string like "9.6/10", extract the first part
     const str = String(ratingStr);
     if (str.includes('/')) {
       const parts = str.split('/');
       return parseFloat(parts[0]) || 9.6;
     }
-    
-    // Otherwise try to parse as float
     return parseFloat(str) || 9.6;
   };
   
@@ -32,6 +26,17 @@ const FinalCta = () => {
   const handleWhatsApp = () => {
     const message = encodeURIComponent(t.whatsapp.homeMessage);
     const url = `https://wa.me/${phoneNumber}?text=${message}`;
+    
+    // ✅ TRACK AVANT D'OUVRIR WHATSAPP
+    analytics.trackWhatsAppClick(
+      'final_cta_section',  // source
+      undefined,            // roomId
+      undefined,            // roomName
+      undefined,            // totalPrice
+      undefined,            // nights
+      false                 // hasDateRange
+    );
+    
     window.open(url, '_blank');
   };
 

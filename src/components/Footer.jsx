@@ -45,6 +45,19 @@ const Footer = () => {
     const message = t.whatsapp.homeMessage;
     const encodedMessage = encodeURIComponent(message);
     const url = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    
+    // ✅ TRACK AVANT D'OUVRIR WHATSAPP
+    import('../utils/analytics').then(analytics => {
+      analytics.trackWhatsAppClick(
+        'footer',      // source
+        undefined,     // roomId
+        undefined,     // roomName
+        undefined,     // totalPrice
+        undefined,     // nights
+        false          // hasDateRange
+      );
+    });
+    
     window.open(url, '_blank');
   };
 

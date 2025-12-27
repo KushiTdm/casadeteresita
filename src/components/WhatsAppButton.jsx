@@ -1,7 +1,11 @@
-// src/components/WhatsAppButton.tsx
+// ==========================================
+// 1. src/components/WhatsAppButton.jsx 
+// ==========================================
+
 import { MessageCircle } from 'lucide-react';
 import { useLanguage } from '../context/LanguageContext';
 import { useData } from '../context/DataContext';
+import * as analytics from '../utils/analytics';
 
 const WhatsAppButton = () => {
   const { language, t } = useLanguage();
@@ -10,6 +14,17 @@ const WhatsAppButton = () => {
   const handleClick = () => {
     const message = t.whatsapp.homeMessage;
     const url = `https://wa.me/${config.whatsappNumber}?text=${encodeURIComponent(message)}`;
+    
+    // ✅ TRACK AVANT D'OUVRIR WHATSAPP
+    analytics.trackWhatsAppClick(
+      'floating_button',  // source
+      undefined,          // roomId
+      undefined,          // roomName
+      undefined,          // totalPrice
+      undefined,          // nights
+      false              // hasDateRange
+    );
+    
     window.open(url, '_blank');
   };
 

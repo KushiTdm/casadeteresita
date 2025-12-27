@@ -1,4 +1,4 @@
-// src/components/Header.jsx - VERSION AVEC ROUTES LANGUE
+// src/components/Header.jsx
 import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, Home } from 'lucide-react';
@@ -11,11 +11,16 @@ const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // ✅ FIX: Détecter si on est sur la page Dashboard
+  const isDashboardPage = location.pathname === '/dashboard';
+
   // Detect if on detail/blog/museum pages
   const isDetailPage = location.pathname.includes('/rooms/') || 
                         location.pathname.includes('/blog') ||
                         location.pathname.includes('/museum');
-  const shouldUseDarkStyle = isScrolled || isDetailPage;
+  
+  // ✅ FIX: Toujours utiliser le style sombre sur Dashboard
+  const shouldUseDarkStyle = isScrolled || isDetailPage || isDashboardPage;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,11 +48,9 @@ const Header = () => {
     setIsMobileMenuOpen(false);
   };
 
-  // 🆕 GESTION INTELLIGENTE DU CHANGEMENT DE LANGUE
   const handleLanguageToggle = () => {
     const currentPath = location.pathname;
     
-    // Si on est sur un article de blog avec préfixe langue
     const blogMatch = currentPath.match(/^\/(en|es)\/blog\/(.+)$/);
     if (blogMatch) {
       const [, currentLang, slug] = blogMatch;
@@ -57,7 +60,6 @@ const Header = () => {
       return;
     }
     
-    // Si on est sur une œuvre du musée avec préfixe langue
     const museumMatch = currentPath.match(/^\/(en|es)\/museum\/(.+)$/);
     if (museumMatch) {
       const [, currentLang, slug] = museumMatch;
@@ -67,7 +69,6 @@ const Header = () => {
       return;
     }
     
-    // Pour les autres pages, changement simple
     toggleLanguage();
   };
 
@@ -98,53 +99,63 @@ const Header = () => {
           </Link>
 
           <nav className="hidden md:flex items-center space-x-8">
-            <button
-              onClick={() => scrollToSection('experience')}
-              className={linkClass(false)}
-            >
-              {t.nav.story}
-            </button>
+            {/* ✅ FIX: Cacher les liens de navigation sur Dashboard */}
+            {!isDashboardPage && (
+              <>
+                <button
+                  onClick={() => scrollToSection('experience')}
+                  className={linkClass(false)}
+                >
+                  {t.nav.story}
+                </button>
 
-            <button
-              onClick={() => scrollToSection('rooms')}
-              className={linkClass(location.pathname.includes('/rooms'))}
-            >
-              {t.nav.rooms}
-            </button>
+                <button
+                  onClick={() => scrollToSection('rooms')}
+                  className={linkClass(location.pathname.includes('/rooms'))}
+                >
+                  {t.nav.rooms}
+                </button>
 
-            {/* 🆕 LIEN BLOG AVEC PRÉFIXE LANGUE */}
-            <Link
-              to={`/${language}/blog`}
-              className={linkClass(location.pathname.includes('/blog'))}
-            >
-              {t.nav.blog}
-            </Link>
+                <Link
+                  to={`/${language}/blog`}
+                  className={linkClass(location.pathname.includes('/blog'))}
+                >
+                  {t.nav.blog}
+                </Link>
 
-            {/* 🆕 LIEN MUSEUM AVEC PRÉFIXE LANGUE */}
-            <Link
-              to={`/${language}/museum`}
-              className={linkClass(location.pathname.includes('/museum'))}
-            >
-              {t.nav.museum}
-            </Link>
+                <Link
+                  to={`/${language}/museum`}
+                  className={linkClass(location.pathname.includes('/museum'))}
+                >
+                  {t.nav.museum}
+                </Link>
 
-            <button
-              onClick={() => scrollToSection('location')}
-              className={linkClass(false)}
-            >
-              {t.nav.location}
-            </button>
+                <button
+                  onClick={() => scrollToSection('location')}
+                  className={linkClass(false)}
+                >
+                  {t.nav.location}
+                </button>
 
-            <button
-              onClick={handleLanguageToggle}
-              className={`px-4 py-2 rounded-md font-medium transition-colors ${
-                shouldUseDarkStyle
-                  ? 'bg-[#A85C32] text-white hover:bg-[#8B4926]'
-                  : 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm'
-              }`}
-            >
-              {language === 'en' ? '🇬🇧 EN' : '🇪🇸 ES'}
-            </button>
+                <button
+                  onClick={handleLanguageToggle}
+                  className={`px-4 py-2 rounded-md font-medium transition-colors ${
+                    shouldUseDarkStyle
+                      ? 'bg-[#A85C32] text-white hover:bg-[#8B4926]'
+                      : 'bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm'
+                  }`}
+                >
+                  {language === 'en' ? '🇬🇧 EN' : '🇪🇸 ES'}
+                </button>
+              </>
+            )}
+
+            {/* ✅ FIX: Afficher seulement le titre Dashboard si on est dessus */}
+            {isDashboardPage && (
+              <span className="text-lg font-semibold text-[#2D5A4A]">
+                Analytics Dashboard
+              </span>
+            )}
           </nav>
 
           <button
@@ -160,7 +171,7 @@ const Header = () => {
         </div>
       </div>
 
-      {isMobileMenuOpen && (
+      {isMobileMenuOpen && !isDashboardPage && (
         <div className="md:hidden bg-white border-t border-gray-200">
           <nav className="px-4 py-4 space-y-4">
             <Link
