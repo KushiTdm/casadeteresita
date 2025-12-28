@@ -15,7 +15,7 @@ const SEOHelmet = ({
   currentLanguage = 'en',
   alternateLanguages = null
 }) => {
-  const siteUrl = 'https://lacasadeteresita.netlify.app';
+  const siteUrl = 'https://lacasadeteresita.com/';
   const siteName = 'La Casa de Teresita';
   
   // 🔧 FIX: S'assurer que l'URL contient toujours le préfixe langue

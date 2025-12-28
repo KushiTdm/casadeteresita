@@ -18,7 +18,7 @@ interface EventParams {
 }
 
 const GA_CONFIG: AnalyticsConfig = {
-  measurementId: import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-ML2H0Q0R0N',
+  measurementId: import.meta.env.VITE_GA_MEASUREMENT_ID || 'G-PEPZTL0NRS',
   enabled: true,
   debug: import.meta.env.DEV,
 };
