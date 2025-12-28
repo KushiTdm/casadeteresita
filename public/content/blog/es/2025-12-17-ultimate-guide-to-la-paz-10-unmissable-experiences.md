@@ -31,8 +31,6 @@ No es solo un medio de transporte; es **la mejor introducción a La Paz**. Con m
 * **Costo aproximado**: 3 BOB por tramo (menos de 0.50 USD)
 * **Consejo pro**: Toma el teleférico al atardecer para ver la ciudad iluminarse mientras el cielo se tiñe de naranja y rosa
 
-![Vista desde el teleférico de La Paz sobre la ciudad y las montañas](/images/blog/teleferico-la-paz.jpg)
-*Desde las alturas, La Paz revela su verdadera magnitud y belleza caótica*
 
 ## 2. Sumérgete en el Místico Mercado de las Brujas
 
@@ -91,8 +89,6 @@ La comida en La Paz es una fusión de tradiciones indígenas e influencias espa�
 * **Api con pastel**: Bebida caliente de maíz morado acompañada de un pastel frito
 * **Chairo**: Sopa tradicional de chuño y carne
 
-![Puestos del mercado de las brujas en La Paz con artesanías y elementos tradicionales](/images/blog/mercado-brujas-la-paz.jpg)
-*El Mercado de las Brujas: donde la tradición andina se mantiene viva*
 
 ## 9. Vive la Noche Paceña en la Zona Sopocachi
 
